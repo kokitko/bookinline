@@ -19,6 +19,8 @@ public class Property {
     private Integer maxGuests;
     private Boolean available = true;
 
+    private Double averageRating = 0.0;
+
     @ManyToOne
     private User host;
 
@@ -27,4 +29,7 @@ public class Property {
 
     @OneToMany(mappedBy = "property")
     private List<Booking> bookings;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
 }
