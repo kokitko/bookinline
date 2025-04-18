@@ -1,0 +1,89 @@
+package service.impl;
+
+import dto.PropertyRequestDto;
+import dto.PropertyResponseDto;
+import dto.PropertyResponsePage;
+import entity.Property;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import repositories.PropertyRepository;
+import service.PropertyService;
+
+import java.util.List;
+
+@Service
+public class PropertyServiceImpl implements PropertyService {
+    private final PropertyRepository propertyRepository;
+
+    public PropertyServiceImpl(PropertyRepository propertyRepository) {
+        this.propertyRepository = propertyRepository;
+    }
+
+    public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto) {
+        Property property = mapPropertyDtoToEntity(propertyRequestDto);
+        Property savedProperty = propertyRepository.save(property);
+        return mapPropertyEntityToDto(savedProperty);
+    }
+
+    public PropertyResponseDto updateProperty(Long id, PropertyRequestDto propertyRequestDto) {
+        Property property = mapPropertyDtoToEntity(propertyRequestDto);
+        property.setId(id);
+        Property updatedProperty = propertyRepository.save(property);
+        return mapPropertyEntityToDto(updatedProperty);
+    }
+
+    public void deleteProperty(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+        propertyRepository.delete(property);
+    }
+
+    public PropertyResponseDto getPropertyById(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+        return mapPropertyEntityToDto(property);
+    }
+
+    public PropertyResponsePage getAvailableProperties(int page, int size) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<Property> propertyPage = propertyRepository.findByAvailableTrue();
+        List<PropertyResponseDto> propertyResponseDtos = propertyPage.getContent()
+                .stream()
+                .map(this::mapPropertyEntityToDto).toList();
+
+        PropertyResponsePage propertyResponsePage = new PropertyResponsePage();
+        propertyResponsePage.setPage(pageable.getPageNumber());
+        propertyResponsePage.setSize(pageable.getPageSize());
+        propertyResponsePage.setTotalElements(propertyPage.getTotalElements());
+        propertyResponsePage.setTotalPages(propertyPage.getTotalPages());
+        propertyResponsePage.setLast(propertyPage.isLast());
+        propertyResponsePage.setProperties(propertyResponseDtos);
+        return propertyResponsePage;
+    }
+
+    private PropertyResponseDto mapPropertyEntityToDto(Property property) {
+        return PropertyResponseDto.builder()
+                .id(property.getId())
+                .title(property.getTitle())
+                .description(property.getDescription())
+                .address(property.getAddress())
+                .pricePerNight(property.getPricePerNight())
+                .maxGuests(property.getMaxGuests())
+                .available(property.getAvailable())
+                .averageRating(property.getAverageRating())
+                .build();
+    }
+
+    private Property mapPropertyDtoToEntity(PropertyRequestDto propertyRequestDto) {
+        return Property.builder()
+                .title(propertyRequestDto.getTitle())
+                .description(propertyRequestDto.getDescription())
+                .address(propertyRequestDto.getAddress())
+                .pricePerNight(propertyRequestDto.getPricePerNight())
+                .maxGuests(propertyRequestDto.getMaxGuests())
+                .available(propertyRequestDto.getAvailable())
+                .build();
+
+    }
+}
