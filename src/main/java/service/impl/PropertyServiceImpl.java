@@ -20,12 +20,14 @@ public class PropertyServiceImpl implements PropertyService {
         this.propertyRepository = propertyRepository;
     }
 
+    @Override
     public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto) {
         Property property = mapPropertyDtoToEntity(propertyRequestDto);
         Property savedProperty = propertyRepository.save(property);
         return mapPropertyEntityToDto(savedProperty);
     }
 
+    @Override
     public PropertyResponseDto updateProperty(Long id, PropertyRequestDto propertyRequestDto) {
         Property property = mapPropertyDtoToEntity(propertyRequestDto);
         property.setId(id);
@@ -33,18 +35,21 @@ public class PropertyServiceImpl implements PropertyService {
         return mapPropertyEntityToDto(updatedProperty);
     }
 
+    @Override
     public void deleteProperty(Long id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
         propertyRepository.delete(property);
     }
 
+    @Override
     public PropertyResponseDto getPropertyById(Long id) {
         Property property = propertyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
         return mapPropertyEntityToDto(property);
     }
 
+    @Override
     public PropertyResponsePage getAvailableProperties(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Property> propertyPage = propertyRepository.findByAvailableTrue();
