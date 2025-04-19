@@ -55,15 +55,15 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponsePage getReviewsByPropertyId(Long propertyId, int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        Page<Review> reviewPage = reviewRepository.findByPropertyId(propertyId);
+        Page<Review> reviewPage = reviewRepository.findByPropertyId(propertyId, pageable);
         List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent()
                 .stream()
                 .map(this::mapReviewEntityToDto)
                 .toList();
 
         ReviewResponsePage reviewResponsePage = new ReviewResponsePage();
-        reviewResponsePage.setPage(pageable.getPageNumber());
-        reviewResponsePage.setSize(pageable.getPageSize());
+        reviewResponsePage.setPage(reviewPage.getNumber());
+        reviewResponsePage.setSize(reviewPage.getSize());
         reviewResponsePage.setTotalElements(reviewPage.getTotalElements());
         reviewResponsePage.setTotalPages(reviewPage.getTotalPages());
         reviewResponsePage.setLast(reviewPage.isLast());
@@ -74,15 +74,15 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponsePage getReviewsByUserId(Long userId, int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        Page<Review> reviewPage = reviewRepository.findByAuthorId(userId);
+        Page<Review> reviewPage = reviewRepository.findByAuthorId(userId, pageable);
         List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent()
                 .stream()
                 .map(this::mapReviewEntityToDto)
                 .toList();
 
         ReviewResponsePage reviewResponsePage = new ReviewResponsePage();
-        reviewResponsePage.setPage(pageable.getPageNumber());
-        reviewResponsePage.setSize(pageable.getPageSize());
+        reviewResponsePage.setPage(reviewPage.getNumber());
+        reviewResponsePage.setSize(reviewPage.getSize());
         reviewResponsePage.setTotalElements(reviewPage.getTotalElements());
         reviewResponsePage.setTotalPages(reviewPage.getTotalPages());
         reviewResponsePage.setLast(reviewPage.isLast());
@@ -92,8 +92,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public double calculateAverageRating(Long propertyId) {
-        Page<Review> reviewPage = reviewRepository.findByPropertyId(propertyId);
-        List<Review> reviews = reviewPage.getContent();
+        List<Review> reviews = reviewRepository.findByPropertyId(propertyId);
         if (reviews.isEmpty()) {
             return 0.0;
         }

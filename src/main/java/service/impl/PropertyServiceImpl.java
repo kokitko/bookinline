@@ -52,14 +52,14 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyResponsePage getAvailableProperties(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        Page<Property> propertyPage = propertyRepository.findByAvailableTrue();
+        Page<Property> propertyPage = propertyRepository.findByAvailableTrue(pageable);
         List<PropertyResponseDto> propertyResponseDtos = propertyPage.getContent()
                 .stream()
                 .map(this::mapPropertyEntityToDto).toList();
 
         PropertyResponsePage propertyResponsePage = new PropertyResponsePage();
-        propertyResponsePage.setPage(pageable.getPageNumber());
-        propertyResponsePage.setSize(pageable.getPageSize());
+        propertyResponsePage.setPage(propertyPage.getNumber());
+        propertyResponsePage.setSize(propertyPage.getSize());
         propertyResponsePage.setTotalElements(propertyPage.getTotalElements());
         propertyResponsePage.setTotalPages(propertyPage.getTotalPages());
         propertyResponsePage.setLast(propertyPage.isLast());
