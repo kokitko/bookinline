@@ -9,6 +9,7 @@ import entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import repositories.PropertyRepository;
 import repositories.ReviewRepository;
 import repositories.UserRepository;
@@ -17,6 +18,7 @@ import service.ReviewService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PropertyRepository propertyRepository;
