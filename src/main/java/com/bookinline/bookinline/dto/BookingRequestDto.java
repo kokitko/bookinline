@@ -1,0 +1,19 @@
+package com.bookinline.bookinline.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookingRequestDto {
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
+    private Long propertyId;
+    private Long guestId;
+}
