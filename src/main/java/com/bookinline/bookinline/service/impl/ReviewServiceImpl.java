@@ -34,14 +34,22 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponseDto addReview(Long propertyId, Long userId, ReviewRequestDto reviewRequestDto) {
         Review review = mapReviewDtoToEntity(reviewRequestDto);
+
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new IllegalArgumentException("Property not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
         review.setProperty(property);
         review.setAuthor(user);
         review.setCreatedAt(LocalDateTime.now());
-        return mapReviewEntityToDto(reviewRepository.save(review));
+
+        ReviewResponseDto reviewResponse = mapReviewEntityToDto(reviewRepository.save(review));
+
+        property.setAverageRating(calculateAverageRating(propertyId));
+        propertyRepository.save(property);
+
+        return reviewResponse;
     }
 
     @Override
@@ -49,6 +57,9 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found"));
         reviewRepository.delete(review);
+        Property property = review.getProperty();
+        property.setAverageRating(calculateAverageRating(property.getId()));
+        propertyRepository.save(property);
     }
 
     @Override
