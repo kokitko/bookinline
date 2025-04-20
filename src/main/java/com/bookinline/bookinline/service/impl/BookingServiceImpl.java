@@ -33,8 +33,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto) {
-        Booking booking = mapToBookingEntity(bookingRequestDto);
+    public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
+        // Check if the property is available
+        if (!isPropertyAvailable(propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate())) {
+            throw new RuntimeException("Property is not available for the selected dates");
+        }
+
+        Booking booking = mapToBookingEntity(bookingRequestDto, propertyId, userId);
         Booking savedBooking = bookingRepository.save(booking);
         return mapToBookingResponseDto(savedBooking);
     }
@@ -85,12 +90,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean isPropertyAvailable(Long propertyId, String startDate, String endDate) {
+    public BookingResponseDto confirmBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        booking.setStatus(BookingStatus.CONFIRMED);
+        Booking updatedBooking = bookingRepository.save(booking);
+        return mapToBookingResponseDto(updatedBooking);
+    }
+
+    @Override
+    public boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
         List<Booking> bookings = bookingRepository.findByPropertyId(propertyId, Pageable.unpaged()).getContent();
-        LocalDate startLocalDate = LocalDate.parse(startDate);
-        LocalDate endLocalDate = LocalDate.parse(endDate);
         for (Booking booking : bookings) {
-            if (booking.getCheckInDate().isBefore(startLocalDate) && booking.getCheckOutDate().isAfter(endLocalDate)) {
+            if (!(startDate.isAfter(booking.getCheckOutDate()) || startDate.isEqual(booking.getCheckOutDate())) &&
+                    !(endDate.isBefore(booking.getCheckInDate()) || endDate.isEqual(booking.getCheckInDate()))) {
                 return false;
             }
         }
@@ -108,10 +121,10 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
-    private Booking mapToBookingEntity(BookingRequestDto bookingRequestDto) {
-        Property property = propertyRepository.findById(bookingRequestDto.getPropertyId())
+    private Booking mapToBookingEntity(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
+        Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
-        User guest = userRepository.findById(bookingRequestDto.getGuestId())
+        User guest = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return Booking.builder()
                 .checkInDate(bookingRequestDto.getCheckInDate())
