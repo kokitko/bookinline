@@ -8,9 +8,10 @@ import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.EmailBeingUsedException;
 import com.bookinline.bookinline.exception.IllegalRoleException;
 import com.bookinline.bookinline.exception.InvalidUserDataException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.bookinline.bookinline.repository.UserRepository;
@@ -19,6 +20,8 @@ import com.bookinline.bookinline.service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -33,33 +36,51 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
+        logger.info("Attempting to register user with email: {}", request.email());
+
+
+        if (userRepository.existsByEmail(request.email())) {
+            logger.warn("Email already in use: {}", request.email());
+            throw new EmailBeingUsedException("Email already being used");
+        }
+        if(request.role() == Role.ADMIN) {
+            logger.warn("Registration failed: Illegal role to register: {}", request.role());
+            throw new IllegalRoleException("Illegal role to register");
+        }
 
         User user = new User();
         user.setFullName(request.fullName());
         user.setEmail(request.email());
-        if (userRepository.existsByEmail(request.email())) {
-            throw new EmailBeingUsedException("Email already being used");
-        }
         user.setPassword(passwordEncoder.encode(request.password()));
-        if(request.role() == Role.ADMIN) {
-            throw new IllegalRoleException("Illegal role to register");
-        }
         user.setRole(request.role());
         userRepository.save(user);
 
         String token = jwtService.generateToken(user);
+        logger.info("User registered successfully: {}", request.email());
         return new AuthenticationResponse(token);
     }
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
+        logger.info("Attempting to login user with email: {}", request.email());
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
+            );
+        } catch (Exception e) {
+            logger.warn("Authentication failed with email: {}", request.email());
+            throw new InvalidUserDataException("Invalid email or password");
+        }
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new InvalidUserDataException("Invalid email or password"));
+                .orElseThrow(() ->  {
+                    logger.warn("Login failed: User with email {} not found", request.email());
+                    return new InvalidUserDataException("Invalid email or password");
+                });
+
         String token = jwtService.generateToken(user);
+        logger.info("User logged in successfully: {}", request.email());
         return new AuthenticationResponse(token);
     }
 }
