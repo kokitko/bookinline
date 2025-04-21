@@ -9,6 +9,17 @@ import java.util.Date;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(BookingNotFoundException.class)
+    public ResponseEntity<ErrorObject> handleBookingNotFoundException(BookingNotFoundException e) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(404);
+        errorObject.setMessage("Booking not found");
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(EmailBeingUsedException.class)
     public ResponseEntity<ErrorObject> handleEmailBeingUsedException(EmailBeingUsedException e) {
         ErrorObject errorObject = new ErrorObject();

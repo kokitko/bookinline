@@ -4,6 +4,7 @@ import com.bookinline.bookinline.dto.ReviewRequestDto;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,6 @@ public class ReviewController {
                 return ((User) principal).getId();
             }
         }
-        throw new RuntimeException("Authentication object is null");
+        throw new UnauthorizedActionException("Authentication object is null");
     }
 }

@@ -7,6 +7,7 @@ import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.BookingStatus;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.exception.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
         if (!isPropertyAvailable(propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate())) {
-            throw new RuntimeException("Property is not available");
+            throw new PropertyNotAvailableException("Property is not available for this date range");
         }
         Booking booking = mapToBookingEntity(bookingRequestDto, propertyId, userId);
         Booking savedBooking = bookingRepository.save(booking);
@@ -45,11 +46,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto cancelBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
         User guest = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!booking.getGuest().getId().equals(guest.getId())) {
-            throw new RuntimeException("You are not able to cancel this booking");
+            throw new UnauthorizedActionException("You are not able to cancel this booking");
         }
         booking.setStatus(BookingStatus.CANCELLED);
         Booking updatedBooking = bookingRepository.save(booking);
@@ -95,11 +96,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto confirmBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
         User host = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!booking.getProperty().getHost().getId().equals(host.getId())) {
-            throw new RuntimeException("You are not able to confirm this booking");
+            throw new UnauthorizedActionException("You are not able to confirm this booking");
         }
         booking.setStatus(BookingStatus.CONFIRMED);
         Booking updatedBooking = bookingRepository.save(booking);
@@ -108,8 +109,7 @@ public class BookingServiceImpl implements BookingService {
 
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
-        if (!property.getAvailable()) return false;
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         List<Booking> bookings = bookingRepository.findByPropertyId(propertyId, Pageable.unpaged()).getContent();
         for (Booking booking : bookings) {
             if (!(startDate.isAfter(booking.getCheckOutDate()) || startDate.isEqual(booking.getCheckOutDate())) &&
@@ -133,9 +133,9 @@ public class BookingServiceImpl implements BookingService {
 
     private Booking mapToBookingEntity(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         User guest = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return Booking.builder()
                 .checkInDate(bookingRequestDto.getCheckInDate())
                 .checkOutDate(bookingRequestDto.getCheckOutDate())

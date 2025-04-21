@@ -4,6 +4,7 @@ import com.bookinline.bookinline.dto.ReviewRequestDto;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.*;
+import com.bookinline.bookinline.exception.*;
 import com.bookinline.bookinline.repository.BookingRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,16 +39,16 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = mapReviewDtoToEntity(reviewRequestDto);
 
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new IllegalArgumentException("Property not found"));
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!hasPersonStayedInProperty(propertyId, userId)) {
-            throw new IllegalArgumentException("User has not stayed in this property");
+            throw new UnauthorizedActionException("User has not stayed in this property");
         }
 
         if (!hasPersonLeftReview(propertyId, userId)) {
-            throw new IllegalArgumentException("User has already left a review for this property");
+            throw new OverReviewingException("User has already left a review for this property");
         }
 
         review.setProperty(property);
@@ -65,7 +66,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+                .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
         reviewRepository.delete(review);
         Property property = review.getProperty();
         property.setAverageRating(calculateAverageRating(property.getId()));

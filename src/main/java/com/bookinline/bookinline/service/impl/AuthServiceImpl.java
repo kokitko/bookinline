@@ -5,6 +5,9 @@ import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
 import com.bookinline.bookinline.entity.Role;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.exception.EmailBeingUsedException;
+import com.bookinline.bookinline.exception.IllegalRoleException;
+import com.bookinline.bookinline.exception.InvalidUserDataException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,11 +38,11 @@ public class AuthServiceImpl implements AuthService {
         user.setFullName(request.fullName());
         user.setEmail(request.email());
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new EmailBeingUsedException("Email already being used");
         }
         user.setPassword(passwordEncoder.encode(request.password()));
         if(request.role() == Role.ADMIN) {
-            throw new IllegalArgumentException("Admin role is not allowed for registration");
+            throw new IllegalRoleException("Illegal role to register");
         }
         user.setRole(request.role());
         userRepository.save(user);
@@ -55,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidUserDataException("Invalid email or password"));
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
     }

@@ -6,6 +6,9 @@ import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Role;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.exception.PropertyNotFoundException;
+import com.bookinline.bookinline.exception.UnauthorizedActionException;
+import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +31,9 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         if (user.getRole() == Role.GUEST) {
-            throw new RuntimeException("User does not have permission to create a property");
+            throw new UnauthorizedActionException("User does not have permission to create a property");
         }
         Property property = mapPropertyDtoToEntity(propertyRequestDto);
         property.setHost(user);
@@ -41,11 +44,11 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyResponseDto updateProperty(Long propertyId, PropertyRequestDto propertyRequestDto, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         if (!property.getHost().equals(user)) {
-            throw new RuntimeException("User does not have permission to update this property");
+            throw new UnauthorizedActionException("User does not have permission to update this property");
         }
         property.setTitle(propertyRequestDto.getTitle());
         property.setDescription(propertyRequestDto.getDescription());
@@ -61,11 +64,11 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public void deleteProperty(Long propertyId, Long userId) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         if (!property.getHost().equals(user)) {
-            throw new RuntimeException("User does not have permission to delete this property");
+            throw new UnauthorizedActionException("User does not have permission to delete this property");
         }
         propertyRepository.delete(property);
     }
@@ -73,7 +76,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyResponseDto getPropertyById(Long id) {
         Property property = propertyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Property not found"));
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         return mapPropertyEntityToDto(property);
     }
 
