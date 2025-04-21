@@ -36,7 +36,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponse);
     }
 
-    @GetMapping("/user/")
+    @GetMapping("/user")
     public ResponseEntity<BookingResponsePage> getBookingsByUserId(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size) {
         Long userId = getAuthenticatedUserId();

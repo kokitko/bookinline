@@ -3,6 +3,7 @@ package com.bookinline.bookinline.service.impl;
 import com.bookinline.bookinline.dto.AuthenticationRequest;
 import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
+import com.bookinline.bookinline.entity.Role;
 import com.bookinline.bookinline.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,12 +30,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
+
         User user = new User();
         user.setFullName(request.fullName());
         user.setEmail(request.email());
+        if (userRepository.existsByEmail(request.email())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
         user.setPassword(passwordEncoder.encode(request.password()));
+        if(request.role() == Role.ADMIN) {
+            throw new IllegalArgumentException("Admin role is not allowed for registration");
+        }
         user.setRole(request.role());
-
         userRepository.save(user);
 
         String token = jwtService.generateToken(user);

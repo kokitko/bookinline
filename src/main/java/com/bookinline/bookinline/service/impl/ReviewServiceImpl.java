@@ -46,6 +46,10 @@ public class ReviewServiceImpl implements ReviewService {
             throw new IllegalArgumentException("User has not stayed in this property");
         }
 
+        if (!hasPersonLeftReview(propertyId, userId)) {
+            throw new IllegalArgumentException("User has already left a review for this property");
+        }
+
         review.setProperty(property);
         review.setAuthor(user);
         review.setCreatedAt(LocalDateTime.now());
@@ -122,6 +126,11 @@ public class ReviewServiceImpl implements ReviewService {
         List<Booking> bookings = bookingRepository.findByPropertyIdAndGuestIdAndStatus
                 (propertyId, userId, BookingStatus.CHECKED_OUT);
         return !bookings.isEmpty();
+    }
+
+    private boolean hasPersonLeftReview(Long propertyId, Long userId) {
+        List<Review> reviews = reviewRepository.findByPropertyIdAndAuthorId(propertyId, userId);
+        return !reviews.isEmpty();
     }
 
     private Review mapReviewDtoToEntity(ReviewRequestDto reviewRequestDto) {
