@@ -10,6 +10,8 @@ import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import java.util.List;
 
 @Service
 public class PropertyServiceImpl implements PropertyService {
+    private static final Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
+
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
 
@@ -30,24 +34,38 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto, Long userId) {
+        logger.info("Attempting to create property for user with ID: {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with ID: {}", userId);
+                    return new UserNotFoundException("User not found");
+                });
         if (user.getRole() == Role.GUEST) {
+            logger.warn("User with ID: {} does not have permission to create a property", userId);
             throw new UnauthorizedActionException("User does not have permission to create a property");
         }
         Property property = mapPropertyDtoToEntity(propertyRequestDto);
         property.setHost(user);
         Property savedProperty = propertyRepository.save(property);
+        logger.info("Property created successfully with ID: {}", savedProperty.getId());
         return mapPropertyEntityToDto(savedProperty);
     }
 
     @Override
     public PropertyResponseDto updateProperty(Long propertyId, PropertyRequestDto propertyRequestDto, Long userId) {
+        logger.info("Attempting to update property with ID: {} for user with ID: {}", propertyId, userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with ID: {}", userId);
+                    return new UserNotFoundException("User not found");
+                });
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
+                .orElseThrow(() -> {
+                    logger.error("Property not found with ID: {}", propertyId);
+                    return new PropertyNotFoundException("Property not found");
+                });
         if (!property.getHost().equals(user)) {
+            logger.warn("User with ID: {} does not have permission to update property with ID: {}", userId, propertyId);
             throw new UnauthorizedActionException("User does not have permission to update this property");
         }
         property.setTitle(propertyRequestDto.getTitle());
@@ -58,32 +76,50 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAvailable(propertyRequestDto.getAvailable());
         Property updatedProperty = propertyRepository.save(property);
 
+        logger.info("Property with ID: {} updated successfully", propertyId);
         return mapPropertyEntityToDto(updatedProperty);
     }
 
     @Override
     public void deleteProperty(Long propertyId, Long userId) {
+        logger.info("Attempting to delete property with ID: {} for user with ID: {}", propertyId, userId);
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
+                .orElseThrow(() -> {
+                    logger.error("Property not found with ID: {}", propertyId);
+                    return new PropertyNotFoundException("Property not found");
+                });
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with ID: {}", userId);
+                    return new UserNotFoundException("User not found");
+                });
         if (!property.getHost().equals(user)) {
+            logger.warn("Unauthorized action: User with ID: {} does not have permission to delete property with ID: {}",
+                    userId, propertyId);
             throw new UnauthorizedActionException("User does not have permission to delete this property");
         }
         propertyRepository.delete(property);
+        logger.info("Property with ID: {} deleted successfully", propertyId);
     }
 
     @Override
     public PropertyResponseDto getPropertyById(Long id) {
+        logger.info("Attempting to get property with ID: {}", id);
         Property property = propertyRepository.findById(id)
-                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
+                .orElseThrow(() -> {
+                    logger.error("Property not found with ID: {}", id);
+                    return new PropertyNotFoundException("Property not found");
+                });
+        logger.info("Property with ID: {} retrieved successfully", id);
         return mapPropertyEntityToDto(property);
     }
 
     @Override
     public PropertyResponsePage getAvailableProperties(int page, int size) {
+        logger.info("Fetching available properties, page: {}, size: {}", page, size);
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Property> propertyPage = propertyRepository.findByAvailableTrue(pageable);
+        logger.info("Found {} available properties", propertyPage.getTotalElements());
         List<PropertyResponseDto> propertyResponseDtos = propertyPage.getContent()
                 .stream()
                 .map(this::mapPropertyEntityToDto).toList();
