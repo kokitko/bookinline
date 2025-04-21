@@ -57,6 +57,12 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponse);
     }
 
+    @PostMapping("/{bookingId}/check-out")
+    public ResponseEntity<BookingResponseDto> checkOutBooking(@PathVariable Long bookingId) {
+        BookingResponseDto bookingResponse = bookingService.checkOutBooking(bookingId);
+        return ResponseEntity.ok(bookingResponse);
+    }
+
     private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

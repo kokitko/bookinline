@@ -99,6 +99,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingResponseDto checkOutBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        booking.setStatus(BookingStatus.CHECKED_OUT);
+        Booking updatedBooking = bookingRepository.save(booking);
+        return mapToBookingResponseDto(updatedBooking);
+    }
+
+    @Override
     public boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
         List<Booking> bookings = bookingRepository.findByPropertyId(propertyId, Pageable.unpaged()).getContent();
         for (Booking booking : bookings) {
