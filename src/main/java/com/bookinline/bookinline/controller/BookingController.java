@@ -31,14 +31,15 @@ public class BookingController {
 
     @DeleteMapping("/{bookingId}")
     public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long bookingId) {
-        BookingResponseDto bookingResponse = bookingService.cancelBooking(bookingId);
+        Long userId = getAuthenticatedUserId();
+        BookingResponseDto bookingResponse = bookingService.cancelBooking(bookingId, userId);
         return ResponseEntity.ok(bookingResponse);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<BookingResponsePage> getBookingsByUserId(@PathVariable Long userId,
-                                                                   @RequestParam(defaultValue = "0") int page,
+    @GetMapping("/user/")
+    public ResponseEntity<BookingResponsePage> getBookingsByUserId(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size) {
+        Long userId = getAuthenticatedUserId();
         BookingResponsePage bookingResponsePage = bookingService.getBookingsByUserId(userId, page, size);
         return ResponseEntity.ok(bookingResponsePage);
     }
@@ -53,13 +54,8 @@ public class BookingController {
 
     @PostMapping("/{bookingId}/confirm")
     public ResponseEntity<BookingResponseDto> confirmBooking(@PathVariable Long bookingId) {
-        BookingResponseDto bookingResponse = bookingService.confirmBooking(bookingId);
-        return ResponseEntity.ok(bookingResponse);
-    }
-
-    @PostMapping("/{bookingId}/check-out")
-    public ResponseEntity<BookingResponseDto> checkOutBooking(@PathVariable Long bookingId) {
-        BookingResponseDto bookingResponse = bookingService.checkOutBooking(bookingId);
+        Long userId = getAuthenticatedUserId();
+        BookingResponseDto bookingResponse = bookingService.confirmBooking(bookingId, userId);
         return ResponseEntity.ok(bookingResponse);
     }
 

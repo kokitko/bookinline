@@ -29,7 +29,7 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getRole() != Role.HOST && user.getRole() != Role.ADMIN) {
+        if (user.getRole() == Role.GUEST) {
             throw new RuntimeException("User does not have permission to create a property");
         }
         Property property = mapPropertyDtoToEntity(propertyRequestDto);
@@ -44,7 +44,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new RuntimeException("Property not found"));
-        if (!property.getHost().equals(user) || user.getRole() != Role.ADMIN) {
+        if (!property.getHost().equals(user)) {
             throw new RuntimeException("User does not have permission to update this property");
         }
         property.setTitle(propertyRequestDto.getTitle());
@@ -64,7 +64,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(() -> new RuntimeException("Property not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!property.getHost().equals(user) || user.getRole() != Role.ADMIN) {
+        if (!property.getHost().equals(user)) {
             throw new RuntimeException("User does not have permission to delete this property");
         }
         propertyRepository.delete(property);

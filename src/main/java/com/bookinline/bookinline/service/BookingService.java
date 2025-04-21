@@ -8,10 +8,8 @@ import java.time.LocalDate;
 
 public interface BookingService {
     BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId);
-    BookingResponseDto cancelBooking(Long bookingId);
+    BookingResponseDto cancelBooking(Long bookingId, Long userId);
     BookingResponsePage getBookingsByUserId(Long userId, int page, int size);
     BookingResponsePage getBookingsByPropertyId(Long propertyId, int page, int size);
-    BookingResponseDto confirmBooking(Long bookingId);
-    BookingResponseDto checkOutBooking(Long bookingId);
-    boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate);
+    BookingResponseDto confirmBooking(Long bookingId, Long userId);
 }

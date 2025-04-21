@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.awt.print.Book;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByPropertyIdAndGuestIdAndStatus(@Param("propertyId") Long propertyId,
                                                       @Param("guestId") Long guestId,
                                                       @Param("status") BookingStatus status);
+    @Query("SELECT b FROM Booking b WHERE b.status = :status AND b.checkOutDate < :checkOutDate")
+    List<Booking> findByStatusAndCheckOutDateBefore(@Param("status") BookingStatus status,
+                                                    @Param("checkOutDate") LocalDate checkOutDate);
 }

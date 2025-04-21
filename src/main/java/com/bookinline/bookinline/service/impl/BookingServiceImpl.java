@@ -34,20 +34,23 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
-        // Check if the property is available
         if (!isPropertyAvailable(propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate())) {
-            throw new RuntimeException("Property is not available for the selected dates");
+            throw new RuntimeException("Property is not available");
         }
-
         Booking booking = mapToBookingEntity(bookingRequestDto, propertyId, userId);
         Booking savedBooking = bookingRepository.save(booking);
         return mapToBookingResponseDto(savedBooking);
     }
 
     @Override
-    public BookingResponseDto cancelBooking(Long bookingId) {
+    public BookingResponseDto cancelBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
+        User guest = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!booking.getGuest().getId().equals(guest.getId())) {
+            throw new RuntimeException("You are not able to cancel this booking");
+        }
         booking.setStatus(BookingStatus.CANCELLED);
         Booking updatedBooking = bookingRepository.save(booking);
         return mapToBookingResponseDto(updatedBooking);
@@ -90,25 +93,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponseDto confirmBooking(Long bookingId) {
+    public BookingResponseDto confirmBooking(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
+        User host = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!booking.getProperty().getHost().getId().equals(host.getId())) {
+            throw new RuntimeException("You are not able to confirm this booking");
+        }
         booking.setStatus(BookingStatus.CONFIRMED);
         Booking updatedBooking = bookingRepository.save(booking);
         return mapToBookingResponseDto(updatedBooking);
     }
 
-    @Override
-    public BookingResponseDto checkOutBooking(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
-        booking.setStatus(BookingStatus.CHECKED_OUT);
-        Booking updatedBooking = bookingRepository.save(booking);
-        return mapToBookingResponseDto(updatedBooking);
-    }
-
-    @Override
-    public boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
+    private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+        if (!property.getAvailable()) return false;
         List<Booking> bookings = bookingRepository.findByPropertyId(propertyId, Pageable.unpaged()).getContent();
         for (Booking booking : bookings) {
             if (!(startDate.isAfter(booking.getCheckOutDate()) || startDate.isEqual(booking.getCheckOutDate())) &&
