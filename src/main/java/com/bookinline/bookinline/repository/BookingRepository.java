@@ -1,8 +1,7 @@
-package com.bookinline.bookinline.repositories;
+package com.bookinline.bookinline.repository;
 
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.BookingStatus;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Book;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

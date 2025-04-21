@@ -1,4 +1,4 @@
-package com.bookinline.bookinline.repositories;
+package com.bookinline.bookinline.repository;
 
 import com.bookinline.bookinline.entity.Review;
 import org.springframework.data.domain.Page;

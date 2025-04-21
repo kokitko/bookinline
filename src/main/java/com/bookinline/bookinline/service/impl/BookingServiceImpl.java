@@ -10,9 +10,9 @@ import com.bookinline.bookinline.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.bookinline.bookinline.repositories.BookingRepository;
-import com.bookinline.bookinline.repositories.PropertyRepository;
-import com.bookinline.bookinline.repositories.UserRepository;
+import com.bookinline.bookinline.repository.BookingRepository;
+import com.bookinline.bookinline.repository.PropertyRepository;
+import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.BookingService;
 
 import java.time.LocalDate;

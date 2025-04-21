@@ -2,7 +2,7 @@ package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.BookingStatus;
-import com.bookinline.bookinline.repositories.BookingRepository;
+import com.bookinline.bookinline.repository.BookingRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

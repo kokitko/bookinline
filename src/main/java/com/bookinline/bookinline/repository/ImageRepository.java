@@ -1,4 +1,4 @@
-package com.bookinline.bookinline.repositories;
+package com.bookinline.bookinline.repository;
 
 import com.bookinline.bookinline.entity.Image;
 import org.springframework.data.jpa.repository.JpaRepository;

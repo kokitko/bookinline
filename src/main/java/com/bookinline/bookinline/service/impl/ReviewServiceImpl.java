@@ -4,13 +4,13 @@ import com.bookinline.bookinline.dto.ReviewRequestDto;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.*;
-import com.bookinline.bookinline.repositories.BookingRepository;
+import com.bookinline.bookinline.repository.BookingRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.bookinline.bookinline.repositories.PropertyRepository;
-import com.bookinline.bookinline.repositories.ReviewRepository;
-import com.bookinline.bookinline.repositories.UserRepository;
+import com.bookinline.bookinline.repository.PropertyRepository;
+import com.bookinline.bookinline.repository.ReviewRepository;
+import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.ReviewService;
 
 import java.time.LocalDateTime;

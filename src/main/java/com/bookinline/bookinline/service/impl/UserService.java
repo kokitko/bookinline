@@ -5,7 +5,7 @@ import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.Role;
 import com.bookinline.bookinline.entity.User;
 import org.springframework.stereotype.Service;
-import com.bookinline.bookinline.repositories.UserRepository;
+import com.bookinline.bookinline.repository.UserRepository;
 
 @Service
 public class UserService {

@@ -1,6 +1,6 @@
 package com.bookinline.bookinline.security;
 
-import com.bookinline.bookinline.repositories.UserRepository;
+import com.bookinline.bookinline.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

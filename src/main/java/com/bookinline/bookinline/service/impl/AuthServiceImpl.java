@@ -10,7 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.bookinline.bookinline.repositories.UserRepository;
+import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.security.JwtService;
 import com.bookinline.bookinline.service.AuthService;
 
