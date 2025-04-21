@@ -1,11 +1,17 @@
 package com.bookinline.bookinline.repositories;
 
 import com.bookinline.bookinline.entity.Booking;
+import com.bookinline.bookinline.entity.BookingStatus;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.awt.print.Book;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -13,4 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Optional<Booking> findById(Long id);
     Page<Booking> findByGuestId(Long guestId, Pageable pageable);
     Page<Booking> findByPropertyId(Long propertyId, Pageable pageable);
+    @Query("SELECT b FROM Booking b WHERE b.property.id = :propertyId AND b.guest.id = :guestId AND b.status = :status")
+    List<Booking> findByPropertyIdAndGuestIdAndStatus(@Param("propertyId") Long propertyId,
+                                                      @Param("guestId") Long guestId,
+                                                      @Param("status") BookingStatus status);
 }

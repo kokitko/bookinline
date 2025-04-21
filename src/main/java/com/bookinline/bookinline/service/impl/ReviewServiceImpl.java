@@ -3,9 +3,8 @@ package com.bookinline.bookinline.service.impl;
 import com.bookinline.bookinline.dto.ReviewRequestDto;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
-import com.bookinline.bookinline.entity.Property;
-import com.bookinline.bookinline.entity.Review;
-import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.*;
+import com.bookinline.bookinline.repositories.BookingRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,13 +20,16 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final PropertyRepository propertyRepository;
+    private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
 
     public ReviewServiceImpl(ReviewRepository reviewRepository,
-                             PropertyRepository propertyRepository,
-                             UserRepository userRepository) {
+                              PropertyRepository propertyRepository,
+                              BookingRepository bookingRepository,
+                              UserRepository userRepository) {
         this.reviewRepository = reviewRepository;
         this.propertyRepository = propertyRepository;
+        this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
     }
 
@@ -39,6 +41,10 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new IllegalArgumentException("Property not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (!hasPersonStayedInProperty(propertyId, userId)) {
+            throw new IllegalArgumentException("User has not stayed in this property");
+        }
 
         review.setProperty(property);
         review.setAuthor(user);
@@ -110,6 +116,12 @@ public class ReviewServiceImpl implements ReviewService {
                 .mapToDouble(Review::getRating)
                 .sum();
         return totalRating / reviews.size();
+    }
+
+    private boolean hasPersonStayedInProperty(Long propertyId, Long userId) {
+        List<Booking> bookings = bookingRepository.findByPropertyIdAndGuestIdAndStatus
+                (propertyId, userId, BookingStatus.CHECKED_OUT);
+        return !bookings.isEmpty();
     }
 
     private Review mapReviewDtoToEntity(ReviewRequestDto reviewRequestDto) {
