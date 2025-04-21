@@ -3,9 +3,13 @@ package com.bookinline.bookinline.controller;
 import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
+import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,20 +23,23 @@ public class PropertyController {
 
     @PostMapping("/create")
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyRequestDto) {
-        PropertyResponseDto createdProperty = propertyService.createProperty(propertyRequestDto);
+        Long userId = getAuthenticatedUserId();
+        PropertyResponseDto createdProperty = propertyService.createProperty(propertyRequestDto, userId);
         return ResponseEntity.ok(createdProperty);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable Long id,
+    @PutMapping("/update/{propertyId}")
+    public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable Long propertyId,
                                                               @RequestBody PropertyRequestDto propertyRequestDto) {
-        PropertyResponseDto updatedProperty = propertyService.updateProperty(id, propertyRequestDto);
+        Long userId = getAuthenticatedUserId();
+        PropertyResponseDto updatedProperty = propertyService.updateProperty(propertyId, propertyRequestDto, userId);
         return ResponseEntity.ok(updatedProperty);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteProperty(@PathVariable Long id) {
-        propertyService.deleteProperty(id);
+    @DeleteMapping("/delete/{propertyId}")
+    public ResponseEntity<Void> deleteProperty(@PathVariable Long propertyId) {
+        Long userId = getAuthenticatedUserId();
+        propertyService.deleteProperty(propertyId, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -47,5 +54,16 @@ public class PropertyController {
                                                                         @RequestParam(defaultValue = "10") int size) {
         PropertyResponsePage availableProperties = propertyService.getAvailableProperties(page, size);
         return ResponseEntity.ok(availableProperties);
+    }
+
+    private Long getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                return ((User) principal).getId();
+            }
+        }
+        throw new RuntimeException("Authentication object is null");
     }
 }
