@@ -8,6 +8,8 @@ import com.bookinline.bookinline.entity.BookingStatus;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
+    private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
+
     private final BookingRepository bookingRepository;
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
@@ -35,32 +39,47 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
+        logger.info("Attempting to book property with ID: {} for user with ID: {}", propertyId, userId);
         if (!isPropertyAvailable(propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate())) {
+            logger.warn("Property with ID: {} is not available for date range: {} to {}",
+                    propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
             throw new PropertyNotAvailableException("Property is not available for this date range");
         }
         Booking booking = mapToBookingEntity(bookingRequestDto, propertyId, userId);
         Booking savedBooking = bookingRepository.save(booking);
+        logger.info("Booking has been saved successfully with id: {}", savedBooking.getId());
         return mapToBookingResponseDto(savedBooking);
     }
 
     @Override
     public BookingResponseDto cancelBooking(Long bookingId, Long userId) {
+        logger.info("Attempting to cancel booking with ID: {} for user ID: {}", bookingId, userId);
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
+                .orElseThrow(() -> {
+                    logger.error("Booking with ID: {} not found", bookingId);
+                    return new BookingNotFoundException("Booking not found");
+                });
         User guest = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User with ID: {} not found", userId);
+                    return new UserNotFoundException("User not found");
+                });
         if (!booking.getGuest().getId().equals(guest.getId())) {
+            logger.warn("Unauthorized action: User with ID: {} is not the guest of booking with ID: {}", userId, bookingId);
             throw new UnauthorizedActionException("You are not able to cancel this booking");
         }
         booking.setStatus(BookingStatus.CANCELLED);
         Booking updatedBooking = bookingRepository.save(booking);
+        logger.info("Booking with ID: {} has been cancelled successfully", bookingId);
         return mapToBookingResponseDto(updatedBooking);
     }
 
     @Override
     public BookingResponsePage getBookingsByUserId(Long userId, int page, int size) {
+        logger.info("Fetching booking for user ID: {}, page: {}, size: {}", userId, page, size);
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Booking> bookingPage = bookingRepository.findByGuestId(userId, pageable);
+        logger.info("Found {} bookings for user ID: {}", bookingPage.getTotalElements(), userId);
         List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent()
                 .stream()
                 .map(this::mapToBookingResponseDto).toList();
@@ -95,21 +114,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto confirmBooking(Long bookingId, Long userId) {
+        logger.info("Attempting to confirm booking with ID: {} for user ID: {}", bookingId, userId);
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
+                .orElseThrow(() -> {
+                    logger.error("Booking with ID: {} not found", bookingId);
+                    return new BookingNotFoundException("Booking not found");
+                });
         User host = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User with ID: {} not found", userId);
+                    return new UserNotFoundException("User not found");
+                });
         if (!booking.getProperty().getHost().getId().equals(host.getId())) {
+            logger.warn("Unauthorized action: User with ID: {} is not the host of booking with ID: {}", userId, bookingId);
             throw new UnauthorizedActionException("You are not able to confirm this booking");
         }
         booking.setStatus(BookingStatus.CONFIRMED);
         Booking updatedBooking = bookingRepository.save(booking);
+        logger.info("Booking with ID: {} successfully confirmed", bookingId);
         return mapToBookingResponseDto(updatedBooking);
     }
 
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
+        logger.info("Checking availability for property ID: {} from {} to {}", propertyId, startDate, endDate);
         List<Booking> bookings = bookingRepository.findByPropertyId(propertyId, Pageable.unpaged()).getContent();
         for (Booking booking : bookings) {
             if (!(startDate.isAfter(booking.getCheckOutDate()) || startDate.isEqual(booking.getCheckOutDate())) &&
@@ -117,6 +144,7 @@ public class BookingServiceImpl implements BookingService {
                 return false;
             }
         }
+        logger.info("Property ID: {} is available from {} to {}", propertyId, startDate, endDate);
         return true;
     }
 
