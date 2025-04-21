@@ -1,4 +1,11 @@
 package com.bookinline.bookinline.dto;
 
-public record AuthenticationRequest(String email, String password) {
+import jakarta.validation.constraints.NotBlank;
+
+public record AuthenticationRequest(
+        @NotBlank(message = "Email is required")
+        String email,
+
+        @NotBlank(message = "Password is required")
+        String password) {
 }
