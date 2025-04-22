@@ -58,6 +58,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         List<Image> imageList = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
+            logger.info("Uploading images for property with ID: {}", property.getId());
             for (MultipartFile file : images) {
                 String imageUrl = imageService.uploadImage(file);
                 Image image = new Image();
@@ -74,7 +75,8 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public PropertyResponseDto updateProperty(Long propertyId, PropertyRequestDto propertyRequestDto, Long userId) {
+    public PropertyResponseDto updateProperty(Long propertyId, PropertyRequestDto propertyRequestDto,
+                                              Long userId, List<MultipartFile> images) {
         logger.info("Attempting to update property with ID: {} for user with ID: {}", propertyId, userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
@@ -96,6 +98,20 @@ public class PropertyServiceImpl implements PropertyService {
         property.setPricePerNight(propertyRequestDto.getPricePerNight());
         property.setMaxGuests(propertyRequestDto.getMaxGuests());
         property.setAvailable(propertyRequestDto.getAvailable());
+
+        List<Image> imageList = property.getImages();
+        imageList.clear();
+        if (images != null && !images.isEmpty()) {
+            logger.info("Uploading images for property with ID: {}", propertyId);
+            for (MultipartFile file : images) {
+                String imageUrl = imageService.uploadImage(file);
+                Image image = new Image();
+                image.setImageUrl(imageUrl);
+                image.setProperty(property);
+                imageList.add(image);
+            }
+        }
+        property.setImages(imageList);
         Property updatedProperty = propertyRepository.save(property);
 
         logger.info("Property with ID: {} updated successfully", propertyId);

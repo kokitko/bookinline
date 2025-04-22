@@ -44,9 +44,14 @@ public class PropertyController {
     @PreAuthorize("hasRole('ROLE_HOST')")
     @PutMapping("/update/{propertyId}")
     public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable Long propertyId,
-                                                              @RequestBody PropertyRequestDto propertyRequestDto) {
+                                                              @RequestPart("property") String propertyJson,
+                                                              @RequestPart(value = "images", required = false)
+                                                              List<MultipartFile> images) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        PropertyRequestDto propertyRequestDto = mapper.readValue(propertyJson, PropertyRequestDto.class);
         Long userId = getAuthenticatedUserId();
-        PropertyResponseDto updatedProperty = propertyService.updateProperty(propertyId, propertyRequestDto, userId);
+        PropertyResponseDto updatedProperty = propertyService.updateProperty(
+                propertyId, propertyRequestDto, userId, images);
         return ResponseEntity.ok(updatedProperty);
     }
 
