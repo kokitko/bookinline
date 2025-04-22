@@ -129,4 +129,15 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorObject> handleInvalidBookingDatesException(InvalidBookingDatesException e) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(400);
+        errorObject.setMessage("Invalid booking dates");
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -58,7 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw new UnauthorizedActionException("User has not stayed in this property");
         }
 
-        if (!hasPersonLeftReview(propertyId, userId)) {
+        if (hasPersonLeftReview(propertyId, userId)) {
             logger.warn("User with ID: {} has already left a review for property with ID: {}", userId, propertyId);
             throw new OverReviewingException("User has already left a review for this property");
         }
@@ -79,7 +79,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void deleteReview(Long reviewId) {
+    public void deleteReview(Long reviewId, Long userId) {
         logger.info("Attempting to delete review with ID: {}", reviewId);
 
         Review review = reviewRepository.findById(reviewId)
@@ -87,6 +87,11 @@ public class ReviewServiceImpl implements ReviewService {
                     logger.error("Review not found with ID: {}", reviewId);
                     return new ReviewNotFoundException("Review not found");
                 });
+
+        if (!review.getAuthor().getId().equals(userId)) {
+            logger.warn("User with ID: {} is not authorized to delete review with ID: {}", userId, reviewId);
+            throw new UnauthorizedActionException("User is not authorized to delete this review");
+        }
 
         reviewRepository.delete(review);
         logger.info("Review with ID: {} deleted successfully", reviewId);

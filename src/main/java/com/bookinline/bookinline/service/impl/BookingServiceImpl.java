@@ -40,6 +40,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
         logger.info("Attempting to book property with ID: {} for user with ID: {}", propertyId, userId);
+        if (bookingRequestDto.getCheckInDate().isAfter(bookingRequestDto.getCheckOutDate()) ||
+            bookingRequestDto.getCheckInDate().isEqual(bookingRequestDto.getCheckOutDate())) {
+            logger.warn("Invalid booking dates: Check-in date is after or same as check-out date");
+            throw new InvalidBookingDatesException("Check-in date must be before check-out date");
+        }
         if (!isPropertyAvailable(propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate())) {
             logger.warn("Property with ID: {} is not available for date range: {} to {}",
                     propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
@@ -129,6 +134,10 @@ public class BookingServiceImpl implements BookingService {
             logger.warn("Unauthorized action: User with ID: {} is not the host of booking with ID: {}", userId, bookingId);
             throw new UnauthorizedActionException("You are not able to confirm this booking");
         }
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            logger.warn("Booking with ID: {} is not in PENDING status", bookingId);
+            throw new UnauthorizedActionException("Booking is not in PENDING status");
+        }
         booking.setStatus(BookingStatus.CONFIRMED);
         Booking updatedBooking = bookingRepository.save(booking);
         logger.info("Booking with ID: {} successfully confirmed", bookingId);
@@ -137,13 +146,28 @@ public class BookingServiceImpl implements BookingService {
 
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
         logger.info("Checking availability for property ID: {} from {} to {}", propertyId, startDate, endDate);
-        List<Booking> bookings = bookingRepository.findByPropertyId(propertyId, Pageable.unpaged()).getContent();
+        LocalDate today = LocalDate.now();
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
+        if (!property.getAvailable()) {
+            logger.warn("Property ID: {} is not available", propertyId);
+            return false;
+        }
+
+        if (startDate.isBefore(today)) {
+            logger.warn("Start date {} is before today {}", startDate, today);
+            throw new InvalidBookingDatesException("Start date must be today or in the future");
+        }
+
+        List<Booking> bookings = bookingRepository.findByPropertyIdAndStatuses
+                (propertyId, List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
         for (Booking booking : bookings) {
             if (!(startDate.isAfter(booking.getCheckOutDate()) || startDate.isEqual(booking.getCheckOutDate())) &&
                     !(endDate.isBefore(booking.getCheckInDate()) || endDate.isEqual(booking.getCheckInDate()))) {
                 return false;
             }
         }
+
         logger.info("Property ID: {} is available from {} to {}", propertyId, startDate, endDate);
         return true;
     }

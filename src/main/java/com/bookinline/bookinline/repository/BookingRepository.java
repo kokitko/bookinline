@@ -25,4 +25,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT b FROM Booking b WHERE b.status = :status AND b.checkOutDate < :checkOutDate")
     List<Booking> findByStatusAndCheckOutDateBefore(@Param("status") BookingStatus status,
                                                     @Param("checkOutDate") LocalDate checkOutDate);
+    @Query("SELECT b FROM Booking b WHERE b.property.id = :propertyId AND b.status IN :statuses")
+    List<Booking> findByPropertyIdAndStatuses(@Param("propertyId") Long propertyId, @Param("statuses") List<BookingStatus> statuses);
 }
