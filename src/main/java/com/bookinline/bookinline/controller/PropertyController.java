@@ -8,6 +8,7 @@ import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class PropertyController {
         this.propertyService = propertyService;
     }
 
+    @PreAuthorize("hasRole('ROLE_HOST')")
     @PostMapping("/create")
     public ResponseEntity<PropertyResponseDto> createProperty(@RequestBody PropertyRequestDto propertyRequestDto) {
         Long userId = getAuthenticatedUserId();
@@ -29,6 +31,7 @@ public class PropertyController {
         return ResponseEntity.ok(createdProperty);
     }
 
+    @PreAuthorize("hasRole('ROLE_HOST')")
     @PutMapping("/update/{propertyId}")
     public ResponseEntity<PropertyResponseDto> updateProperty(@PathVariable Long propertyId,
                                                               @RequestBody PropertyRequestDto propertyRequestDto) {
@@ -37,6 +40,7 @@ public class PropertyController {
         return ResponseEntity.ok(updatedProperty);
     }
 
+    @PreAuthorize("hasRole('ROLE_HOST')")
     @DeleteMapping("/delete/{propertyId}")
     public ResponseEntity<Void> deleteProperty(@PathVariable Long propertyId) {
         Long userId = getAuthenticatedUserId();

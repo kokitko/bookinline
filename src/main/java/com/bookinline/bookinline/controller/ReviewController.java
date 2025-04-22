@@ -8,6 +8,7 @@ import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @PostMapping("/property/{propertyId}")
     public ResponseEntity<ReviewResponseDto> addReview(@PathVariable Long propertyId,
                                                        @RequestBody ReviewRequestDto reviewRequestDto) {
@@ -30,9 +32,11 @@ public class ReviewController {
         return ResponseEntity.ok(reviewResponseDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
-        reviewService.deleteReview(reviewId);
+        Long userId = getAuthenticatedUserId();
+        reviewService.deleteReview(reviewId, userId);
         return ResponseEntity.noContent().build();
     }
 

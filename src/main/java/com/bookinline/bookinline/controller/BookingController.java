@@ -8,6 +8,7 @@ import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @PostMapping("/property/{propertyId}")
     public ResponseEntity<BookingResponseDto> bookProperty(@RequestBody BookingRequestDto bookingRequestDto,
                                                           @PathVariable Long propertyId) {
@@ -30,6 +32,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponse);
     }
 
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @DeleteMapping("/{bookingId}")
     public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long bookingId) {
         Long userId = getAuthenticatedUserId();
@@ -37,6 +40,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponse);
     }
 
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @GetMapping("/user")
     public ResponseEntity<BookingResponsePage> getBookingsByUserId(@RequestParam(defaultValue = "0") int page,
                                                                    @RequestParam(defaultValue = "10") int size) {
@@ -53,6 +57,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponsePage);
     }
 
+    @PreAuthorize("hasRole('ROLE_HOST')")
     @PostMapping("/{bookingId}/confirm")
     public ResponseEntity<BookingResponseDto> confirmBooking(@PathVariable Long bookingId) {
         Long userId = getAuthenticatedUserId();
