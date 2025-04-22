@@ -3,9 +3,12 @@ package com.bookinline.bookinline.service;
 import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface PropertyService {
-    PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto, Long userId);
+    PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto, Long userId, List<MultipartFile> images);
     PropertyResponseDto updateProperty(Long propertyId, PropertyRequestDto propertyRequestDto, Long userId);
     void deleteProperty(Long propertyId, Long userId);
     PropertyResponseDto getPropertyById(Long id);

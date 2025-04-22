@@ -1,9 +1,6 @@
 package com.bookinline.bookinline.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,5 +17,6 @@ public class Image {
     private String imageUrl;
 
     @ManyToOne
+    @JoinColumn(name = "property_id")
     private Property property;
 }

@@ -3,6 +3,7 @@ package com.bookinline.bookinline.service.impl;
 import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
+import com.bookinline.bookinline.entity.Image;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Role;
 import com.bookinline.bookinline.entity.User;
@@ -10,6 +11,7 @@ import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -17,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.service.PropertyService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,14 +30,19 @@ public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
-    public PropertyServiceImpl(PropertyRepository propertyRepository, UserRepository userRepository) {
+    public PropertyServiceImpl(PropertyRepository propertyRepository,
+                               UserRepository userRepository,
+                               ImageService imageService) {
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
+        this.imageService = imageService;
     }
 
     @Override
-    public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto, Long userId) {
+    public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto,
+                                              Long userId, List<MultipartFile> images) {
         logger.info("Attempting to create property for user with ID: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
@@ -46,6 +55,19 @@ public class PropertyServiceImpl implements PropertyService {
         }
         Property property = mapPropertyDtoToEntity(propertyRequestDto);
         property.setHost(user);
+
+        List<Image> imageList = new ArrayList<>();
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile file : images) {
+                String imageUrl = imageService.uploadImage(file);
+                Image image = new Image();
+                image.setImageUrl(imageUrl);
+                image.setProperty(property);
+                imageList.add(image);
+            }
+        }
+        property.setImages(imageList);
+
         Property savedProperty = propertyRepository.save(property);
         logger.info("Property created successfully with ID: {}", savedProperty.getId());
         return mapPropertyEntityToDto(savedProperty);
@@ -135,7 +157,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     private PropertyResponseDto mapPropertyEntityToDto(Property property) {
-        return PropertyResponseDto.builder()
+        PropertyResponseDto response = PropertyResponseDto.builder()
                 .id(property.getId())
                 .title(property.getTitle())
                 .description(property.getDescription())
@@ -145,6 +167,12 @@ public class PropertyServiceImpl implements PropertyService {
                 .available(property.getAvailable())
                 .averageRating(property.getAverageRating())
                 .build();
+
+        List<String> urls = property.getImages().stream()
+                .map(Image::getImageUrl)
+                .toList();
+        response.setImageUrls(urls);
+        return response;
     }
 
     private Property mapPropertyDtoToEntity(PropertyRequestDto propertyRequestDto) {
