@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/api/bookings/**",
                                 "/api/reviews",
                                 "/api/reviews/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(sess ->
