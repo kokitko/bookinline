@@ -140,4 +140,15 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorObject> handleInvalidPropertyDataException(InvalidPropertyDataException e) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(400);
+        errorObject.setMessage("Invalid property data");
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
+    }
 }
