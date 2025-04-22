@@ -24,11 +24,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorObject> handleEmailBeingUsedException(EmailBeingUsedException e) {
         ErrorObject errorObject = new ErrorObject();
 
-        errorObject.setStatusCode(400);
+        errorObject.setStatusCode(409);
         errorObject.setMessage("Email is already being used");
         errorObject.setTimestamp(new Date());
 
-        return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorObject, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(IllegalRoleException.class)
