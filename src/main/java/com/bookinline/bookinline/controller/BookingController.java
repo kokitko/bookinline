@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.controller;
 
+import com.bookinline.bookinline.dto.BookingDatesDto;
 import com.bookinline.bookinline.dto.BookingRequestDto;
 import com.bookinline.bookinline.dto.BookingResponseDto;
 import com.bookinline.bookinline.dto.BookingResponsePage;
@@ -20,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -88,12 +91,39 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponsePage);
     }
 
+    @PreAuthorize("hasRole('ROLE_HOST')")
     @GetMapping("/property/{propertyId}")
+    @Operation(summary = "Get bookings for property",
+            description = "Get bookings for property, requires host role",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of bookings retrieved successfully"),
+                    @ApiResponse(responseCode = "403", description =
+                            "User does not have permission to view bookings for this property",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+                    @ApiResponse(responseCode = "404", description = "Property not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+            }
+    )
     public ResponseEntity<BookingResponsePage> getBookingsByPropertyId(@PathVariable Long propertyId,
                                                                         @RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size) {
-        BookingResponsePage bookingResponsePage = bookingService.getBookingsByPropertyId(propertyId, page, size);
+        Long userId = getAuthenticatedUserId();
+        BookingResponsePage bookingResponsePage = bookingService.getBookingsByPropertyId(propertyId, userId, page, size);
         return ResponseEntity.ok(bookingResponsePage);
+    }
+
+
+    @GetMapping("/property/{propertyId}/dates")
+    @Operation(summary = "Get booking dates for property",
+            description = "Get booking dates for property, does not require authentication",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of booking dates retrieved successfully")
+            }
+    )
+    public ResponseEntity<List<BookingDatesDto>> getBookingDatesByPropertyId(@PathVariable Long propertyId) {
+        List<BookingDatesDto> bookedDates = bookingService.getBookedDatesByPropertyId(propertyId);
+        return ResponseEntity.ok(bookedDates);
     }
 
     @PreAuthorize("hasRole('ROLE_HOST')")

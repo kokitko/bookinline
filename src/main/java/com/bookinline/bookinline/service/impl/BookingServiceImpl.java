@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.service.impl;
 
+import com.bookinline.bookinline.dto.BookingDatesDto;
 import com.bookinline.bookinline.dto.BookingRequestDto;
 import com.bookinline.bookinline.dto.BookingResponseDto;
 import com.bookinline.bookinline.dto.BookingResponsePage;
@@ -100,9 +101,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponsePage getBookingsByPropertyId(Long propertyId, int page, int size) {
+    public BookingResponsePage getBookingsByPropertyId(Long propertyId, Long userId, int page, int size) {
+        logger.info("Fetching bookings for property ID: {}, page: {}, size: {}", propertyId, page, size);
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> {
+                    logger.error("Property with ID: {} not found", propertyId);
+                    return new PropertyNotFoundException("Property not found");
+                });
+        if (!property.getHost().getId().equals(userId)) {
+            logger.warn("Unauthorized action: User with ID: {} is not the host of property with ID: {}", userId, propertyId);
+            throw new UnauthorizedActionException("You are not able to view bookings for this property");
+        }
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Booking> bookingPage = bookingRepository.findByPropertyId(propertyId, pageable);
+        logger.info("Found {} bookings for property ID: {}", bookingPage.getTotalElements(), propertyId);
         List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent()
                 .stream()
                 .map(this::mapToBookingResponseDto).toList();
@@ -115,6 +127,17 @@ public class BookingServiceImpl implements BookingService {
         bookingResponsePage.setLast(bookingPage.isLast());
         bookingResponsePage.setBookings(bookingResponseDtos);
         return bookingResponsePage;
+    }
+
+    @Override
+    public List<BookingDatesDto> getBookedDatesByPropertyId(Long propertyId) {
+        logger.info("Fetching bookings for property ID: {}", propertyId);
+        List<Booking> bookings = bookingRepository.findByPropertyIdAndStatuses(
+                propertyId, List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
+        logger.info("Found {} pending/confirmed bookings for property ID: {}", bookings.size(), propertyId);
+        return bookings.stream()
+                .map(booking -> new BookingDatesDto(booking.getCheckInDate(), booking.getCheckOutDate()))
+                .toList();
     }
 
     @Override
