@@ -6,6 +6,7 @@ import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.BookingStatus;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.BookingNotFoundException;
+import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.UserRepository;
@@ -82,15 +83,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getUserById(Long userId, Long authenticatedUserId) {
         logger.info("Fetching user with ID: {} for authenticated user ID: {}", userId, authenticatedUserId);
-        if (!userId.equals(authenticatedUserId)) {
-            logger.error("Unauthorized access attempt by user ID: {}", authenticatedUserId);
-            throw new UserNotFoundException("Unauthorized access");
-        }
         boolean hasBooking = bookingRepository.existsByGuestIdAndHostIdAndStatuses(userId, authenticatedUserId,
                 List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
         if (!hasBooking) {
-            logger.error("User with ID {} does not have any bookings", userId);
-            throw new BookingNotFoundException("User does not have any bookings");
+            hasBooking = bookingRepository.existsByGuestIdAndHostIdAndStatuses(authenticatedUserId, userId,
+                    List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
+            if (!hasBooking) {
+                logger.error("No bookings found for user ID: {}", userId);
+                throw new UnauthorizedActionException("No bookings found");
+            }
         }
 
         User user = userRepository.findById(userId)

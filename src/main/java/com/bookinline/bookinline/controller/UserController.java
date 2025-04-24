@@ -3,8 +3,15 @@ package com.bookinline.bookinline.controller;
 import com.bookinline.bookinline.dto.UserRequestDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.exception.ErrorObject;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+@Tag(name = "User", description = "User management API")
 public class UserController {
     private final UserService userService;
 
@@ -21,6 +29,15 @@ public class UserController {
     }
 
     @PutMapping("/phone")
+    @Operation(summary = "Set a phone number",
+            description = "Changes/Sets a phone number for authenticated user, requires authentication",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Changed/Set phone number successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<UserResponseDto> setPhoneNumber(@RequestBody UserRequestDto userRequestDto) {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.setPhoneNumber(userRequestDto, userId);
@@ -28,6 +45,15 @@ public class UserController {
     }
 
     @PutMapping("/email")
+    @Operation(summary = "Change email",
+            description = "Changes an email for authenticated user, requires authentication",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Email changed successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<UserResponseDto> setEmail(@RequestBody UserRequestDto userRequestDto) {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.setEmail(userRequestDto, userId);
@@ -35,6 +61,15 @@ public class UserController {
     }
 
     @PutMapping("/password")
+    @Operation(summary = "Change password",
+            description = "Changes a password for authenticated user, requires authentication",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<UserResponseDto> setPassword(@RequestBody UserRequestDto userRequestDto) {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.setPassword(userRequestDto, userId);
@@ -42,6 +77,15 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Get current user",
+            description = "Returns authenticated User info",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User info retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<UserResponseDto> getCurrentUser() {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.getUserById(userId);
@@ -49,6 +93,15 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
+    @Operation(summary = "Get user by ID",
+            description = "Returns User info by ID, requires authentication",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User info retrieved successfully"),
+                    @ApiResponse(responseCode = "403", description = "User is not authorized to view this user",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId) {
         Long authenticatedUserId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.getUserById(userId, authenticatedUserId);
@@ -56,6 +109,15 @@ public class UserController {
     }
 
     @DeleteMapping
+    @Operation(summary = "Delete user",
+            description = "Deletes the authenticated user, requires authentication",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "User deleted successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<Void> deleteUser() {
         Long userId = getAuthenticatedUserId();
         userService.deleteUser(userId);

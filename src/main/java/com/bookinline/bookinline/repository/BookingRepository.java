@@ -26,5 +26,14 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> findByStatusAndCheckOutDateBefore(@Param("status") BookingStatus status,
                                                     @Param("checkOutDate") LocalDate checkOutDate);
     @Query("SELECT b FROM Booking b WHERE b.property.id = :propertyId AND b.status IN :statuses")
-    List<Booking> findByPropertyIdAndStatuses(@Param("propertyId") Long propertyId, @Param("statuses") List<BookingStatus> statuses);
+    List<Booking> findByPropertyIdAndStatuses(@Param("propertyId") Long propertyId,
+                                              @Param("statuses") List<BookingStatus> statuses);
+    @Query("SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END " +
+            "FROM Booking b " +
+            "WHERE b.guest.id = :guestId " +
+            "AND b.property.host.id = :hostId " +
+            "AND b.status IN :statuses")
+    boolean existsByGuestIdAndHostIdAndStatuses(@Param("guestId") Long guestId,
+                                                @Param("hostId") Long hostId,
+                                                @Param("statuses") List<BookingStatus> statuses);
 }
