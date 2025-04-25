@@ -10,6 +10,7 @@ import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
+import com.bookinline.bookinline.mapper.PropertyMapper;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.ImageService;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class PropertyServiceImpl implements PropertyService {
             logger.warn("User with ID: {} does not have permission to create a property", userId);
             throw new UnauthorizedActionException("User does not have permission to create a property");
         }
-        Property property = mapPropertyDtoToEntity(propertyRequestDto);
+        Property property = PropertyMapper.mapToPropertyEntity(propertyRequestDto);
         property.setHost(user);
 
         List<Image> imageList = new ArrayList<>();
@@ -71,7 +72,7 @@ public class PropertyServiceImpl implements PropertyService {
 
         Property savedProperty = propertyRepository.save(property);
         logger.info("Property created successfully with ID: {}", savedProperty.getId());
-        return mapPropertyEntityToDto(savedProperty);
+        return PropertyMapper.mapToPropertyResponseDto(savedProperty);
     }
 
     @Override
@@ -115,7 +116,7 @@ public class PropertyServiceImpl implements PropertyService {
         Property updatedProperty = propertyRepository.save(property);
 
         logger.info("Property with ID: {} updated successfully", propertyId);
-        return mapPropertyEntityToDto(updatedProperty);
+        return PropertyMapper.mapToPropertyResponseDto(updatedProperty);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class PropertyServiceImpl implements PropertyService {
                     return new PropertyNotFoundException("Property not found");
                 });
         logger.info("Property with ID: {} retrieved successfully", id);
-        return mapPropertyEntityToDto(property);
+        return PropertyMapper.mapToPropertyResponseDto(property);
     }
 
     @Override
@@ -160,46 +161,8 @@ public class PropertyServiceImpl implements PropertyService {
         logger.info("Found {} available properties", propertyPage.getTotalElements());
         List<PropertyResponseDto> propertyResponseDtos = propertyPage.getContent()
                 .stream()
-                .map(this::mapPropertyEntityToDto).toList();
+                .map(PropertyMapper::mapToPropertyResponseDto).toList();
 
-        PropertyResponsePage propertyResponsePage = new PropertyResponsePage();
-        propertyResponsePage.setPage(propertyPage.getNumber());
-        propertyResponsePage.setSize(propertyPage.getSize());
-        propertyResponsePage.setTotalElements(propertyPage.getTotalElements());
-        propertyResponsePage.setTotalPages(propertyPage.getTotalPages());
-        propertyResponsePage.setLast(propertyPage.isLast());
-        propertyResponsePage.setProperties(propertyResponseDtos);
-        return propertyResponsePage;
-    }
-
-    private PropertyResponseDto mapPropertyEntityToDto(Property property) {
-        PropertyResponseDto response = PropertyResponseDto.builder()
-                .id(property.getId())
-                .title(property.getTitle())
-                .description(property.getDescription())
-                .address(property.getAddress())
-                .pricePerNight(property.getPricePerNight())
-                .maxGuests(property.getMaxGuests())
-                .available(property.getAvailable())
-                .averageRating(property.getAverageRating())
-                .build();
-
-        List<String> urls = property.getImages().stream()
-                .map(Image::getImageUrl)
-                .toList();
-        response.setImageUrls(urls);
-        return response;
-    }
-
-    private Property mapPropertyDtoToEntity(PropertyRequestDto propertyRequestDto) {
-        return Property.builder()
-                .title(propertyRequestDto.getTitle())
-                .description(propertyRequestDto.getDescription())
-                .address(propertyRequestDto.getAddress())
-                .pricePerNight(propertyRequestDto.getPricePerNight())
-                .maxGuests(propertyRequestDto.getMaxGuests())
-                .available(propertyRequestDto.getAvailable())
-                .build();
-
+        return PropertyMapper.mapToPropertyResponsePage(propertyPage, propertyResponseDtos);
     }
 }

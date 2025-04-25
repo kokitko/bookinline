@@ -6,6 +6,7 @@ import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.*;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.exception.*;
+import com.bookinline.bookinline.mapper.ReviewMapper;
 import com.bookinline.bookinline.repository.BookingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,12 +65,12 @@ public class ReviewServiceImpl implements ReviewService {
             throw new OverReviewingException("User has already left a review for this property");
         }
 
-        Review review = mapReviewDtoToEntity(reviewRequestDto);
+        Review review = ReviewMapper.mapToReviewEntity(reviewRequestDto);
         review.setProperty(property);
         review.setAuthor(user);
         review.setCreatedAt(LocalDateTime.now());
 
-        ReviewResponseDto reviewResponse = mapReviewEntityToDto(reviewRepository.save(review));
+        ReviewResponseDto reviewResponse = ReviewMapper.mapToReviewResponseDto(reviewRepository.save(review));
         logger.info("Review added successfully for property with ID: {} by user with ID: {}", propertyId, userId);
 
         property.setAverageRating(calculateAverageRating(propertyId));
@@ -114,17 +115,10 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent()
                 .stream()
-                .map(this::mapReviewEntityToDto)
+                .map(ReviewMapper::mapToReviewResponseDto)
                 .toList();
 
-        ReviewResponsePage reviewResponsePage = new ReviewResponsePage();
-        reviewResponsePage.setPage(reviewPage.getNumber());
-        reviewResponsePage.setSize(reviewPage.getSize());
-        reviewResponsePage.setTotalElements(reviewPage.getTotalElements());
-        reviewResponsePage.setTotalPages(reviewPage.getTotalPages());
-        reviewResponsePage.setLast(reviewPage.isLast());
-        reviewResponsePage.setReviews(reviewResponseDtos);
-        return reviewResponsePage;
+        return ReviewMapper.mapToReviewResponsePage(reviewPage, reviewResponseDtos);
     }
 
     @Override
@@ -138,17 +132,10 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent()
                 .stream()
-                .map(this::mapReviewEntityToDto)
+                .map(ReviewMapper::mapToReviewResponseDto)
                 .toList();
 
-        ReviewResponsePage reviewResponsePage = new ReviewResponsePage();
-        reviewResponsePage.setPage(reviewPage.getNumber());
-        reviewResponsePage.setSize(reviewPage.getSize());
-        reviewResponsePage.setTotalElements(reviewPage.getTotalElements());
-        reviewResponsePage.setTotalPages(reviewPage.getTotalPages());
-        reviewResponsePage.setLast(reviewPage.isLast());
-        reviewResponsePage.setReviews(reviewResponseDtos);
-        return reviewResponsePage;
+        return ReviewMapper.mapToReviewResponsePage(reviewPage, reviewResponseDtos);
     }
 
     @Override
@@ -189,21 +176,4 @@ public class ReviewServiceImpl implements ReviewService {
         return hasLeftReview;
     }
 
-    private Review mapReviewDtoToEntity(ReviewRequestDto reviewRequestDto) {
-        return Review.builder()
-                .rating(reviewRequestDto.getRating())
-                .comment(reviewRequestDto.getComment())
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
-
-    private ReviewResponseDto mapReviewEntityToDto(Review review) {
-        return ReviewResponseDto.builder()
-                .id(review.getId())
-                .rating(review.getRating())
-                .comment(review.getComment())
-                .createdAt(review.getCreatedAt())
-                .authorName(review.getAuthor().getFullName())
-                .build();
-    }
 }

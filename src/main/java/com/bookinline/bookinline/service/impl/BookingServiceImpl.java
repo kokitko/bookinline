@@ -9,6 +9,7 @@ import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.*;
+import com.bookinline.bookinline.mapper.BookingMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -51,10 +52,20 @@ public class BookingServiceImpl implements BookingService {
                     propertyId, bookingRequestDto.getCheckInDate(), bookingRequestDto.getCheckOutDate());
             throw new PropertyNotAvailableException("Property is not available for this date range");
         }
-        Booking booking = mapToBookingEntity(bookingRequestDto, propertyId, userId);
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> {
+                    logger.error("Property with ID: {} not found", propertyId);
+                    return new PropertyNotFoundException("Property not found");
+                });
+        User guest = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    logger.error("User with ID: {} not found", userId);
+                    return new UserNotFoundException("User not found");
+                });
+        Booking booking = BookingMapper.mapToBookingEntity(bookingRequestDto, property, guest);
         Booking savedBooking = bookingRepository.save(booking);
         logger.info("Booking has been saved successfully with id: {}", savedBooking.getId());
-        return mapToBookingResponseDto(savedBooking);
+        return BookingMapper.mapToBookingResponseDto(savedBooking);
     }
 
     @Override
@@ -77,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         Booking updatedBooking = bookingRepository.save(booking);
         logger.info("Booking with ID: {} has been cancelled successfully", bookingId);
-        return mapToBookingResponseDto(updatedBooking);
+        return BookingMapper.mapToBookingResponseDto(updatedBooking);
     }
 
     @Override
@@ -88,16 +99,9 @@ public class BookingServiceImpl implements BookingService {
         logger.info("Found {} bookings for user ID: {}", bookingPage.getTotalElements(), userId);
         List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent()
                 .stream()
-                .map(this::mapToBookingResponseDto).toList();
+                .map(BookingMapper::mapToBookingResponseDto).toList();
 
-        BookingResponsePage bookingResponsePage = new BookingResponsePage();
-        bookingResponsePage.setPage(bookingPage.getNumber());
-        bookingResponsePage.setSize(bookingPage.getSize());
-        bookingResponsePage.setTotalElements(bookingPage.getTotalElements());
-        bookingResponsePage.setTotalPages(bookingPage.getTotalPages());
-        bookingResponsePage.setLast(bookingPage.isLast());
-        bookingResponsePage.setBookings(bookingResponseDtos);
-        return bookingResponsePage;
+        return BookingMapper.mapToBookingResponsePage(bookingPage, bookingResponseDtos);
     }
 
     @Override
@@ -117,16 +121,9 @@ public class BookingServiceImpl implements BookingService {
         logger.info("Found {} bookings for property ID: {}", bookingPage.getTotalElements(), propertyId);
         List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent()
                 .stream()
-                .map(this::mapToBookingResponseDto).toList();
+                .map(BookingMapper::mapToBookingResponseDto).toList();
 
-        BookingResponsePage bookingResponsePage = new BookingResponsePage();
-        bookingResponsePage.setPage(bookingPage.getNumber());
-        bookingResponsePage.setSize(bookingPage.getSize());
-        bookingResponsePage.setTotalElements(bookingPage.getTotalElements());
-        bookingResponsePage.setTotalPages(bookingPage.getTotalPages());
-        bookingResponsePage.setLast(bookingPage.isLast());
-        bookingResponsePage.setBookings(bookingResponseDtos);
-        return bookingResponsePage;
+        return BookingMapper.mapToBookingResponsePage(bookingPage, bookingResponseDtos);
     }
 
     @Override
@@ -164,7 +161,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.CONFIRMED);
         Booking updatedBooking = bookingRepository.save(booking);
         logger.info("Booking with ID: {} successfully confirmed", bookingId);
-        return mapToBookingResponseDto(updatedBooking);
+        return BookingMapper.mapToBookingResponseDto(updatedBooking);
     }
 
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
@@ -193,30 +190,5 @@ public class BookingServiceImpl implements BookingService {
 
         logger.info("Property ID: {} is available from {} to {}", propertyId, startDate, endDate);
         return true;
-    }
-
-    private BookingResponseDto mapToBookingResponseDto(Booking booking) {
-        return BookingResponseDto.builder()
-                .id(booking.getId())
-                .checkInDate(booking.getCheckInDate())
-                .checkOutDate(booking.getCheckOutDate())
-                .guestName(booking.getGuest().getFullName())
-                .propertyTitle(booking.getProperty().getTitle())
-                .status(String.valueOf(booking.getStatus()))
-                .build();
-    }
-
-    private Booking mapToBookingEntity(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
-        User guest = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        return Booking.builder()
-                .checkInDate(bookingRequestDto.getCheckInDate())
-                .checkOutDate(bookingRequestDto.getCheckOutDate())
-                .property(property)
-                .guest(guest)
-                .status(BookingStatus.PENDING)
-                .build();
     }
 }

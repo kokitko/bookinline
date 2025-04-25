@@ -6,6 +6,7 @@ import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
+import com.bookinline.bookinline.mapper.UserMapper;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.UserService;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 });
         user.setPhoneNumber(userRequestDto.getPhoneNumber());
         userRepository.save(user);
-        return mapToDto(user);
+        return UserMapper.mapToUserResponseDto(user);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
                 });
         user.setEmail(userRequestDto.getEmail());
         userRepository.save(user);
-        return mapToDto(user);
+        return UserMapper.mapToUserResponseDto(user);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
                 });
         user.setPassword(encoder.encode(userRequestDto.getPassword()));
         userRepository.save(user);
-        return mapToDto(user);
+        return UserMapper.mapToUserResponseDto(user);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
                     logger.error("User with ID {} not found", userId);
                     return new UserNotFoundException("User not found");
                 });
-        return mapToDto(user);
+        return UserMapper.mapToUserResponseDto(user);
     }
 
     @Override
@@ -97,7 +98,7 @@ public class UserServiceImpl implements UserService {
                     logger.error("User with ID {} not found", userId);
                     return new UserNotFoundException("User not found");
                 });
-        return mapToDto(user);
+        return UserMapper.mapToUserResponseDto(user);
     }
 
     @Override
@@ -109,15 +110,5 @@ public class UserServiceImpl implements UserService {
                     return new UserNotFoundException("User not found");
                 });
         userRepository.delete(user);
-    }
-
-    private UserResponseDto mapToDto(User user) {
-        return UserResponseDto.builder()
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .fullName(user.getFullName())
-                .status(String.valueOf(user.getStatus()))
-                .statusDescription(user.getStatusDescription())
-                .build();
     }
 }
