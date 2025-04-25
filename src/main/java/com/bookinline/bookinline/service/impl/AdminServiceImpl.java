@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.dto.BookingResponseDto;
+import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
@@ -12,6 +13,7 @@ import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.ReviewNotFoundException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.mapper.BookingMapper;
+import com.bookinline.bookinline.mapper.PropertyMapper;
 import com.bookinline.bookinline.mapper.UserMapper;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
@@ -20,6 +22,8 @@ import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.AdminService;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -73,11 +77,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteProperty(Long propertyId, Long adminId) {
-        logger.info("Admin {} is deleting property {}", adminId, propertyId);
+    public PropertyResponseDto deactivateProperty(Long propertyId, Long adminId) {
+        logger.info("Admin {} is deactivating property {}", adminId, propertyId);
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
-        propertyRepository.delete(property);
+        property.setAvailable(false);
+        return PropertyMapper.mapToPropertyResponseDto(property);
     }
 
     @Override
@@ -95,5 +100,24 @@ public class AdminServiceImpl implements AdminService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
         reviewRepository.delete(review);
+        calculateAverageRating(review.getProperty().getId());
+        logger.info("Average rating updated for property {}", review.getProperty().getId());
+    }
+
+    private double calculateAverageRating(Long propertyId) {
+        logger.info("Calculating average rating for property with ID: {}", propertyId);
+
+        List<Review> reviews = reviewRepository.findByPropertyId(propertyId);
+        if (reviews.isEmpty()) {
+            logger.info("No reviews found for property with ID: {}", propertyId);
+            return 0.0;
+        }
+        double totalRating = reviews.stream()
+                .mapToDouble(Review::getRating)
+                .sum();
+        double averageRating = totalRating / reviews.size();
+        logger.info("Average rating for property with ID: {} is {}", propertyId, averageRating);
+
+        return averageRating;
     }
 }

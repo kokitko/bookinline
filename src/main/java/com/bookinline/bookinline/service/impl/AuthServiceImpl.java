@@ -5,6 +5,7 @@ import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.exception.EmailBeingUsedException;
 import com.bookinline.bookinline.exception.IllegalRoleException;
 import com.bookinline.bookinline.exception.InvalidUserDataException;
@@ -53,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(request.role());
+        user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
         String token = jwtService.generateToken(user);

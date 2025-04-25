@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
     private AdminService adminService;
     public AdminController(AdminService adminService) {
@@ -45,21 +45,21 @@ public class AdminController {
     }
 
     @DeleteMapping("/property/{propertyId}")
-    public ResponseEntity<PropertyResponseDto> deleteProperty(@RequestParam Long propertyId) {
+    public ResponseEntity<PropertyResponseDto> deactivateProperty(@PathVariable Long propertyId) {
         Long adminId = getAuthenticatedAdminId();
-        adminService.deleteProperty(propertyId, adminId);
-        return ResponseEntity.noContent().build();
+        PropertyResponseDto response = adminService.deactivateProperty(propertyId, adminId);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/booking/{bookingId}")
-    public ResponseEntity<BookingResponseDto> cancelBooking(@RequestParam Long bookingId) {
+    public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long bookingId) {
         Long adminId = getAuthenticatedAdminId();
         BookingResponseDto bookingResponseDto = adminService.cancelBooking(bookingId, adminId);
         return ResponseEntity.ok(bookingResponseDto);
     }
 
     @DeleteMapping("/review/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@RequestParam Long reviewId) {
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
         Long adminId = getAuthenticatedAdminId();
         adminService.deleteReview(reviewId, adminId);
         return ResponseEntity.noContent().build();

@@ -56,6 +56,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
         Property property = PropertyMapper.mapToPropertyEntity(propertyRequestDto);
         property.setHost(user);
+        property.setAverageRating(0.0);
 
         List<Image> imageList = new ArrayList<>();
         if (images != null && !images.isEmpty()) {

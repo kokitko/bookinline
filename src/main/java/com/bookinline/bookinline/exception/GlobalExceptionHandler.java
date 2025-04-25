@@ -151,4 +151,15 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorObject> handleUserIsBannedException(UserIsBannedException e) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(403);
+        errorObject.setMessage("User is banned");
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
+    }
 }

@@ -138,8 +138,7 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewMapper.mapToReviewResponsePage(reviewPage, reviewResponseDtos);
     }
 
-    @Override
-    public double calculateAverageRating(Long propertyId) {
+    private double calculateAverageRating(Long propertyId) {
         logger.info("Calculating average rating for property with ID: {}", propertyId);
 
         List<Review> reviews = reviewRepository.findByPropertyId(propertyId);
