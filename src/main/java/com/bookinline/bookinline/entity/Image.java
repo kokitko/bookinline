@@ -14,6 +14,7 @@ public class Image {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String imageUrl;
 
     @ManyToOne

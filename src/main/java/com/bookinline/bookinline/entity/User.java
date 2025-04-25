@@ -23,10 +23,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String fullName;
+    @Column
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)

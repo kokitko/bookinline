@@ -20,14 +20,21 @@ public class Property {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
     private String address;
+    @Column(nullable = false)
     private BigDecimal pricePerNight;
 
+    @Column(nullable = false)
     private Integer maxGuests;
+    @Column(nullable = false)
     private Boolean available = true;
 
+    @Column(nullable = false)
     private Double averageRating = 0.0;
 
     @ManyToOne
