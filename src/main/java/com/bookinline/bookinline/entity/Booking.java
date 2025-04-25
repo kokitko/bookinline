@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.entity;
 
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

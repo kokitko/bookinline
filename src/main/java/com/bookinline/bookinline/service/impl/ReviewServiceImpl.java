@@ -4,6 +4,7 @@ import com.bookinline.bookinline.dto.ReviewRequestDto;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.*;
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.exception.*;
 import com.bookinline.bookinline.repository.BookingRepository;
 import org.slf4j.Logger;

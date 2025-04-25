@@ -2,10 +2,8 @@ package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.dto.UserRequestDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
-import com.bookinline.bookinline.entity.Booking;
-import com.bookinline.bookinline.entity.BookingStatus;
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.User;
-import com.bookinline.bookinline.exception.BookingNotFoundException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.repository.BookingRepository;
@@ -118,6 +116,8 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .fullName(user.getFullName())
+                .status(String.valueOf(user.getStatus()))
+                .statusDescription(user.getStatusDescription())
                 .build();
     }
 }

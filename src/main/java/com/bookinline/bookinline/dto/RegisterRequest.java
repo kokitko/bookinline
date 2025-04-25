@@ -1,6 +1,6 @@
 package com.bookinline.bookinline.dto;
 
-import com.bookinline.bookinline.entity.Role;
+import com.bookinline.bookinline.entity.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

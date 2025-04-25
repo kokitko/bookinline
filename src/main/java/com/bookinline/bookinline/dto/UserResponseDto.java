@@ -13,4 +13,6 @@ public class UserResponseDto {
     private String email;
     private String fullName;
     private String phoneNumber;
+    private String status;
+    private String statusDescription;
 }

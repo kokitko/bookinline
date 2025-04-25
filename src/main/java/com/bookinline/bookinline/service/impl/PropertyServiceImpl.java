@@ -5,7 +5,7 @@ import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Image;
 import com.bookinline.bookinline.entity.Property;
-import com.bookinline.bookinline.entity.Role;
+import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;

@@ -1,5 +1,7 @@
 package com.bookinline.bookinline.entity;
 
+import com.bookinline.bookinline.entity.enums.Role;
+import com.bookinline.bookinline.entity.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +35,11 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
+    private UserStatus status; // ACTIVE, WARNED, BANNED
+    @Column
+    private String statusDescription;
+
+    @Enumerated(EnumType.STRING)
     private Role role; // HOST, GUEST, ADMIN
 
     @OneToMany(mappedBy = "host")
@@ -58,6 +65,9 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
+        if (status.equals(UserStatus.BANNED)) {;
+            return false;
+        }
         return true;
     }
 

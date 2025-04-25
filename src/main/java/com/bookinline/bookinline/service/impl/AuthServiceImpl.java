@@ -3,7 +3,7 @@ package com.bookinline.bookinline.service.impl;
 import com.bookinline.bookinline.dto.AuthenticationRequest;
 import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
-import com.bookinline.bookinline.entity.Role;
+import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.EmailBeingUsedException;
 import com.bookinline.bookinline.exception.IllegalRoleException;

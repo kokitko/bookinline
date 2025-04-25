@@ -5,7 +5,7 @@ import com.bookinline.bookinline.dto.BookingRequestDto;
 import com.bookinline.bookinline.dto.BookingResponseDto;
 import com.bookinline.bookinline.dto.BookingResponsePage;
 import com.bookinline.bookinline.entity.Booking;
-import com.bookinline.bookinline.entity.BookingStatus;
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.*;

@@ -1,7 +1,7 @@
 package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.entity.Booking;
-import com.bookinline.bookinline.entity.BookingStatus;
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
