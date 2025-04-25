@@ -8,7 +8,7 @@ public interface AdminService {
     UserResponseDto warnUser(Long userId, String reason, Long adminId);
     UserResponseDto banUser(Long userId, String reason, Long adminId);
     UserResponseDto unbanUser(Long userId, String reason, Long adminId);
-    PropertyResponseDto deactivateProperty(Long propertyId, Long adminId);
+    PropertyResponseDto changePropertyAvailability(Long propertyId, Long adminId);
     BookingResponseDto cancelBooking(Long bookingId, Long adminId);
     void deleteReview(Long reviewId, Long adminId);
 }

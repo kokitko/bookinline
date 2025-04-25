@@ -56,6 +56,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
         Property property = PropertyMapper.mapToPropertyEntity(propertyRequestDto);
         property.setHost(user);
+        property.setAvailable(true);
         property.setAverageRating(0.0);
 
         List<Image> imageList = new ArrayList<>();
@@ -99,7 +100,6 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAddress(propertyRequestDto.getAddress());
         property.setPricePerNight(propertyRequestDto.getPricePerNight());
         property.setMaxGuests(propertyRequestDto.getMaxGuests());
-        property.setAvailable(propertyRequestDto.getAvailable());
 
         List<Image> imageList = property.getImages();
         imageList.clear();

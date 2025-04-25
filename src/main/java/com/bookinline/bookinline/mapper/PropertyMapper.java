@@ -34,7 +34,6 @@ public class PropertyMapper {
                 .address(propertyRequestDto.getAddress())
                 .pricePerNight(propertyRequestDto.getPricePerNight())
                 .maxGuests(propertyRequestDto.getMaxGuests())
-                .available(propertyRequestDto.getAvailable())
                 .build();
     }
 

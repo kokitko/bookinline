@@ -32,7 +32,4 @@ public class PropertyRequestDto {
     @NotNull(message = "Max guests is required")
     @Positive(message = "Max guests must be a positive number")
     private Integer maxGuests;
-
-    @NotNull(message = "Availability status is required")
-    private Boolean available;
 }
