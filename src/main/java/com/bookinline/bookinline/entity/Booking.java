@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Booking {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)

@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Property {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)

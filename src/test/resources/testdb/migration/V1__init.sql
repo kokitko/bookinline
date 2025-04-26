@@ -1,3 +1,8 @@
+CREATE SEQUENCE property_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE image_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE booking_seq START WITH 1 INCREMENT BY 50;
+CREATE SEQUENCE review_seq START WITH 1 INCREMENT BY 50;
+
 CREATE TABLE users (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                        email VARCHAR(255) NOT NULL UNIQUE,
@@ -8,7 +13,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE property (
-                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          id BIGINT PRIMARY KEY,
                           title VARCHAR(255) NOT NULL,
                           description VARCHAR(255) NOT NULL,
                           address VARCHAR(255) NOT NULL,
@@ -21,14 +26,14 @@ CREATE TABLE property (
 );
 
 CREATE TABLE image (
-                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                       id BIGINT PRIMARY KEY,
                        image_url VARCHAR(255) NOT NULL,
                        property_id BIGINT,
                        FOREIGN KEY (property_id) REFERENCES property(id)
 );
 
 CREATE TABLE booking (
-                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         id BIGINT PRIMARY KEY,
                          check_in_date DATE NOT NULL,
                          check_out_date DATE NOT NULL,
                          guest_id BIGINT,
@@ -39,7 +44,7 @@ CREATE TABLE booking (
 );
 
 CREATE TABLE review (
-                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        id BIGINT PRIMARY KEY,
                         rating INTEGER NOT NULL,
                         comment VARCHAR(255) NOT NULL,
                         created_at TIMESTAMP NOT NULL,

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Review {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)
