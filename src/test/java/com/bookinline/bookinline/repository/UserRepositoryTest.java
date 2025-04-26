@@ -2,7 +2,6 @@ package com.bookinline.bookinline.repository;
 
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.Role;
-import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

@@ -1,11 +1,9 @@
 package com.bookinline.bookinline.repository;
 
-import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.Role;
-import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
