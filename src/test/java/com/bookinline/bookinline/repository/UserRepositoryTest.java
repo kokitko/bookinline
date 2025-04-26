@@ -44,7 +44,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void PropertyRepository_FindByEmail_ReturnsUser() {
+    public void UserRepository_FindByEmail_ReturnsUser() {
         userRepository.saveAll(List.of(user1, user2));
         User foundUser = userRepository.findByEmail(user1.getEmail()).orElse(null);
         Assertions.assertThat(foundUser).isNotNull();
@@ -52,7 +52,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void PropertyRepository_FindById_ReturnsUser() {
+    public void UserRepository_FindById_ReturnsUser() {
         userRepository.saveAll(List.of(user1, user2));
         User foundUser = userRepository.findById(user1.getId()).orElse(null);
         Assertions.assertThat(foundUser).isNotNull();
@@ -60,7 +60,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void PropertyRepository_ExistsByEmail_ReturnsTrue() {
+    public void UserRepository_ExistsByEmail_ReturnsTrue() {
         userRepository.saveAll(List.of(user1, user2));
         boolean exists = userRepository.existsByEmail(user1.getEmail());
         Assertions.assertThat(exists).isTrue();
