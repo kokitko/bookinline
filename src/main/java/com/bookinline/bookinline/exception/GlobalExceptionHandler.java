@@ -2,14 +2,32 @@ package com.bookinline.bookinline.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Date;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorObject> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<String> errors = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .toList();
+
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(400);
+        errorObject.setMessage("Validation failed: " + String.join(", ", errors));
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(BookingNotFoundException.class)
     public ResponseEntity<ErrorObject> handleBookingNotFoundException(BookingNotFoundException e) {
         ErrorObject errorObject = new ErrorObject();

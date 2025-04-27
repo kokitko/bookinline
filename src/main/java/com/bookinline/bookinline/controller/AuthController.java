@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "User already exists",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
     })
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
@@ -43,7 +44,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid request data",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
     })
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 }
