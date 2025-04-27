@@ -8,9 +8,10 @@ import lombok.Data;
 
 @Data
 public class ReviewRequestDto {
+
+    @NotNull(message = "Rating cannot be null")
     @Min(value = 1, message = "Rating must be between 1 and 5")
     @Max(value = 5, message = "Rating must be between 1 and 5")
-    @NotNull(message = "Rating cannot be null")
     private int rating;
 
     @NotBlank(message = "Comment cannot be blank")
