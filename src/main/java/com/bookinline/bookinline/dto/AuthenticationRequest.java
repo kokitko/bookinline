@@ -9,7 +9,7 @@ public record AuthenticationRequest(
         @NotBlank(message = "Email is required")
         String email,
 
-        @Size(min = 6)
+        @Size(min = 6, max = 20)
         @NotBlank(message = "Password is required")
         String password) {
 }
