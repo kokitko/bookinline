@@ -1,7 +1,6 @@
 package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.service.ImageService;
-import lombok.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
