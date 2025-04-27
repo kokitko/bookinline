@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,7 +50,7 @@ public class BookingController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
-    public ResponseEntity<BookingResponseDto> bookProperty(@RequestBody BookingRequestDto bookingRequestDto,
+    public ResponseEntity<BookingResponseDto> bookProperty(@RequestBody @Valid BookingRequestDto bookingRequestDto,
                                                           @PathVariable Long propertyId) {
         Long userId = getAuthenticatedUserId();
         BookingResponseDto bookingResponse = bookingService.bookProperty(bookingRequestDto, propertyId, userId);

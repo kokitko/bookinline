@@ -5,6 +5,7 @@ import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.ErrorObject;
+import com.bookinline.bookinline.exception.FailedRequestParsingException;
 import com.bookinline.bookinline.exception.InvalidPropertyDataException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.service.PropertyService;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,15 +31,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/properties")
 @Tag(name = "Property", description = "Endpoints for managing properties")
 public class PropertyController {
+    private Validator validator;
     private final PropertyService propertyService;
     @Autowired
-    public PropertyController(PropertyService propertyService) {
+    public PropertyController(PropertyService propertyService, Validator validator) {
         this.propertyService = propertyService;
+        this.validator = validator;
     }
 
     @PreAuthorize("hasRole('ROLE_HOST')")
@@ -61,6 +67,10 @@ public class PropertyController {
         PropertyRequestDto requestDto;
         try {
             requestDto = mapper.readValue(propertyJson, PropertyRequestDto.class);
+            Set<ConstraintViolation<PropertyRequestDto>> violations = validator.validate(requestDto);
+            if (!violations.isEmpty()) {
+                throw new FailedRequestParsingException("Invalid property data");
+            }
         } catch (IOException e) {
             throw new InvalidPropertyDataException("Invalid property data");
         }
@@ -92,6 +102,10 @@ public class PropertyController {
         PropertyRequestDto requestDto;
         try {
             requestDto = mapper.readValue(propertyJson, PropertyRequestDto.class);
+            Set<ConstraintViolation<PropertyRequestDto>> violations = validator.validate(requestDto);
+            if (!violations.isEmpty()) {
+                throw new FailedRequestParsingException("Invalid property data");
+            }
         } catch (IOException e) {
             throw new InvalidPropertyDataException("Invalid property data");
         }

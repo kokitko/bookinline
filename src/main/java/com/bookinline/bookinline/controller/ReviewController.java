@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,7 +48,7 @@ public class ReviewController {
             }
     )
     public ResponseEntity<ReviewResponseDto> addReview(@PathVariable Long propertyId,
-                                                       @RequestBody ReviewRequestDto reviewRequestDto) {
+                                                       @RequestBody @Valid ReviewRequestDto reviewRequestDto) {
         Long userId = getAuthenticatedUserId();
         ReviewResponseDto reviewResponseDto = reviewService.addReview(propertyId, userId, reviewRequestDto);
         return ResponseEntity.ok(reviewResponseDto);

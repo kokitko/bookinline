@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +39,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
-    public ResponseEntity<UserResponseDto> setPhoneNumber(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> setPhoneNumber(@RequestBody @Valid UserRequestDto userRequestDto) {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.setPhoneNumber(userRequestDto, userId);
         return ResponseEntity.ok(responseDto);
@@ -54,7 +55,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
-    public ResponseEntity<UserResponseDto> setEmail(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> setEmail(@RequestBody @Valid UserRequestDto userRequestDto) {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.setEmail(userRequestDto, userId);
         return ResponseEntity.ok(responseDto);
@@ -70,7 +71,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
-    public ResponseEntity<UserResponseDto> setPassword(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> setPassword(@RequestBody @Valid UserRequestDto userRequestDto) {
         Long userId = getAuthenticatedUserId();
         UserResponseDto responseDto = userService.setPassword(userRequestDto, userId);
         return ResponseEntity.ok(responseDto);

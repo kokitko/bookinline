@@ -4,20 +4,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Date;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(BookingNotFoundException.class)
     public ResponseEntity<ErrorObject> handleBookingNotFoundException(BookingNotFoundException e) {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(404);
-        errorObject.setMessage("Booking not found");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(FailedRequestParsingException.class)
+    public ResponseEntity<ErrorObject> handleFailedRequestParsingException(FailedRequestParsingException e) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(400);
+        errorObject.setMessage(e.getMessage());
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmailBeingUsedException.class)
@@ -25,7 +37,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(409);
-        errorObject.setMessage("Email is already being used");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.CONFLICT);
@@ -36,7 +48,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(400);
-        errorObject.setMessage("Illegal role");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
@@ -47,7 +59,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(400);
-        errorObject.setMessage("Invalid user data");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
@@ -58,7 +70,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(400);
-        errorObject.setMessage("User can review certain property only once");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
@@ -69,7 +81,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(400);
-        errorObject.setMessage("Property is not available");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
@@ -80,7 +92,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(404);
-        errorObject.setMessage("Property not found");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
@@ -91,7 +103,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(404);
-        errorObject.setMessage("Review not found");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
@@ -102,7 +114,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(403);
-        errorObject.setMessage("Unauthorized action");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
@@ -113,7 +125,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(403);
-        errorObject.setMessage("User must visit the property to review it");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
@@ -124,7 +136,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(404);
-        errorObject.setMessage("User not found");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
@@ -135,7 +147,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(400);
-        errorObject.setMessage("Invalid booking dates");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
@@ -146,7 +158,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(400);
-        errorObject.setMessage("Invalid property data");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.BAD_REQUEST);
@@ -157,7 +169,7 @@ public class GlobalExceptionHandler {
         ErrorObject errorObject = new ErrorObject();
 
         errorObject.setStatusCode(403);
-        errorObject.setMessage("User is banned");
+        errorObject.setMessage(e.getMessage());
         errorObject.setTimestamp(new Date());
 
         return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
