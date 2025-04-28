@@ -2,6 +2,7 @@ package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.dto.BookingResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
+import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
@@ -9,11 +10,13 @@ import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.enums.UserStatus;
+import com.bookinline.bookinline.exception.BookingNotFoundException;
 import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.ReviewNotFoundException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.mapper.BookingMapper;
 import com.bookinline.bookinline.mapper.PropertyMapper;
+import com.bookinline.bookinline.mapper.ReviewMapper;
 import com.bookinline.bookinline.mapper.UserMapper;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
@@ -41,6 +44,38 @@ public class AdminServiceImpl implements AdminService {
         this.propertyRepository = propertyRepository;
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
+    }
+
+    @Override
+    public UserResponseDto getUserById(Long userId, Long adminId) {
+        logger.info("Admin {} is fetching user with ID {}", adminId, userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return UserMapper.mapToUserResponseDto(user);
+    }
+
+    @Override
+    public PropertyResponseDto getPropertyById(Long propertyId, Long adminId) {
+        logger.info("Admin {} is fetching property with ID {}", adminId, propertyId);
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
+        return PropertyMapper.mapToPropertyResponseDto(property);
+    }
+
+    @Override
+    public BookingResponseDto getBookingById(Long bookingId, Long adminId) {
+        logger.info("Admin {} is fetching booking with ID {}", adminId, bookingId);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
+        return BookingMapper.mapToBookingResponseDto(booking);
+    }
+
+    @Override
+    public ReviewResponseDto getReviewById(Long reviewId, Long adminId) {
+        logger.info("Admin {} is fetching review with ID {}", adminId, reviewId);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
+        return ReviewMapper.mapToReviewResponseDto(review);
     }
 
     @Override

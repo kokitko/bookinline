@@ -28,6 +28,70 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @GetMapping("/users/{userId}")
+    @Operation(summary = "Get user details",
+            description = "Get details of a user with the given ID",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User details retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+            }
+    )
+    public ResponseEntity<UserResponseDto> getUserDetails(@PathVariable Long userId) {
+        Long adminId = getAuthenticatedAdminId();
+        UserResponseDto userResponseDto = adminService.getUserById(userId, adminId);
+        return ResponseEntity.ok(userResponseDto);
+    }
+
+    @GetMapping("/properties/{propertyId}")
+    @Operation(summary = "Get property by ID",
+            description = "Get property details by ID",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Property details retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Property not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+            }
+    )
+    public ResponseEntity<PropertyResponseDto> getPropertyById(@PathVariable Long propertyId) {
+        Long adminId = getAuthenticatedAdminId();
+        PropertyResponseDto propertyResponseDto = adminService.getPropertyById(propertyId, adminId);
+        return ResponseEntity.ok(propertyResponseDto);
+    }
+
+    @GetMapping("/bookings/{bookingId}")
+    @Operation(summary = "Get booking by ID",
+            description = "Get booking details by ID",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Booking details retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Booking not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+            }
+    )
+    public ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long bookingId) {
+        Long adminId = getAuthenticatedAdminId();
+        BookingResponseDto bookingResponseDto = adminService.getBookingById(bookingId, adminId);
+        return ResponseEntity.ok(bookingResponseDto);
+    }
+
+    @GetMapping("/reviews/{reviewId}")
+    @Operation(summary = "Get review by ID",
+            description = "Get review details by ID",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Review details retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Review not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+            }
+    )
+    public ResponseEntity<Void> getReviewById(@PathVariable Long reviewId) {
+        Long adminId = getAuthenticatedAdminId();
+        adminService.getReviewById(reviewId, adminId);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/warn/{userId}")
     @Operation(summary = "Warn a user",
             description = "Warn a user with the given ID",
