@@ -134,12 +134,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         logger.info("Found {} reviews for property with ID: {}", reviewPage.getTotalElements(), propertyId);
 
-        List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent()
-                .stream()
-                .map(ReviewMapper::mapToReviewResponseDto)
-                .toList();
-
-        return ReviewMapper.mapToReviewResponsePage(reviewPage, reviewResponseDtos);
+        return ReviewMapper.mapToReviewResponsePage(reviewPage);
     }
 
     @Override
@@ -151,12 +146,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         logger.info("Found {} reviews for user with ID: {}", reviewPage.getTotalElements(), userId);
 
-        List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent()
-                .stream()
-                .map(ReviewMapper::mapToReviewResponseDto)
-                .toList();
-
-        return ReviewMapper.mapToReviewResponsePage(reviewPage, reviewResponseDtos);
+        return ReviewMapper.mapToReviewResponsePage(reviewPage);
     }
 
     private double calculateAverageRating(Long propertyId) {

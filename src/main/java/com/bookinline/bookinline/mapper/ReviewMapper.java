@@ -28,14 +28,18 @@ public class ReviewMapper {
                 .build();
     }
 
-    public static ReviewResponsePage mapToReviewResponsePage(Page<Review> reviewPage,
-                                                             List<ReviewResponseDto> reviewResponseDtos) {
+    public static ReviewResponsePage mapToReviewResponsePage(Page<Review> reviewPage) {
         ReviewResponsePage reviewResponsePage = new ReviewResponsePage();
         reviewResponsePage.setPage(reviewPage.getNumber());
         reviewResponsePage.setSize(reviewPage.getSize());
         reviewResponsePage.setTotalElements(reviewPage.getTotalElements());
         reviewResponsePage.setTotalPages(reviewPage.getTotalPages());
         reviewResponsePage.setLast(reviewPage.isLast());
+
+        List<ReviewResponseDto> reviewResponseDtos = reviewPage.getContent().stream()
+                .map(ReviewMapper::mapToReviewResponseDto)
+                .toList();
+
         reviewResponsePage.setReviews(reviewResponseDtos);
         return reviewResponsePage;
     }

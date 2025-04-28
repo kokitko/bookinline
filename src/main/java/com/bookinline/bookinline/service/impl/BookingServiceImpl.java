@@ -118,11 +118,8 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Booking> bookingPage = bookingRepository.findByGuestId(userId, pageable);
         logger.info("Found {} bookings for user ID: {}", bookingPage.getTotalElements(), userId);
-        List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent()
-                .stream()
-                .map(BookingMapper::mapToBookingResponseDto).toList();
 
-        return BookingMapper.mapToBookingResponsePage(bookingPage, bookingResponseDtos);
+        return BookingMapper.mapToBookingResponsePage(bookingPage);
     }
 
     @Override
@@ -140,11 +137,8 @@ public class BookingServiceImpl implements BookingService {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Booking> bookingPage = bookingRepository.findByPropertyId(propertyId, pageable);
         logger.info("Found {} bookings for property ID: {}", bookingPage.getTotalElements(), propertyId);
-        List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent()
-                .stream()
-                .map(BookingMapper::mapToBookingResponseDto).toList();
 
-        return BookingMapper.mapToBookingResponsePage(bookingPage, bookingResponseDtos);
+        return BookingMapper.mapToBookingResponsePage(bookingPage);
     }
 
     @Override

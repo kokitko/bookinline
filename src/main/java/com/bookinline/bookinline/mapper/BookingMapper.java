@@ -33,14 +33,18 @@ public class BookingMapper {
                 .build();
     }
 
-    public static BookingResponsePage mapToBookingResponsePage(Page<Booking> bookingPage,
-                                                               List<BookingResponseDto> bookingResponseDtos) {
+    public static BookingResponsePage mapToBookingResponsePage(Page<Booking> bookingPage) {
         BookingResponsePage bookingResponsePage = new BookingResponsePage();
         bookingResponsePage.setPage(bookingPage.getNumber());
         bookingResponsePage.setSize(bookingPage.getSize());
         bookingResponsePage.setTotalElements(bookingPage.getTotalElements());
         bookingResponsePage.setTotalPages(bookingPage.getTotalPages());
         bookingResponsePage.setLast(bookingPage.isLast());
+
+        List<BookingResponseDto> bookingResponseDtos = bookingPage.getContent().stream()
+                .map(BookingMapper::mapToBookingResponseDto)
+                .toList();
+
         bookingResponsePage.setBookings(bookingResponseDtos);
         return bookingResponsePage;
     }
