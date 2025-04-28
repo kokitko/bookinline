@@ -56,6 +56,17 @@ public class ReviewController {
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @GetMapping("/{reviewId}")
+    @Operation(summary = "Get review by ID",
+            description = "Get review by ID, requires guest role",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Review retrieved successfully"),
+                    @ApiResponse(responseCode = "403", description = "User does not have permission to review a property",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+                    @ApiResponse(responseCode = "404", description = "User/Review not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<ReviewResponseDto> getReview(@PathVariable Long reviewId) {
         Long userId = getAuthenticatedUserId();
         ReviewResponseDto reviewResponseDto = reviewService.getReviewById(reviewId, userId);

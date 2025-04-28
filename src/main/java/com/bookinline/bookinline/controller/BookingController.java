@@ -78,6 +78,17 @@ public class BookingController {
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @GetMapping("/{bookingId}")
+    @Operation(summary = "Get booking by ID",
+            description = "Get booking by ID, requires guest role",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Booking retrieved successfully"),
+                    @ApiResponse(responseCode = "403", description = "User does not have permission to view this booking",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+                    @ApiResponse(responseCode = "404", description = "User/Property/Booking not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
     public ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long bookingId) {
         Long userId = getAuthenticatedUserId();
         BookingResponseDto bookingResponse = bookingService.getBookingById(bookingId, userId);
