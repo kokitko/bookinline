@@ -37,14 +37,18 @@ public class PropertyMapper {
                 .build();
     }
 
-    public static PropertyResponsePage mapToPropertyResponsePage(Page<Property> propertyPage,
-                                                                List<PropertyResponseDto> propertyResponseDtos) {
+    public static PropertyResponsePage mapToPropertyResponsePage(Page<Property> propertyPage) {
         PropertyResponsePage propertyResponsePage = new PropertyResponsePage();
         propertyResponsePage.setPage(propertyPage.getNumber());
         propertyResponsePage.setSize(propertyPage.getSize());
         propertyResponsePage.setTotalElements(propertyPage.getTotalElements());
         propertyResponsePage.setTotalPages(propertyPage.getTotalPages());
         propertyResponsePage.setLast(propertyPage.isLast());
+
+        List<PropertyResponseDto> propertyResponseDtos = propertyPage.getContent().stream()
+                .map(PropertyMapper::mapToPropertyResponseDto)
+                .toList();
+
         propertyResponsePage.setProperties(propertyResponseDtos);
         return propertyResponsePage;
     }

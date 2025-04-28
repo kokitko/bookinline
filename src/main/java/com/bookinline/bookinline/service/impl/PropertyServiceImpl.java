@@ -160,10 +160,7 @@ public class PropertyServiceImpl implements PropertyService {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Property> propertyPage = propertyRepository.findByAvailableTrue(pageable);
         logger.info("Found {} available properties", propertyPage.getTotalElements());
-        List<PropertyResponseDto> propertyResponseDtos = propertyPage.getContent()
-                .stream()
-                .map(PropertyMapper::mapToPropertyResponseDto).toList();
 
-        return PropertyMapper.mapToPropertyResponsePage(propertyPage, propertyResponseDtos);
+        return PropertyMapper.mapToPropertyResponsePage(propertyPage);
     }
 }
