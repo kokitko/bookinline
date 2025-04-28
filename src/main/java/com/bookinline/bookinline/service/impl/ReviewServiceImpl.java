@@ -81,6 +81,27 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public ReviewResponseDto getReviewById(Long reviewId, Long userId) {
+        logger.info("Fetching review with ID: {} for user with ID: {}", reviewId, userId);
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> {
+                    logger.error("Review not found with ID: {}", reviewId);
+                    return new ReviewNotFoundException("Review not found");
+                });
+
+        if (!review.getAuthor().getId().equals(userId)) {
+            logger.warn("User with ID: {} is not authorized to view review with ID: {}", userId, reviewId);
+            throw new UnauthorizedActionException("User is not authorized to view this review");
+        }
+
+        ReviewResponseDto reviewResponse = ReviewMapper.mapToReviewResponseDto(review);
+        logger.info("Review fetched successfully for property with ID: {} by user with ID: {}", review.getProperty().getId(), userId);
+
+        return reviewResponse;
+    }
+
+    @Override
     public void deleteReview(Long reviewId, Long userId) {
         logger.info("Attempting to delete review with ID: {}", reviewId);
 

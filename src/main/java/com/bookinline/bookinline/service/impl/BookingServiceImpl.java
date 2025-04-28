@@ -92,6 +92,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingResponseDto getBookingById(Long bookingId, Long userId) {
+        logger.info("Fetching booking with ID: {} for user ID: {}", bookingId, userId);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> {
+                    logger.error("Booking with ID: {} not found", bookingId);
+                    return new BookingNotFoundException("Booking not found");
+                });
+        User guest = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    logger.error("User with ID: {} not found", userId);
+                    return new UserNotFoundException("User not found");
+                });
+        if (!booking.getGuest().getId().equals(guest.getId())) {
+            logger.warn("Unauthorized action: User with ID: {} is not the guest of booking with ID: {}", userId, bookingId);
+            throw new UnauthorizedActionException("You are not able to view this booking");
+        }
+        logger.info("Booking with ID: {} fetched successfully", bookingId);
+        return BookingMapper.mapToBookingResponseDto(booking);
+    }
+
+    @Override
     public BookingResponsePage getBookingsByUserId(Long userId, int page, int size) {
         logger.info("Fetching booking for user ID: {}, page: {}, size: {}", userId, page, size);
         Pageable pageable = Pageable.ofSize(size).withPage(page);

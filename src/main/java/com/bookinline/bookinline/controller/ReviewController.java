@@ -55,6 +55,14 @@ public class ReviewController {
     }
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> getReview(@PathVariable Long reviewId) {
+        Long userId = getAuthenticatedUserId();
+        ReviewResponseDto reviewResponseDto = reviewService.getReviewById(reviewId, userId);
+        return ResponseEntity.ok(reviewResponseDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @DeleteMapping("/{reviewId}")
     @Operation(summary = "Delete a review",
             description = "Delete a review with the given ID, requires guest role",

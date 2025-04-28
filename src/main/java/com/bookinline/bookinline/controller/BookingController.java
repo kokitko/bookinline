@@ -77,6 +77,14 @@ public class BookingController {
     }
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
+    @GetMapping("/{bookingId}")
+    public ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long bookingId) {
+        Long userId = getAuthenticatedUserId();
+        BookingResponseDto bookingResponse = bookingService.getBookingById(bookingId, userId);
+        return ResponseEntity.ok(bookingResponse);
+    }
+
+    @PreAuthorize("hasRole('ROLE_GUEST')")
     @GetMapping("/user")
     @Operation(summary = "Get bookings for authenticated user",
             description = "Get bookings for authenticated user, requires guest role",

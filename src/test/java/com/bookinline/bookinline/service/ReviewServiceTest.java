@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.service;
 
 import com.bookinline.bookinline.dto.BookingResponsePage;
+import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
@@ -11,6 +12,7 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.ReviewRepository;
+import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.impl.ReviewServiceImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,8 @@ import static org.mockito.Mockito.when;
 public class ReviewServiceTest {
     @Mock
     private ReviewRepository reviewRepository;
+    @Mock
+    private UserRepository userRepository;
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
@@ -82,6 +86,19 @@ public class ReviewServiceTest {
         review.setCreatedAt(LocalDateTime.of(2025, 4, 8, 10, 0));
         review.setAuthor(guest);
         review.setProperty(property);
+    }
+
+    @Test
+    public void ReviewService_GetReview_ReturnReviewResponseDto() {
+        when(reviewRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(review));
+        when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(guest));
+
+        ReviewResponseDto responseDto = reviewService.getReviewById(review.getId(), guest.getId());
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getComment()).isEqualTo(review.getComment());
+        Assertions.assertThat(responseDto.getRating()).isEqualTo(review.getRating());
+        Assertions.assertThat(responseDto.getCreatedAt()).isEqualTo(review.getCreatedAt());
     }
 
     @Test

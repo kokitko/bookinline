@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.service;
 
 import com.bookinline.bookinline.dto.BookingDatesDto;
+import com.bookinline.bookinline.dto.BookingResponseDto;
 import com.bookinline.bookinline.dto.BookingResponsePage;
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
@@ -86,6 +87,18 @@ public class BookingServiceTest {
         booking2.setCheckInDate(LocalDate.of(2025, 6, 1));
         booking2.setCheckOutDate(LocalDate.of(2025, 6, 7));
         booking2.setStatus(BookingStatus.PENDING);
+    }
+
+    @Test
+    public void BookingService_GetBookingById_ReturnsBooking() {
+        when(bookingRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(booking1));
+        when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(guest));
+
+        BookingResponseDto responseDto = bookingService.getBookingById(booking1.getId(), guest.getId());
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getId()).isEqualTo(booking1.getId());
+        Assertions.assertThat(responseDto.getPropertyTitle()).isEqualTo(booking1.getProperty().getTitle());
     }
 
     @Test
