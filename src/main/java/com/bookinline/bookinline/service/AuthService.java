@@ -5,6 +5,6 @@ import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
 
 public interface AuthService {
-    public AuthenticationResponse register(RegisterRequest request);
-    public AuthenticationResponse login(AuthenticationRequest request);
+    AuthenticationResponse register(RegisterRequest request);
+    AuthenticationResponse login(AuthenticationRequest request);
 }

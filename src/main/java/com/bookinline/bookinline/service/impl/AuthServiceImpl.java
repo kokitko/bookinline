@@ -37,52 +37,52 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
-        logger.info("Attempting to register user with email: {}", request.email());
+        logger.info("Attempting to register user with email: {}", request.getEmail());
 
 
-        if (userRepository.existsByEmail(request.email())) {
-            logger.warn("Email already in use: {}", request.email());
+        if (userRepository.existsByEmail(request.getEmail())) {
+            logger.warn("Email already in use: {}", request.getEmail());
             throw new EmailBeingUsedException("Email already being used");
         }
-        if(request.role() == Role.ADMIN) {
-            logger.warn("Registration failed: Illegal role to register: {}", request.role());
+        if(request.getRole() == Role.ADMIN) {
+            logger.warn("Registration failed: Illegal role to register: {}", request.getRole());
             throw new IllegalRoleException("Illegal role to register");
         }
 
         User user = new User();
-        user.setFullName(request.fullName());
-        user.setEmail(request.email());
-        user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole(request.role());
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
         user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
         String token = jwtService.generateToken(user);
-        logger.info("User registered successfully: {}", request.email());
+        logger.info("User registered successfully: {}", request.getEmail());
         return new AuthenticationResponse(token);
     }
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
-        logger.info("Attempting to login user with email: {}", request.email());
+        logger.info("Attempting to login user with email: {}", request.getEmail());
 
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (Exception e) {
-            logger.warn("Authentication failed with email: {}", request.email());
+            logger.warn("Authentication failed with email: {}", request.getEmail());
             throw new InvalidUserDataException("Invalid email or password");
         }
 
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() ->  {
-                    logger.warn("Login failed: User with email {} not found", request.email());
+                    logger.warn("Login failed: User with email {} not found", request.getEmail());
                     return new InvalidUserDataException("Invalid email or password");
                 });
 
         String token = jwtService.generateToken(user);
-        logger.info("User logged in successfully: {}", request.email());
+        logger.info("User logged in successfully: {}", request.getEmail());
         return new AuthenticationResponse(token);
     }
 }
