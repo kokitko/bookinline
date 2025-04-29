@@ -52,7 +52,7 @@ public class AuthServiceIntegrationTest {
         AuthenticationResponse response = authService.register(registerRequest);
 
         Assertions.assertThat(response).isNotNull();
-        Assertions.assertThat(response.token()).isNotNull();
+        Assertions.assertThat(response.getToken()).isNotNull();
     }
 
     @Test
@@ -64,6 +64,6 @@ public class AuthServiceIntegrationTest {
         AuthenticationResponse response = authService.login(request);
 
         Assertions.assertThat(response).isNotNull();
-        Assertions.assertThat(response.token()).isNotNull();
+        Assertions.assertThat(response.getToken()).isNotNull();
     }
 }
