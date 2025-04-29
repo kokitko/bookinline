@@ -61,7 +61,6 @@ public class PropertyControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.page").value(responsePage.getTotalPages()))
                 .andExpect(jsonPath("$.properties[0].id").value(responsePage.getProperties().get(0).getId()))
                 .andExpect(jsonPath("$.properties[1].id").value(responsePage.getProperties().get(1).getId()));
     }

@@ -2,11 +2,8 @@ package com.bookinline.bookinline.controller;
 
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.User;
-import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.security.JwtAuthFilter;
-import com.bookinline.bookinline.service.AuthService;
 import com.bookinline.bookinline.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

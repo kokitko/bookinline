@@ -6,7 +6,6 @@ import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.security.JwtAuthFilter;
-import com.bookinline.bookinline.security.JwtService;
 import com.bookinline.bookinline.service.AdminService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
