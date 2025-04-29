@@ -2,6 +2,7 @@ package com.bookinline.bookinline.controller;
 
 import com.bookinline.bookinline.dto.BookingResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
+import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.ErrorObject;
@@ -86,10 +87,10 @@ public class AdminController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
             }
     )
-    public ResponseEntity<Void> getReviewById(@PathVariable Long reviewId) {
+    public ResponseEntity<ReviewResponseDto> getReviewById(@PathVariable Long reviewId) {
         Long adminId = getAuthenticatedAdminId();
-        adminService.getReviewById(reviewId, adminId);
-        return ResponseEntity.ok().build();
+        ReviewResponseDto reviewResponseDto = adminService.getReviewById(reviewId, adminId);
+        return ResponseEntity.ok(reviewResponseDto);
     }
 
     @PutMapping("/warn/{userId}")
