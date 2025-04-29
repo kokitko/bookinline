@@ -140,4 +140,24 @@ public class UserRequestDtoTest {
                 .andExpect(jsonPath("$.message")
                         .value("Validation failed: fullName: Full name must be between 2 and 50 characters"));
     }
+
+    @Test
+    @WithMockUser
+    public void testPhoneNumberFormat() throws Exception {
+        String request = """
+                    {
+                        "email": "goodemail@example.com",
+                        "password": "password123",
+                        "fullName": "Good Full Name",
+                        "phoneNumber": "1.2.3.4.5.6.7.8.9.0"
+                    }
+                """;
+
+        mockMvc.perform(put("/api/user/phone")
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Validation failed: phoneNumber: Invalid phone number format"));
+    }
 }

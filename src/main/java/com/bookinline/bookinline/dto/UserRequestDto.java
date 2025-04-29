@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.dto;
 
+import com.bookinline.bookinline.custom_annotations.ValidPhoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,5 +26,6 @@ public class UserRequestDto {
     @Size(min = 3, max = 50, message = "Full name must be between 2 and 50 characters")
     private String fullName;
 
+    @ValidPhoneNumber
     private String phoneNumber;
 }
