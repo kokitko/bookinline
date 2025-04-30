@@ -154,6 +154,6 @@ public class BookingServiceTest {
 
         Assertions.assertThat(bookings).isNotNull();
         Assertions.assertThat(bookings).hasSize(2);
-        Assertions.assertThat(bookings.getFirst().getStartDate()).isEqualTo(booking1.getCheckInDate());
+        Assertions.assertThat(bookings.getFirst().getCheckInDate()).isEqualTo(booking1.getCheckInDate());
     }
 }

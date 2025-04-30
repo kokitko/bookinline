@@ -104,7 +104,8 @@ public class BookingServiceImpl implements BookingService {
                     logger.error("User with ID: {} not found", userId);
                     return new UserNotFoundException("User not found");
                 });
-        if (!booking.getGuest().getId().equals(guest.getId())) {
+        if (!booking.getGuest().getId().equals(guest.getId()) &&
+            !booking.getProperty().getHost().getId().equals(userId)) {
             logger.warn("Unauthorized action: User with ID: {} is not the guest of booking with ID: {}", userId, bookingId);
             throw new UnauthorizedActionException("You are not able to view this booking");
         }
@@ -144,6 +145,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDatesDto> getBookedDatesByPropertyId(Long propertyId) {
         logger.info("Fetching bookings for property ID: {}", propertyId);
+        if (propertyRepository.findById(propertyId).isEmpty()) {
+            logger.error("Property with ID: {} not found", propertyId);
+            throw new PropertyNotFoundException("Property not found");
+        }
         List<Booking> bookings = bookingRepository.findByPropertyIdAndStatuses(
                 propertyId, List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
         logger.info("Found {} pending/confirmed bookings for property ID: {}", bookings.size(), propertyId);

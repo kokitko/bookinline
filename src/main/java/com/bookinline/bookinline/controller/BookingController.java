@@ -76,7 +76,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponse);
     }
 
-    @PreAuthorize("hasRole('ROLE_GUEST')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{bookingId}")
     @Operation(summary = "Get booking by ID",
             description = "Get booking by ID, requires guest role",
@@ -138,7 +138,9 @@ public class BookingController {
     @Operation(summary = "Get booking dates for property",
             description = "Get booking dates for property, does not require authentication",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of booking dates retrieved successfully")
+                    @ApiResponse(responseCode = "200", description = "List of booking dates retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Property not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
     public ResponseEntity<List<BookingDatesDto>> getBookingDatesByPropertyId(@PathVariable Long propertyId) {
@@ -147,7 +149,7 @@ public class BookingController {
     }
 
     @PreAuthorize("hasRole('ROLE_HOST')")
-    @PostMapping("/{bookingId}/confirm")
+    @PutMapping("/{bookingId}/confirm")
     @Operation(summary = "Confirm a booking",
             description = "Confirm a booking with the given ID, requires host role",
             security = @SecurityRequirement(name = "bearerAuth"),

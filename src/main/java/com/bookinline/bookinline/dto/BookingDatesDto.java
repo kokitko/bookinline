@@ -12,6 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class BookingDatesDto {
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
 }
