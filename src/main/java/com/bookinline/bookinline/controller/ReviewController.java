@@ -97,6 +97,8 @@ public class ReviewController {
             description = "Get reviews for a property with the given ID, does not require authentication",
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of reviews retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Property not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
     public ResponseEntity<ReviewResponsePage> getReviewsByPropertyId(@PathVariable Long propertyId,
@@ -110,7 +112,9 @@ public class ReviewController {
     @Operation(summary = "Get reviews for a user",
             description = "Get reviews for a user with the given ID, does not require authentication",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of reviews retrieved successfully")
+                    @ApiResponse(responseCode = "200", description = "List of reviews retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
     public ResponseEntity<ReviewResponsePage> getReviewsByUserId(@PathVariable Long userId,

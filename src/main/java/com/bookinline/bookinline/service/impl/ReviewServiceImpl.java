@@ -130,6 +130,10 @@ public class ReviewServiceImpl implements ReviewService {
         logger.info("Fetching reviews for property with ID: {}, page: {}, size: {}", propertyId, page, size);
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
+        if (propertyRepository.findById(propertyId).isEmpty()) {
+            logger.error("Property not found with ID: {}", propertyId);
+            throw new PropertyNotFoundException("Property not found");
+        }
         Page<Review> reviewPage = reviewRepository.findByPropertyId(propertyId, pageable);
 
         logger.info("Found {} reviews for property with ID: {}", reviewPage.getTotalElements(), propertyId);
@@ -142,6 +146,10 @@ public class ReviewServiceImpl implements ReviewService {
         logger.info("Fetching reviews for user with ID: {}, page: {}, size: {}", userId, page, size);
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
+        if (userRepository.findById(userId).isEmpty()) {
+            logger.error("User not found with ID: {}", userId);
+            throw new UserNotFoundException("User not found");
+        }
         Page<Review> reviewPage = reviewRepository.findByAuthorId(userId, pageable);
 
         logger.info("Found {} reviews for user with ID: {}", reviewPage.getTotalElements(), userId);
