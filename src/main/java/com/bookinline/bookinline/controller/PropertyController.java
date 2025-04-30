@@ -80,7 +80,7 @@ public class PropertyController {
     }
 
     @PreAuthorize("hasRole('ROLE_HOST')")
-    @PutMapping("/update/{propertyId}")
+    @PostMapping("/update/{propertyId}")
     @Operation(summary = "Update an existing property",
             description = "Update an existing property, requires host role",
             security = @SecurityRequirement(name = "bearerAuth"),
