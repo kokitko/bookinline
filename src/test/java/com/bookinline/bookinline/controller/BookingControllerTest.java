@@ -126,9 +126,9 @@ public class BookingControllerTest {
 
         mockMvc.perform(get("/api/bookings/property/1/dates"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].startDate").value(response.get(0).getCheckInDate().toString()))
-                .andExpect(jsonPath("$[0].endDate").value(response.get(0).getCheckOutDate().toString()))
-                .andExpect(jsonPath("$[1].startDate").value(response.get(1).getCheckInDate().toString()))
-                .andExpect(jsonPath("$[1].endDate").value(response.get(1).getCheckOutDate().toString()));
+                .andExpect(jsonPath("$[0].checkInDate").value(response.get(0).getCheckInDate().toString()))
+                .andExpect(jsonPath("$[0].checkOutDate").value(response.get(0).getCheckOutDate().toString()))
+                .andExpect(jsonPath("$[1].checkInDate").value(response.get(1).getCheckInDate().toString()))
+                .andExpect(jsonPath("$[1].checkOutDate").value(response.get(1).getCheckOutDate().toString()));
     }
 }

@@ -149,6 +149,7 @@ public class BookingServiceTest {
     public void BookingService_GetBookedDatesByPropertyId_ReturnsBookedDatesDto() {
         when(bookingRepository.findByPropertyIdAndStatuses(Mockito.anyLong(), Mockito.anyList()))
                 .thenReturn(List.of(booking1, booking2));
+        when(propertyRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(property));
 
         List<BookingDatesDto> bookings = bookingService.getBookedDatesByPropertyId(property.getId());
 

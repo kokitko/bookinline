@@ -1,6 +1,5 @@
 package com.bookinline.bookinline.service;
 
-import com.bookinline.bookinline.dto.BookingResponsePage;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
 import com.bookinline.bookinline.entity.Booking;
@@ -9,7 +8,6 @@ import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
-import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.ReviewRepository;
 import com.bookinline.bookinline.repository.UserRepository;
@@ -39,6 +37,8 @@ public class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private PropertyRepository propertyRepository;
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
@@ -104,6 +104,7 @@ public class ReviewServiceTest {
     @Test
     public void ReviewService_GetReviewsByPropertyId_ReturnsReviewResponsePage() {
         Page<Review> mockPage = Mockito.mock(Page.class);
+        when(propertyRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(property));
         when(reviewRepository.findByPropertyId(Mockito.anyLong(), Mockito.any(Pageable.class))).thenReturn(mockPage);
         when(mockPage.getNumber()).thenReturn(0);
         when(mockPage.getSize()).thenReturn(10);
@@ -125,6 +126,7 @@ public class ReviewServiceTest {
     @Test
     public void ReviewService_GetReviewsByUserId_ReturnsReviewResponsePage() {
         Page<Review> mockPage = Mockito.mock(Page.class);
+        when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(guest));
         when(reviewRepository.findByAuthorId(Mockito.anyLong(), Mockito.any(Pageable.class))).thenReturn(mockPage);
         when(mockPage.getNumber()).thenReturn(0);
         when(mockPage.getSize()).thenReturn(10);
