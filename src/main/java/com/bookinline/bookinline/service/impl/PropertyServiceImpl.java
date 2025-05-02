@@ -16,6 +16,7 @@ import com.bookinline.bookinline.service.ImageService;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -166,6 +167,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Timed(
             value = "property.getAll",
             description = "Time taken to get all available properties")
+    @Cacheable(value = "availableProperties")
     @Override
     public PropertyResponsePage getAvailableProperties(int page, int size) {
         logger.info("Fetching available properties, page: {}, size: {}", page, size);
