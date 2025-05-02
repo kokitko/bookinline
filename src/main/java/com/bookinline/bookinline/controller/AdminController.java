@@ -31,7 +31,16 @@ public class AdminController {
 
     @GetMapping("/users/{userId}")
     @Operation(summary = "Get user details",
-            description = "Get details of a user with the given ID",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/users/{userId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `userId` (Long) - ID of the user to retrieve
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if user exists.
+                    3. Returns user details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User details retrieved successfully"),
@@ -47,7 +56,16 @@ public class AdminController {
 
     @GetMapping("/properties/{propertyId}")
     @Operation(summary = "Get property by ID",
-            description = "Get property details by ID",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/properties/{propertyId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `propertyId` (Long) - ID of the property to retrieve
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if property exists.
+                    3. Returns property details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Property details retrieved successfully"),
@@ -63,7 +81,16 @@ public class AdminController {
 
     @GetMapping("/bookings/{bookingId}")
     @Operation(summary = "Get booking by ID",
-            description = "Get booking details by ID",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/bookings/{bookingId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `bookingId` (Long) - ID of the booking to retrieve
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if booking exists.
+                    3. Returns booking details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Booking details retrieved successfully"),
@@ -79,7 +106,16 @@ public class AdminController {
 
     @GetMapping("/reviews/{reviewId}")
     @Operation(summary = "Get review by ID",
-            description = "Get review details by ID",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/reviews/{reviewId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `reviewId` (Long) - ID of the review to retrieve
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if review exists.
+                    3. Returns review details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Review details retrieved successfully"),
@@ -95,7 +131,20 @@ public class AdminController {
 
     @PutMapping("/warn/{userId}")
     @Operation(summary = "Warn a user",
-            description = "Warn a user with the given ID",
+            description = """
+                    Detailed information of user warning:
+                    - **Endpoint**: `/api/admin/warn/{userId}`
+                    - **Method**: `PUT`
+                    - **Path Variable**: `userId` (Long) - ID of the user to warn
+                    - **Request Parameter**: `reason` (String) - Reason for warning
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if user exists.
+                    3. Sets user status to WARNED.
+                    4. Sets user status description to the reason.
+                    5. Saves user to the database.
+                    6. Returns user details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                 @ApiResponse(responseCode = "200", description = "User warned successfully"),
@@ -112,7 +161,20 @@ public class AdminController {
 
     @DeleteMapping("/ban/{userId}")
     @Operation(summary = "Ban a user",
-            description = "Ban a user with the given ID",
+            description = """
+                    Detailed information of user banning:
+                    - **Endpoint**: `/api/admin/ban/{userId}`
+                    - **Method**: `DELETE`
+                    - **Path Variable**: `userId` (Long) - ID of the user to ban
+                    - **Request Parameter**: `reason` (String) - Reason for banning
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if user exists.
+                    3. Sets user status to BANNED.
+                    4. Sets user status description to the reason.
+                    5. Saves user to the database.
+                    6. Returns user details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User banned successfully"),
@@ -129,7 +191,20 @@ public class AdminController {
 
     @PutMapping("/unban/{userId}")
     @Operation(summary = "Unban a user",
-            description = "Unban a user with the given ID",
+            description = """
+                    Detailed information of user unbanning:
+                    - **Endpoint**: `/api/admin/unban/{userId}`
+                    - **Method**: `PUT`
+                    - **Path Variable**: `userId` (Long) - ID of the user to unban
+                    - **Request Parameter**: `reason` (String) - Reason for unbanning
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if user exists.
+                    3. Sets user status to ACTIVE.
+                    4. Sets user status description to the reason.
+                    5. Saves user to the database.
+                    6. Returns user details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User unbanned successfully"),
@@ -146,7 +221,17 @@ public class AdminController {
 
     @PutMapping("/property/{propertyId}")
     @Operation(summary = "Change property availability",
-            description = "Changes availability for a property with the given ID, users can/can't book it anymore",
+            description = """
+                    Detailed information of property availability change:
+                    - **Endpoint**: `/api/admin/property/{propertyId}`
+                    - **Method**: `PUT`
+                    - **Path Variable**: `propertyId` (Long) - ID of the property to change availability
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if property exists.
+                    3. Changes property availability (so guests are not able to book this property).
+                    4. Returns property details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Property availability changed successfully"),
@@ -162,7 +247,17 @@ public class AdminController {
 
     @DeleteMapping("/booking/{bookingId}")
     @Operation(summary = "Cancel a booking",
-            description = "Cancel a booking with the given ID",
+            description = """
+                    Detailed information of booking cancellation:
+                    - **Endpoint**: `/api/admin/booking/{bookingId}`
+                    - **Method**: `DELETE`
+                    - **Path Variable**: `bookingId` (Long) - ID of the booking to cancel
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if booking exists.
+                    3. Cancels the booking.
+                    4. Returns booking details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Booking cancelled successfully"),
@@ -178,7 +273,17 @@ public class AdminController {
 
     @DeleteMapping("/review/{reviewId}")
     @Operation(summary = "Delete a review",
-            description = "Delete a review with the given ID",
+            description = """
+                    Detailed information of review deletion:
+                    - **Endpoint**: `/api/admin/review/{reviewId}`
+                    - **Method**: `DELETE`
+                    - **Path Variable**: `reviewId` (Long) - ID of the review to delete
+                    
+                    1. Checks authenticated admin ID.
+                    2. Checks if review exists.
+                    3. Deletes the review.
+                    4. Returns no content.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Review deleted successfully"),

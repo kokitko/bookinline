@@ -149,8 +149,7 @@ public class PropertyController {
             description = """
                     Detailed description of the delete property endpoint:
                     - **Endpoint**: `/api/properties/delete/{propertyId}`
-                    - **Method**: `DELETE`
-                    - **Request Body**: None
+                    - **Path Variable**: `propertyId` (ID of the property to be deleted)
                     
                     1. The user must be authenticated and have the `ROLE_HOST` role to access this endpoint.
                     2. The server retrieves the authenticated user's ID from the security context.
@@ -179,7 +178,7 @@ public class PropertyController {
                     Detailed description of the get property by ID endpoint:
                     - **Endpoint**: `/api/properties/{id}`
                     - **Method**: `GET`
-                    - **Request Body**: None
+                    - **Path Variable**: `id` (ID of the property to be retrieved)
                     
                     1. The user does not need to be authenticated to access this endpoint.
                     2. The server retrieves the property by its ID.

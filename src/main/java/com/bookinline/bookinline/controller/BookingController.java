@@ -38,7 +38,18 @@ public class BookingController {
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @PostMapping("/property/{propertyId}")
     @Operation(summary = "Book a property",
-            description = "Book a property with the given ID, requires guest role",
+            description = """
+                    Detailed description of the booking process.
+                    - **Endpoint**: `/api/bookings/property/{propertyId}`
+                    - **Method**: `POST`
+                    - **Request Body**: `BookingRequestDto` containing booking details
+                    
+                    1. The user sends a booking request with the property ID.
+                    1.1. The system validates the booking request.
+                    2. The system checks if booking range is valid.
+                    3. The system checks if property is available for this date range.
+                    4. The system creates a booking and returns the booking details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Property created successfully"),
@@ -60,7 +71,17 @@ public class BookingController {
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @DeleteMapping("/{bookingId}")
     @Operation(summary = "Cancel a booking",
-            description = "Cancel a booking with the given ID, requires guest role",
+            description = """
+                    Detailed description of the booking cancellation process.
+                    - **Endpoint**: `/api/bookings/{bookingId}`
+                    - **Method**: `DELETE`
+                    - **Path Variable**: `bookingId` of the booking to be canceled
+                    
+                    1. The user sends a cancellation request with the booking ID.
+                    2. The system checks if the booking exists and is cancellable.
+                    3. The system checks if the user has permission to cancel the booking (only for guest that made booking).
+                    4. The system cancels the booking and returns the booking details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Booking canceled successfully"),
@@ -79,7 +100,17 @@ public class BookingController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{bookingId}")
     @Operation(summary = "Get booking by ID",
-            description = "Get booking by ID, requires guest role",
+            description = """
+                    Detailed description of the booking retrieval process.
+                    - **Endpoint**: `/api/bookings/{bookingId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `bookingId` of the booking to be retrieved
+                    
+                    1. The user sends a request with the booking ID.
+                    2. The system checks if the booking exists.
+                    3. The system checks if the user has permission to view the booking (only for guest && host of this booking).
+                    4. The system retrieves the booking details and returns them.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Booking retrieved successfully"),
@@ -98,7 +129,17 @@ public class BookingController {
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @GetMapping("/user")
     @Operation(summary = "Get bookings for authenticated user",
-            description = "Get bookings for authenticated user, requires guest role",
+            description = """
+                    Detailed description of the booking page retrieval process.
+                    - **Endpoint**: `/api/bookings/user`
+                    - **Method**: `GET`
+                    - **Query Parameters**: `page` and `size` for pagination
+                    
+                    1. The user (with guest role) sends a request to retrieve their bookings.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The system looks for bookings associated with the user ID.
+                    4. The system returns a paginated list of bookings for the user.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of bookings retrieved successfully")
@@ -114,7 +155,18 @@ public class BookingController {
     @PreAuthorize("hasRole('ROLE_HOST')")
     @GetMapping("/property/{propertyId}")
     @Operation(summary = "Get bookings for property",
-            description = "Get bookings for property, requires host role",
+            description = """
+                    Detailed description of the booking page retrieval process.
+                    - **Endpoint**: `/api/bookings/property/{propertyId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `propertyId` of the property to retrieve bookings for && `page` and `size` for pagination
+                    
+                    1. The user (with host role) sends a request to retrieve bookings for a specific property.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The system checks if the user is the host of the property.
+                    4. The system looks for bookings associated with the property ID.
+                    5. The system returns a paginated list of bookings for the property.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of bookings retrieved successfully"),
@@ -136,7 +188,17 @@ public class BookingController {
 
     @GetMapping("/property/{propertyId}/dates")
     @Operation(summary = "Get booking dates for property",
-            description = "Get booking dates for property, does not require authentication",
+            description = """
+                    Detailed description of the booking dates retrieval process.
+                    - **Endpoint**: `/api/bookings/property/{propertyId}/dates`
+                    - **Method**: `GET`
+                    - **Path Variable**: `propertyId` of the property to retrieve booking dates for
+                    
+                    1. Any user sends a request to retrieve booking dates for a specific property.
+                    2. The system checks if the property exists.
+                    3. The system retrieves the booking dates associated with the property ID and status 'PENDING' or 'CONFIRMED'.
+                    4. The system returns a list of booking dates for the property.
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of booking dates retrieved successfully"),
                     @ApiResponse(responseCode = "404", description = "Property not found",
@@ -151,7 +213,17 @@ public class BookingController {
     @PreAuthorize("hasRole('ROLE_HOST')")
     @PutMapping("/{bookingId}/confirm")
     @Operation(summary = "Confirm a booking",
-            description = "Confirm a booking with the given ID, requires host role",
+            description = """
+                    Detailed description of the booking confirmation process.
+                    - **Endpoint**: `/api/bookings/{bookingId}/confirm`
+                    - **Method**: `PUT`
+                    - **Path Variable**: `bookingId` of the booking to be confirmed
+                    
+                    1. The host sends a confirmation request with the booking ID.
+                    2. The system checks if the user has permission to confirm the booking (only for host of this booking).
+                    3. The system checks if the booking exists and has 'PENDING' status.
+                    4. The system confirms the booking and returns the booking details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Booking confirmed successfully"),

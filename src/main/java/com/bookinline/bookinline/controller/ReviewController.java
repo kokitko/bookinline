@@ -35,7 +35,21 @@ public class ReviewController {
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @PostMapping("/property/{propertyId}")
     @Operation(summary = "Leave a review for a property",
-            description = "Leave a review for a property with the given ID, requires guest role",
+            description = """
+                    Detailed description of review creation process:
+                    - **Endpoint**: `/api/reviews/property/{propertyId}`
+                    - **Method**: `POST`
+                    - **Request Body**: JSON object containing review details
+                    - **Path Variable**: `propertyId` - ID of the property to review
+                    
+                    1. Guest sends a POST request to the endpoint with the property ID and review body.
+                    1.1. The system validates the review data (rating, comment, etc.).
+                    2. The system checks if property exists and if the user has permission to review it
+                    (person has to stay in the property at least once, looks for bookings with status 'CHECKED_OUT').
+                    3. Checks if the user has already reviewed the property.
+                    4. Updates property rating based on the new review.
+                    5. If all checks pass, the review is saved in the database and user gets review response.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Review added successfully"),
@@ -57,7 +71,17 @@ public class ReviewController {
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @GetMapping("/{reviewId}")
     @Operation(summary = "Get review by ID",
-            description = "Get review by ID, requires guest role",
+            description = """
+                    Detailed description of review retrieval process:
+                    - **Endpoint**: `/api/reviews/{reviewId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `reviewId` - ID of the review to retrieve
+                    
+                    1. Guest sends a GET request to the endpoint with the review ID.
+                    2. The system checks if the review exists and if the user has permission to view it
+                    (only author can get complete info about review).
+                    3. If all checks pass, the review is retrieved from the database and returned in the response.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Review retrieved successfully"),
@@ -76,7 +100,18 @@ public class ReviewController {
     @PreAuthorize("hasRole('ROLE_GUEST')")
     @DeleteMapping("/{reviewId}")
     @Operation(summary = "Delete a review",
-            description = "Delete a review with the given ID, requires guest role",
+            description = """
+                    Detailed description of review deletion process:
+                    - **Endpoint**: `/api/reviews/{reviewId}`
+                    - **Method**: `DELETE`
+                    - **Path Variable**: `reviewId` - ID of the review to delete
+                    
+                    1. Guest sends a DELETE request to the endpoint with the review ID.
+                    2. The system checks if the review exists and if the user has permission to delete it
+                    (only author can delete the review).
+                    3. Updates property rating based on the deleted review.
+                    4. If all checks pass, the review is deleted from the database and a noContent response is returned.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Review deleted successfully"),
@@ -94,7 +129,16 @@ public class ReviewController {
 
     @GetMapping("/property/{propertyId}")
     @Operation(summary = "Get reviews for a property",
-            description = "Get reviews for a property with the given ID, does not require authentication",
+            description = """
+                    Detailed description of property reviews retrieval process:
+                    - **Endpoint**: `/api/reviews/property/{propertyId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `propertyId` - ID of the property to retrieve reviews for
+                    
+                    1. Any user sends a GET request to the endpoint with the property ID.
+                    2. The system checks if the property exists.
+                    3. If exists, the system retrieves all reviews for the property and returns them in a paginated format.
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of reviews retrieved successfully"),
                     @ApiResponse(responseCode = "404", description = "Property not found",
@@ -110,7 +154,16 @@ public class ReviewController {
 
     @GetMapping("/user/{userId}")
     @Operation(summary = "Get reviews for a user",
-            description = "Get reviews for a user with the given ID, does not require authentication",
+            description = """
+                    Detailed description of user reviews retrieval process:
+                    - **Endpoint**: `/api/reviews/user/{userId}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `userId` - ID of the user to retrieve reviews for
+                    
+                    1. Any user sends a GET request to the endpoint with the user ID.
+                    2. The system checks if the user exists.
+                    3. If exists, the system retrieves all reviews for the user and returns them in a paginated format.
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of reviews retrieved successfully"),
                     @ApiResponse(responseCode = "404", description = "User not found",
