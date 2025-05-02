@@ -23,6 +23,7 @@ import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.ReviewRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.AdminService;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,9 @@ public class AdminServiceImpl implements AdminService {
         this.bookingRepository = bookingRepository;
     }
 
+    @Timed(
+            value = "admin.getAllUsers",
+            description = "Time taken to get all users by admin")
     @Override
     public UserResponseDto getUserById(Long userId, Long adminId) {
         logger.info("Admin {} is fetching user with ID {}", adminId, userId);
@@ -54,6 +58,9 @@ public class AdminServiceImpl implements AdminService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "admin.getPropertyById",
+            description = "Time taken to get property by admin")
     @Override
     public PropertyResponseDto getPropertyById(Long propertyId, Long adminId) {
         logger.info("Admin {} is fetching property with ID {}", adminId, propertyId);
@@ -62,6 +69,9 @@ public class AdminServiceImpl implements AdminService {
         return PropertyMapper.mapToPropertyResponseDto(property);
     }
 
+    @Timed(
+            value = "admin.getBookingById",
+            description = "Time taken to get booking by admin")
     @Override
     public BookingResponseDto getBookingById(Long bookingId, Long adminId) {
         logger.info("Admin {} is fetching booking with ID {}", adminId, bookingId);
@@ -70,6 +80,9 @@ public class AdminServiceImpl implements AdminService {
         return BookingMapper.mapToBookingResponseDto(booking);
     }
 
+    @Timed(
+            value = "admin.getReviewById",
+            description = "Time taken to get review by admin")
     @Override
     public ReviewResponseDto getReviewById(Long reviewId, Long adminId) {
         logger.info("Admin {} is fetching review with ID {}", adminId, reviewId);
@@ -78,6 +91,9 @@ public class AdminServiceImpl implements AdminService {
         return ReviewMapper.mapToReviewResponseDto(review);
     }
 
+    @Timed(
+            value = "admin.warnUser",
+            description = "Time taken to warn user by admin")
     @Override
     public UserResponseDto warnUser(Long userId, String reason, Long adminId) {
         logger.info("Admin {} is warning user {} for reason: {}", adminId, userId, reason);
@@ -89,6 +105,9 @@ public class AdminServiceImpl implements AdminService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "admin.banUser",
+            description = "Time taken to ban user by admin")
     @Override
     public UserResponseDto banUser(Long userId, String reason, Long adminId) {
         logger.info("Admin {} is banning user {} for reason: {}", adminId, userId, reason);
@@ -100,6 +119,9 @@ public class AdminServiceImpl implements AdminService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "admin.unbanUser",
+            description = "Time taken to unban user by admin")
     @Override
     public UserResponseDto unbanUser(Long userId, String reason, Long adminId) {
         logger.info("Admin {} is unbanning user {} for reason: {}", adminId, userId, reason);
@@ -111,6 +133,9 @@ public class AdminServiceImpl implements AdminService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "admin.changePropertyAvailability",
+            description = "Time taken to change property availability by admin")
     @Override
     public PropertyResponseDto changePropertyAvailability(Long propertyId, Long adminId) {
         logger.info("Admin {} is deactivating property {}", adminId, propertyId);
@@ -120,6 +145,9 @@ public class AdminServiceImpl implements AdminService {
         return PropertyMapper.mapToPropertyResponseDto(property);
     }
 
+    @Timed(
+            value = "admin.cancelBooking",
+            description = "Time taken to cancel booking by admin")
     @Override
     public BookingResponseDto cancelBooking(Long bookingId, Long adminId) {
         logger.info("Admin {} is cancelling booking {}", adminId, bookingId);
@@ -129,6 +157,9 @@ public class AdminServiceImpl implements AdminService {
         return BookingMapper.mapToBookingResponseDto(booking);
     }
 
+    @Timed(
+            value = "admin.deleteReview",
+            description = "Time taken to delete review by admin")
     @Override
     public void deleteReview(Long reviewId, Long adminId) {
         logger.info("Admin {} is deleting review {}", adminId, reviewId);
@@ -139,6 +170,9 @@ public class AdminServiceImpl implements AdminService {
         logger.info("Average rating updated for property {}", review.getProperty().getId());
     }
 
+    @Timed(
+            value = "admin.calculateAverageRating",
+            description = "Time taken to calculate average rating inside admin service")
     private double calculateAverageRating(Long propertyId) {
         logger.info("Calculating average rating for property with ID: {}", propertyId);
 

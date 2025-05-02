@@ -8,6 +8,7 @@ import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.exception.*;
 import com.bookinline.bookinline.mapper.ReviewMapper;
 import com.bookinline.bookinline.repository.BookingRepository;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,9 @@ public class ReviewServiceImpl implements ReviewService {
         this.userRepository = userRepository;
     }
 
+    @Timed(
+            value = "review.add",
+            description = "Time taken to add a review")
     @Override
     public ReviewResponseDto addReview(Long propertyId, Long userId, ReviewRequestDto reviewRequestDto) {
         logger.info("Attempting to add review for property with ID: {} by user with ID: {}", propertyId, userId);
@@ -80,6 +84,9 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewResponse;
     }
 
+    @Timed(
+            value = "review.getById",
+            description = "Time taken to get a review by ID")
     @Override
     public ReviewResponseDto getReviewById(Long reviewId, Long userId) {
         logger.info("Fetching review with ID: {} for user with ID: {}", reviewId, userId);
@@ -101,6 +108,9 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewResponse;
     }
 
+    @Timed(
+            value = "review.delete",
+            description = "Time taken to delete a review")
     @Override
     public void deleteReview(Long reviewId, Long userId) {
         logger.info("Attempting to delete review with ID: {}", reviewId);
@@ -125,6 +135,9 @@ public class ReviewServiceImpl implements ReviewService {
         logger.info("Update average rating for property with ID: {}", property.getId());
     }
 
+    @Timed(
+            value = "review.getByPropertyId",
+            description = "Time taken to get reviews by property ID")
     @Override
     public ReviewResponsePage getReviewsByPropertyId(Long propertyId, int page, int size) {
         logger.info("Fetching reviews for property with ID: {}, page: {}, size: {}", propertyId, page, size);
@@ -141,6 +154,9 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewMapper.mapToReviewResponsePage(reviewPage);
     }
 
+    @Timed(
+            value = "review.getByUserId",
+            description = "Time taken to get reviews by user ID")
     @Override
     public ReviewResponsePage getReviewsByUserId(Long userId, int page, int size) {
         logger.info("Fetching reviews for user with ID: {}, page: {}, size: {}", userId, page, size);
@@ -157,6 +173,9 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewMapper.mapToReviewResponsePage(reviewPage);
     }
 
+    @Timed(
+            value = "review.calculateAverageRating",
+            description = "Time taken to calculate average rating")
     private double calculateAverageRating(Long propertyId) {
         logger.info("Calculating average rating for property with ID: {}", propertyId);
 
@@ -174,6 +193,9 @@ public class ReviewServiceImpl implements ReviewService {
         return averageRating;
     }
 
+    @Timed(
+            value = "review.hasPersonStayedInProperty",
+            description = "Time taken to check if a person has stayed in a property")
     private boolean hasPersonStayedInProperty(Long propertyId, Long userId) {
         logger.info("Checking if user with ID: {} has stayed in property with ID: {}", userId, propertyId);
         List<Booking> bookings = bookingRepository.findByPropertyIdAndGuestIdAndStatus
@@ -184,6 +206,9 @@ public class ReviewServiceImpl implements ReviewService {
         return hasStayed;
     }
 
+    @Timed(
+            value = "review.hasPersonLeftReview",
+            description = "Time taken to check if a person has left a review")
     private boolean hasPersonLeftReview(Long propertyId, Long userId) {
         logger.info("Checking if user with ID: {} has left a review for property with ID: {}", userId, propertyId);
 

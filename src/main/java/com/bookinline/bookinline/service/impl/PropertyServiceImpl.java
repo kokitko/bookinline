@@ -13,6 +13,7 @@ import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.mapper.PropertyMapper;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.ImageService;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,9 @@ public class PropertyServiceImpl implements PropertyService {
         this.imageService = imageService;
     }
 
+    @Timed(
+            value = "property.create",
+            description = "Time taken to create a property")
     @Override
     public PropertyResponseDto createProperty(PropertyRequestDto propertyRequestDto,
                                               Long userId, List<MultipartFile> images) {
@@ -77,6 +81,9 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyMapper.mapToPropertyResponseDto(savedProperty);
     }
 
+    @Timed(
+            value = "property.update",
+            description = "Time taken to update a property")
     @Override
     public PropertyResponseDto updateProperty(Long propertyId, PropertyRequestDto propertyRequestDto,
                                               Long userId, List<MultipartFile> images) {
@@ -120,6 +127,9 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyMapper.mapToPropertyResponseDto(updatedProperty);
     }
 
+    @Timed(
+            value = "property.delete",
+            description = "Time taken to delete a property")
     @Override
     public void deleteProperty(Long propertyId, Long userId) {
         logger.info("Attempting to delete property with ID: {} for user with ID: {}", propertyId, userId);
@@ -142,6 +152,9 @@ public class PropertyServiceImpl implements PropertyService {
         logger.info("Property with ID: {} deleted successfully", propertyId);
     }
 
+    @Timed(
+            value = "property.getById",
+            description = "Time taken to get property by ID")
     @Override
     public PropertyResponseDto getPropertyById(Long id) {
         logger.info("Attempting to get property with ID: {}", id);
@@ -154,6 +167,9 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyMapper.mapToPropertyResponseDto(property);
     }
 
+    @Timed(
+            value = "property.getAll",
+            description = "Time taken to get all available properties")
     @Override
     public PropertyResponsePage getAvailableProperties(int page, int size) {
         logger.info("Fetching available properties, page: {}, size: {}", page, size);

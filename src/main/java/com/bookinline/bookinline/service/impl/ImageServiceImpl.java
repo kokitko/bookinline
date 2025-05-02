@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.service.impl;
 
 import com.bookinline.bookinline.service.ImageService;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,9 @@ import java.util.UUID;
 @Service
 public class ImageServiceImpl implements ImageService {
 
+    @Timed(
+            value = "image.upload",
+            description = "Time taken to upload an image")
     @Override
     public String uploadImage(MultipartFile file) {
         String uploadDir = System.getProperty("user.dir") + "/images/";

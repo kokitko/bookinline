@@ -10,6 +10,7 @@ import com.bookinline.bookinline.mapper.UserMapper;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
         this.bookingRepository = bookingRepository;
     }
 
+    @Timed(
+            value = "user.setPhoneNumber",
+            description = "Time taken to set phone number")
     @Override
     public UserResponseDto setPhoneNumber(UserRequestDto userRequestDto, Long userId) {
         logger.info("Setting phone number for user with ID: {}", userId);
@@ -42,6 +46,9 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "user.setEmail",
+            description = "Time taken to set email")
     @Override
     public UserResponseDto setEmail(UserRequestDto userRequestDto, Long userId) {
         logger.info("Setting email for user with ID: {}", userId);
@@ -55,6 +62,9 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "user.setPassword",
+            description = "Time taken to set password")
     @Override
     public UserResponseDto setPassword(UserRequestDto userRequestDto, Long userId) {
         logger.info("Setting password for user with ID: {}", userId);
@@ -68,6 +78,9 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "user.setFullName",
+            description = "Time taken to set full name")
     @Override
     public UserResponseDto getUserById(Long userId) {
         logger.info("Fetching user with ID: {}", userId);
@@ -79,6 +92,9 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "user.getUserById",
+            description = "Time taken to get user by ID")
     @Override
     public UserResponseDto getUserById(Long userId, Long authenticatedUserId) {
         logger.info("Fetching user with ID: {} for authenticated user ID: {}", userId, authenticatedUserId);
@@ -101,6 +117,9 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserResponseDto(user);
     }
 
+    @Timed(
+            value = "user.deleteUser",
+            description = "Time taken to delete user")
     @Override
     public void deleteUser(Long userId) {
         logger.info("Deleting user with ID: {}", userId);

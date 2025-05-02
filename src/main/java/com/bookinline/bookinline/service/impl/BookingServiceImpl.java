@@ -10,6 +10,7 @@ import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.*;
 import com.bookinline.bookinline.mapper.BookingMapper;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,9 @@ public class BookingServiceImpl implements BookingService {
         this.userRepository = userRepository;
     }
 
+    @Timed(
+            value = "booking.bookProperty",
+            description = "Time taken to book a property")
     @Override
     public BookingResponseDto bookProperty(BookingRequestDto bookingRequestDto, Long propertyId, Long userId) {
         logger.info("Attempting to book property with ID: {} for user with ID: {}", propertyId, userId);
@@ -68,6 +72,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.mapToBookingResponseDto(savedBooking);
     }
 
+    @Timed(
+            value = "booking.cancelBooking",
+            description = "Time taken to cancel a booking")
     @Override
     public BookingResponseDto cancelBooking(Long bookingId, Long userId) {
         logger.info("Attempting to cancel booking with ID: {} for user ID: {}", bookingId, userId);
@@ -91,6 +98,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.mapToBookingResponseDto(updatedBooking);
     }
 
+    @Timed(
+            value = "booking.getBookingById",
+            description = "Time taken to get booking by ID")
     @Override
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
         logger.info("Fetching booking with ID: {} for user ID: {}", bookingId, userId);
@@ -113,6 +123,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.mapToBookingResponseDto(booking);
     }
 
+    @Timed(
+            value = "booking.getBookingsByUserId",
+            description = "Time taken to get bookings by user ID")
     @Override
     public BookingResponsePage getBookingsByUserId(Long userId, int page, int size) {
         logger.info("Fetching booking for user ID: {}, page: {}, size: {}", userId, page, size);
@@ -123,6 +136,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.mapToBookingResponsePage(bookingPage);
     }
 
+    @Timed(
+            value = "booking.getBookingsByPropertyId",
+            description = "Time taken to get bookings by property ID")
     @Override
     public BookingResponsePage getBookingsByPropertyId(Long propertyId, Long userId, int page, int size) {
         logger.info("Fetching bookings for property ID: {}, page: {}, size: {}", propertyId, page, size);
@@ -142,6 +158,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.mapToBookingResponsePage(bookingPage);
     }
 
+    @Timed(
+            value = "booking.getBookedDatesByPropertyId",
+            description = "Time taken to get booked dates by property ID")
     @Override
     public List<BookingDatesDto> getBookedDatesByPropertyId(Long propertyId) {
         logger.info("Fetching bookings for property ID: {}", propertyId);
@@ -157,6 +176,9 @@ public class BookingServiceImpl implements BookingService {
                 .toList();
     }
 
+    @Timed(
+            value = "booking.confirmBooking",
+            description = "Time taken to confirm a booking")
     @Override
     public BookingResponseDto confirmBooking(Long bookingId, Long userId) {
         logger.info("Attempting to confirm booking with ID: {} for user ID: {}", bookingId, userId);
@@ -184,6 +206,9 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.mapToBookingResponseDto(updatedBooking);
     }
 
+    @Timed(
+            value = "booking.isPropertyAvailable",
+            description = "Time taken to check property availability")
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {
         logger.info("Checking availability for property ID: {} from {} to {}", propertyId, startDate, endDate);
         LocalDate today = LocalDate.now();

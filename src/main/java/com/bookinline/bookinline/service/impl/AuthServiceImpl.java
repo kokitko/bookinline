@@ -9,6 +9,7 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.exception.EmailBeingUsedException;
 import com.bookinline.bookinline.exception.IllegalRoleException;
 import com.bookinline.bookinline.exception.InvalidUserDataException;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,9 @@ public class AuthServiceImpl implements AuthService {
         this.authenticationManager = authenticationManager;
     }
 
+    @Timed(
+            value = "auth.register",
+            description = "Time taken to register a user")
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
         logger.info("Attempting to register user with email: {}", request.getEmail());
@@ -62,6 +66,9 @@ public class AuthServiceImpl implements AuthService {
         return new AuthenticationResponse(token);
     }
 
+    @Timed(
+            value = "auth.login",
+            description = "Time taken to login a user")
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
         logger.info("Attempting to login user with email: {}", request.getEmail());
