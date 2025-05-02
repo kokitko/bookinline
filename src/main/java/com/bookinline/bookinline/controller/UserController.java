@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@Tag(name = "User", description = "User management API")
+@Tag(name = "User", description = "User management API, all endpoints require authentication")
 public class UserController {
     private final UserService userService;
 
@@ -31,7 +31,14 @@ public class UserController {
 
     @PutMapping("/phone")
     @Operation(summary = "Set a phone number",
-            description = "Changes/Sets a phone number for authenticated user, requires authentication",
+            description = """
+                    Detailed description of the phone number setting process:
+                    1. The user sends a PUT request to the /phone endpoint with userRequestDto info.
+                    2. The server validates the request data.
+                    3. The server retrieves the authenticated user's ID from the security context.
+                    4. The server updates the user's phone number in the database.
+                    5. The server returns a response with the updated user information.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Changed/Set phone number successfully"),
@@ -47,11 +54,22 @@ public class UserController {
 
     @PutMapping("/email")
     @Operation(summary = "Change email",
-            description = "Changes an email for authenticated user, requires authentication",
+            description = """
+                    Detailed description of the email changing process:
+                    1. The user sends a PUT request to the /email endpoint with userRequestDto info.
+                    2. The server validates the request data.
+                    3. The server retrieves the authenticated user's ID from the security context.
+                    4. The server checks if the email already exists in the database.
+                    5. If the email exists, the server returns a conflict error.
+                    6. If the email does not exist, the server updates the user's email in the database.
+                    7. The server returns a response with the updated user information.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Email changed successfully"),
                     @ApiResponse(responseCode = "404", description = "User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
+                    @ApiResponse(responseCode = "409", description = "Email already exists",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
@@ -63,7 +81,14 @@ public class UserController {
 
     @PutMapping("/password")
     @Operation(summary = "Change password",
-            description = "Changes a password for authenticated user, requires authentication",
+            description = """
+                    Detailed description of the password changing process:
+                    1. The user sends a PUT request to the /password endpoint with userRequestDto info.
+                    2. The server validates the request data.
+                    3. The server retrieves the authenticated user's ID from the security context.
+                    4. The server updates the user's password in the database.
+                    5. The server returns a response with the updated user information.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Password changed successfully"),
@@ -79,7 +104,13 @@ public class UserController {
 
     @GetMapping("/me")
     @Operation(summary = "Get current user",
-            description = "Returns authenticated User info",
+            description = """
+                    Detailed description of the current user retrieval process:
+                    1. The user sends a GET request to the /me endpoint.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The server fetches the user's information from the database.
+                    4. The server returns a response with the user's information.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User info retrieved successfully"),
@@ -95,7 +126,16 @@ public class UserController {
 
     @GetMapping("/{userId}")
     @Operation(summary = "Get user by ID",
-            description = "Returns User info by ID, requires authentication",
+            description = """
+                    Detailed description of the user retrieval process by ID:
+                    1. The user sends a GET request to the /{userId} endpoint.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The server checks if the authenticated user is authorized to view the requested user
+                    (by checking if guest has booked a property from host user).
+                    4. If authorized, the server fetches the user's information from the database.
+                    5. The server returns a response with the user's information.
+                    6. If not authorized, the server returns a forbidden error.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "User info retrieved successfully"),
@@ -111,7 +151,14 @@ public class UserController {
 
     @DeleteMapping
     @Operation(summary = "Delete user",
-            description = "Deletes the authenticated user, requires authentication",
+            description = """
+                    Detailed description of the user deletion process:
+                    1. The user sends a DELETE request to the / endpoint.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The server checks if the user exists in the database.
+                    4. If the user exists, the server deletes the user from the database.
+                    5. The server returns a response indicating successful deletion (noContent).
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "User deleted successfully"),

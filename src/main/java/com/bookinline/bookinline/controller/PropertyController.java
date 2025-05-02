@@ -48,7 +48,21 @@ public class PropertyController {
     @PreAuthorize("hasRole('ROLE_HOST')")
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new property",
-            description = "Create a new property with images, requires host role",
+            description = """
+                    Detailed description of the create property endpoint:
+                    - **Endpoint**: `/api/properties/create`
+                    - **Method**: `POST`
+                    - **Request Body**: Multipart form data containing the property details and optional images.
+                    
+                    1. The user must be authenticated and have the `ROLE_HOST` role to access this endpoint.
+                    2. The request body must contain a JSON object representing the property details.
+                    3. The user can optionally include images in the request.
+                    4. The server will validate the property data and images.
+                    5. The server retrieves the authenticated user's ID from the security context.
+                    6. The server uploads the images to the server and associates them with the property.
+                    7. The server creates a new property in the database with the provided details and images.
+                    8. The server returns a response with the created property details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Property created successfully"),
@@ -82,7 +96,21 @@ public class PropertyController {
     @PreAuthorize("hasRole('ROLE_HOST')")
     @PostMapping("/update/{propertyId}")
     @Operation(summary = "Update an existing property",
-            description = "Update an existing property, requires host role",
+            description = """
+                    Detailed description of the update property endpoint:
+                    - **Endpoint**: `/api/properties/update/{propertyId}`
+                    - **Method**: `POST`
+                    - **Request Body**: Multipart form data containing the property details and optional images.
+                    
+                    1. The user must be authenticated and have the `ROLE_HOST` role to access this endpoint.
+                    2. The request body must contain a JSON object representing the property details.
+                    3. The user can optionally include images in the request.
+                    4. The server will validate the property data and images.
+                    5. The server retrieves the authenticated user's ID from the security context.
+                    6. The server uploads the images to the server and associates them with the property.
+                    7. The server updates the existing property in the database with the provided details and images.
+                    8. The server returns a response with the updated property details.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Property updated successfully"),
@@ -118,7 +146,18 @@ public class PropertyController {
     @PreAuthorize("hasRole('ROLE_HOST')")
     @DeleteMapping("/delete/{propertyId}")
     @Operation(summary = "Delete an existing property",
-            description = "Delete an existing property, requires host role",
+            description = """
+                    Detailed description of the delete property endpoint:
+                    - **Endpoint**: `/api/properties/delete/{propertyId}`
+                    - **Method**: `DELETE`
+                    - **Request Body**: None
+                    
+                    1. The user must be authenticated and have the `ROLE_HOST` role to access this endpoint.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The server checks if the property exists and if the user has permission to delete it.
+                    4. The server deletes the property from the database.
+                    5. The server returns a response indicating the deletion was successful (noContent).
+                    """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Property deleted successfully"),
@@ -136,7 +175,17 @@ public class PropertyController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get an existing property by ID",
-            description = "Get an existing property, does not require authentication",
+            description = """
+                    Detailed description of the get property by ID endpoint:
+                    - **Endpoint**: `/api/properties/{id}`
+                    - **Method**: `GET`
+                    - **Request Body**: None
+                    
+                    1. The user does not need to be authenticated to access this endpoint.
+                    2. The server retrieves the property by its ID.
+                    3. The server returns a response with the property details.
+                    4. If the property is not found, the server returns a 404 error.
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "Property found"),
                     @ApiResponse(responseCode = "404", description = "Property not found",
@@ -150,7 +199,18 @@ public class PropertyController {
 
     @GetMapping("/available")
     @Operation(summary = "Get a list of available properties",
-            description = "Get a list of available properties, does not require authentication",
+            description = """
+                    Detailed description of the get available properties endpoint:
+                    - **Endpoint**: `/api/properties/available`
+                    - **Method**: `GET`
+                    - **Request Body**: None
+                    
+                    1. The user does not need to be authenticated to access this endpoint.
+                    2. The server retrieves a paginated list of available properties.
+                    3. The server returns a response with the list of available properties.
+                    4. The user can specify the page and size of the results using query parameters.
+                    5. If no properties are found, the server returns an empty list.
+                    """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "Available properties found")
             }

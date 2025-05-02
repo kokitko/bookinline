@@ -54,10 +54,6 @@ public class PropertyServiceImpl implements PropertyService {
                     logger.error("User not found with ID: {}", userId);
                     return new UserNotFoundException("User not found");
                 });
-        if (user.getRole() == Role.GUEST) {
-            logger.warn("User with ID: {} does not have permission to create a property", userId);
-            throw new UnauthorizedActionException("User does not have permission to create a property");
-        }
         Property property = PropertyMapper.mapToPropertyEntity(propertyRequestDto);
         property.setHost(user);
         property.setAvailable(true);

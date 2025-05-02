@@ -27,7 +27,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Register a new user", responses = {
+    @Operation(summary = "Register a new user",
+            description = """
+                    Detailed description of the registration process:
+                    1. The user sends a POST request to the /register endpoint with their details.
+                    2. The server validates the request data.
+                    3. If the data is valid, the server creates a new user in the database.
+                    4. The server responds with a success message and the user's jwtToken.
+                    5. If the data is invalid or the user already exists, the server responds with an error message.
+                    """, responses = {
             @ApiResponse(responseCode = "200", description = "User registered successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class))),
@@ -39,7 +47,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Login an existing user", responses = {
+    @Operation(summary = "Login an existing user",
+            description = """
+                    Detailed description of the login process:
+                    1. The user sends a POST request to the /login endpoint with their credentials.
+                    2. The server validates the request data.
+                    3. If the credentials are valid, the server generates a jwtToken for the user.
+                    4. The server responds with a success message and the user's jwtToken.
+                    5. If the credentials are invalid, the server responds with an error message.
+                    6. The user can use the jwtToken for subsequent requests to access protected resources.
+                    """, responses = {
             @ApiResponse(responseCode = "200", description = "User logged in successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))

@@ -4,6 +4,7 @@ import com.bookinline.bookinline.dto.UserRequestDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.exception.EmailBeingUsedException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.mapper.UserMapper;
@@ -57,6 +58,10 @@ public class UserServiceImpl implements UserService {
                     logger.error("User with ID {} not found", userId);
                     return new UserNotFoundException("User not found");
                 });
+        if (userRepository.existsByEmail(userRequestDto.getEmail())) {
+            logger.error("Email {} already exists", userRequestDto.getEmail());
+            throw new EmailBeingUsedException("Email already exists");
+        }
         user.setEmail(userRequestDto.getEmail());
         userRepository.save(user);
         return UserMapper.mapToUserResponseDto(user);
