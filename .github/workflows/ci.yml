@@ -1,41 +1,56 @@
-name: Build & Test BookInLine application
+name: CI - Dev Build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ master, dev ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ master, dev ]
 
 jobs:
-  build:
+  dev-build:
     runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres:17
-        ports:
-          - 5432:5432
+        image: postgres:latest
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
           POSTGRES_DB: bookinline
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+          image: redis:latest
+          ports:
+            - 6379:6379
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -DskipTests
+
+      - name: Run Docker Compose (DEV)
+        run: docker-compose -f docker-compose-dev.yml up -d --build
+
+      - name: Wait for services
+        run: sleep 20
+
+      - name: Run integration tests
+        run: mvn verify -Pintegration
+
+      - name: Shutdown containers
+        run: docker-compose -f docker-compose-dev.yml down
