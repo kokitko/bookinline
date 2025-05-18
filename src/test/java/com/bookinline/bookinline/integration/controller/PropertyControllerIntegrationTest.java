@@ -46,6 +46,7 @@ public class PropertyControllerIntegrationTest {
 
     User host;
     Property property;
+    Property property2;
     String token;
 
     @BeforeEach
@@ -77,6 +78,20 @@ public class PropertyControllerIntegrationTest {
         property.setAvailable(true);
         property.setHost(host);
         property = propertyRepository.save(property);
+
+        property2 = new Property();
+        property2.setTitle("Luxury Villa");
+        property2.setDescription("A luxury villa with a sea view.");
+        property2.setCity("Beach City");
+        property2.setFloorArea(300);
+        property2.setBedrooms(4);
+        property2.setPropertyType(PropertyType.VILLA);
+        property2.setAddress("456 Ocean Drive");
+        property2.setPricePerNight(new BigDecimal("500.00"));
+        property2.setMaxGuests(8);
+        property2.setAvailable(true);
+        property2.setHost(host);
+        property2 = propertyRepository.save(property2);
 
         AuthenticationRequest request = new AuthenticationRequest("janedoe91@gmail.com", "password456");
         token = mockMvc.perform(post("/api/auth/login")
@@ -285,5 +300,64 @@ public class PropertyControllerIntegrationTest {
                 .andExpect(jsonPath("$.properties[0].title").value(property.getTitle()))
                 .andExpect(jsonPath("$.properties[0].description").value(property.getDescription()))
                 .andExpect(jsonPath("$.properties[0].address").value(property.getAddress()));
+    }
+
+    @Test
+    void shouldReturnFilteredByPriceProperties() throws Exception {
+        String filters = """
+                {"title": null,
+                "city": null,
+                "propertyType": null,
+                "minFloorArea": null,
+                "maxFloorArea": null,
+                "minBedrooms": null,
+                "maxBedrooms": null,
+                "address": null,
+                "minPrice": null,
+                "maxPrice": null,
+                "minGuests": null,
+                "maxGuests": null,
+                "minRating": null,
+                "maxRating": null,
+                "sortBy": "pricePerNight",
+                "sortOrder": "DESC"}
+                """;
+        mockMvc.perform(get("/api/properties/filter")
+                    .param("page", "0")
+                    .param("size", "10")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(filters))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.properties[0].title").value(property2.getTitle()))
+                .andExpect(jsonPath("$.properties[1].title").value(property.getTitle()));
+    }
+
+    @Test
+    void shouldReturnFilteredByMaxGuestsAndCityProperties() throws Exception {
+        String filters = """
+                {"title": null,
+                "city": "Beach City",
+                "propertyType": null,
+                "minFloorArea": null,
+                "maxFloorArea": null,
+                "minBedrooms": null,
+                "maxBedrooms": null,
+                "address": null,
+                "minPrice": null,
+                "maxPrice": null,
+                "minGuests": 3,
+                "maxGuests": 8,
+                "minRating": null,
+                "maxRating": null,
+                "sortBy": null,
+                "sortOrder": null}
+                """;
+        mockMvc.perform(get("/api/properties/filter")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(filters))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.properties[0].title").value(property2.getTitle()));
     }
 }

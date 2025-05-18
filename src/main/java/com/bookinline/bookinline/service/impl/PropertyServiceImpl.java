@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.service.impl;
 
+import com.bookinline.bookinline.dto.PropertyFilterDto;
 import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
@@ -14,12 +15,14 @@ import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.mapper.PropertyMapper;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.ImageService;
+import com.bookinline.bookinline.specification.PropertySpecification;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.service.PropertyService;
@@ -179,6 +182,21 @@ public class PropertyServiceImpl implements PropertyService {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Page<Property> propertyPage = propertyRepository.findByAvailableTrue(pageable);
         logger.info("Found {} available properties", propertyPage.getTotalElements());
+
+        return PropertyMapper.mapToPropertyResponsePage(propertyPage);
+    }
+
+    @Timed(
+            value = "property.getFilteredProperties",
+            description = "Time taken to get customly filtered properties")
+    @Override
+    public PropertyResponsePage getFilteredProperties(PropertyFilterDto propertyFilterDto, int page, int size) {
+        logger.info("Fetching filtered properties with filters: {}, page: {}, size: {}", propertyFilterDto, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Specification<Property> specification = PropertySpecification.withAvailability()
+                .and(new PropertySpecification(propertyFilterDto));
+        Page<Property> propertyPage = propertyRepository.findAll(specification, pageable);
+        logger.info("Found {} filtered properties", propertyPage.getTotalElements());
 
         return PropertyMapper.mapToPropertyResponsePage(propertyPage);
     }

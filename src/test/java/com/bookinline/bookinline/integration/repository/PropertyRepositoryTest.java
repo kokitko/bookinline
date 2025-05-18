@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,5 +90,22 @@ public class PropertyRepositoryTest {
 
         Assertions.assertThat(foundProperty).isNotNull();
         Assertions.assertThat(foundProperty.getId()).isEqualTo(property1.getId());
+    }
+
+    @Test
+    public void PropertyRepository_FindAll_ReturnsAllFilteredAndPaginatedPropertiesPage() {
+        propertyRepository.saveAll(List.of(property1, property2));
+        Pageable pageable = Pageable.ofSize(10);
+        Specification<Property> specification = (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.and(
+                    criteriaBuilder.equal(root.get("available"), true),
+                    criteriaBuilder.equal(root.get("city"), "Cityville")
+            );
+        };
+
+        Page<Property> propertiesPage = propertyRepository.findAll(specification, pageable);
+
+        Assertions.assertThat(propertiesPage).isNotNull();
+        Assertions.assertThat(propertiesPage.getTotalElements()).isEqualTo(1);
     }
 }

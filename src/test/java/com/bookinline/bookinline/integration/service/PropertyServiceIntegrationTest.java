@@ -1,7 +1,9 @@
 package com.bookinline.bookinline.integration.service;
 
+import com.bookinline.bookinline.dto.PropertyFilterDto;
 import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
+import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.PropertyType;
@@ -37,6 +39,10 @@ public class PropertyServiceIntegrationTest {
     private User user = new User();
     private Property property = new Property();
     private PropertyRequestDto propertyRequestDto = new PropertyRequestDto();
+
+    private Property property1 = new Property();
+    private Property property2 = new Property();
+    private Property property3 = new Property();
 
     @BeforeEach
     public void setup() {
@@ -105,5 +111,79 @@ public class PropertyServiceIntegrationTest {
 
         Property deletedProperty = propertyRepository.findById(savedProperty.getId()).orElse(null);
         Assertions.assertThat(deletedProperty).isNull();
+    }
+
+    @Test
+    public void PropertyService_GetFilteredPropertiesByDesc_ReturnsFilteredProperties() {
+        initializeMoreProperties();
+
+        PropertyFilterDto filter = new PropertyFilterDto();
+        filter.setCity("Beach City");
+        filter.setMinPrice(new BigDecimal("140.00"));
+        filter.setSortBy("pricePerNight");
+        filter.setSortOrder("DESC");
+
+        PropertyResponsePage page = propertyService.getFilteredProperties(filter, 0, 10);
+        Assertions.assertThat(page).isNotNull();
+        Assertions.assertThat(page.getProperties().size()).isEqualTo(3);
+        Assertions.assertThat(page.getProperties().getFirst().getPricePerNight()).isEqualTo(new BigDecimal("700.00"));
+    }
+
+    @Test
+    public void PropertyService_GetFilteredPropertiesByApartment_ReturnsFilteredProperties() {
+        initializeMoreProperties();
+
+        PropertyFilterDto filter = new PropertyFilterDto();
+        filter.setPropertyType(PropertyType.APARTMENT);
+        filter.setSortBy("pricePerNight");
+        filter.setSortOrder("DESC");
+
+        PropertyResponsePage page = propertyService.getFilteredProperties(filter, 0, 10);
+        Assertions.assertThat(page).isNotNull();
+        Assertions.assertThat(page.getProperties().size()).isEqualTo(1);
+        Assertions.assertThat(page.getProperties().getFirst().getTitle()).isEqualTo(property1.getTitle());
+    }
+
+    private void initializeMoreProperties() {
+        property = propertyRepository.save(property);
+
+        property1.setTitle("Cozy Apartment");
+        property1.setDescription("A cozy apartment in the city center.");
+        property1.setPropertyType(PropertyType.APARTMENT);
+        property1.setCity("Beach City");
+        property1.setFloorArea(80);
+        property1.setBedrooms(2);
+        property1.setAddress("123 Main St");
+        property1.setPricePerNight(new BigDecimal("150.00"));
+        property1.setMaxGuests(4);
+        property1.setAvailable(true);
+        property1.setHost(user);
+        propertyRepository.save(property1);
+
+        property2.setTitle("Studio Apartment");
+        property2.setDescription("A studio apartment with a sea view.");
+        property2.setPropertyType(PropertyType.STUDIO);
+        property2.setCity("Beach City");
+        property2.setFloorArea(50);
+        property2.setBedrooms(1);
+        property2.setAddress("789 Ocean Blvd");
+        property2.setPricePerNight(new BigDecimal("100.00"));
+        property2.setMaxGuests(2);
+        property2.setAvailable(true);
+        property2.setHost(user);
+        propertyRepository.save(property2);
+
+        property3.setTitle("Farmhouse");
+        property3.setDescription("A farmhouse in the countryside.");
+        property3.setPropertyType(PropertyType.FARMHOUSE);
+        property3.setCity("Beach City");
+        property3.setFloorArea(300);
+        property3.setBedrooms(5);
+        property3.setAddress("101 Country Rd");
+        property3.setPricePerNight(new BigDecimal("700.00"));
+        property3.setMaxGuests(10);
+        property3.setAvailable(true);
+        property3.setHost(user);
+        propertyRepository.save(property3);
     }
 }

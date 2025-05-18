@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.controller;
 
+import com.bookinline.bookinline.dto.PropertyFilterDto;
 import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
@@ -219,6 +220,32 @@ public class PropertyController {
                                                                         @RequestParam(defaultValue = "10") int size) {
         PropertyResponsePage availableProperties = propertyService.getAvailableProperties(page, size);
         return ResponseEntity.ok(availableProperties);
+    }
+
+    @GetMapping("/filter")
+    @Operation(summary = "Get a list of filtered properties",
+            description = """
+                    Detailed description of the get filtered properties endpoint:
+                    - **Endpoint**: `/api/properties/filter`
+                    - **Method**: `GET`
+                    - **Request Body**: None
+                    
+                    1. The user does not need to be authenticated to access this endpoint.
+                    2. The server retrieves a paginated list of properties based on the provided filters.
+                    3. The server returns a response with the list of filtered properties.
+                    4. The user can specify the page and size of the results using query parameters.
+                    5. If no properties are found, the server returns an empty list.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Filtered properties found")
+            }
+    )
+    public ResponseEntity<PropertyResponsePage> getFilteredProperties(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestBody PropertyFilterDto propertyFilterDto) {
+        PropertyResponsePage filteredProperties = propertyService.getFilteredProperties(propertyFilterDto, page, size);
+        return ResponseEntity.ok(filteredProperties);
     }
 
     private Long getAuthenticatedUserId() {
