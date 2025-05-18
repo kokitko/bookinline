@@ -1,11 +1,14 @@
 package com.bookinline.bookinline.integration.controller;
 
 import com.bookinline.bookinline.dto.AuthenticationRequest;
+import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
+import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,6 +45,8 @@ public class PropertyControllerIntegrationTest {
     private UserRepository userRepository;
     @Autowired
     private PropertyRepository propertyRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
     @Autowired
     private Flyway flyway;
 
@@ -305,7 +311,10 @@ public class PropertyControllerIntegrationTest {
     @Test
     void shouldReturnFilteredByPriceProperties() throws Exception {
         String filters = """
-                {"title": null,
+                {
+                "checkIn": "01/01/2020",
+                "checkOut": "01/01/2030",
+                "title": null,
                 "city": null,
                 "propertyType": null,
                 "minFloorArea": null,
@@ -335,7 +344,10 @@ public class PropertyControllerIntegrationTest {
     @Test
     void shouldReturnFilteredByMaxGuestsAndCityProperties() throws Exception {
         String filters = """
-                {"title": null,
+                {
+                "checkIn": "01/01/2020",
+                "checkOut": "01/01/2030",
+                "title": null,
                 "city": "Beach City",
                 "propertyType": null,
                 "minFloorArea": null,
@@ -359,5 +371,44 @@ public class PropertyControllerIntegrationTest {
                         .content(filters))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.properties[0].title").value(property2.getTitle()));
+    }
+
+    @Test
+    void shouldReturnZeroAvailablePropertiesAfterSorting() throws Exception {
+        Booking booking = new Booking();
+        booking.setCheckInDate(LocalDate.of(2023, 1, 1));
+        booking.setCheckOutDate(LocalDate.of(2023, 1, 10));
+        booking.setProperty(property2);
+        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setGuest(host);
+        booking = bookingRepository.save(booking);
+        String filters = """
+                {
+                "checkIn": "01/01/2020",
+                "checkOut": "01/01/2030",
+                "title": null,
+                "city": "Beach City",
+                "propertyType": null,
+                "minFloorArea": null,
+                "maxFloorArea": null,
+                "minBedrooms": null,
+                "maxBedrooms": null,
+                "address": null,
+                "minPrice": null,
+                "maxPrice": null,
+                "minGuests": 3,
+                "maxGuests": 8,
+                "minRating": null,
+                "maxRating": null,
+                "sortBy": null,
+                "sortOrder": null}
+                """;
+        mockMvc.perform(get("/api/properties/filter")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(filters))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.properties").isEmpty());
     }
 }

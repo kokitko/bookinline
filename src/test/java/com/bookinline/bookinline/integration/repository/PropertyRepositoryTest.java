@@ -98,7 +98,6 @@ public class PropertyRepositoryTest {
         Pageable pageable = Pageable.ofSize(10);
         Specification<Property> specification = (root, query, criteriaBuilder) -> {
             return criteriaBuilder.and(
-                    criteriaBuilder.equal(root.get("available"), true),
                     criteriaBuilder.equal(root.get("city"), "Cityville")
             );
         };

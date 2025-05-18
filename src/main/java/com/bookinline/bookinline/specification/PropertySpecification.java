@@ -1,10 +1,13 @@
 package com.bookinline.bookinline.specification;
 
 import com.bookinline.bookinline.dto.PropertyFilterDto;
+import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
+import com.bookinline.bookinline.entity.enums.BookingStatus;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,8 +79,29 @@ public class PropertySpecification implements Specification<Property> {
 
         return cb.and(predicates.toArray(new Predicate[0]));
     }
+
     public static Specification<Property> withAvailability() {
         return (root, query, criteriaBuilder) ->
             criteriaBuilder.isTrue(root.get("available"));
+    }
+
+    public static Specification<Property> availableBetween(LocalDate checkIn, LocalDate checkOut) {
+        return (root, query, cb) -> {
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<Booking> bookingRoot = subquery.from(Booking.class);
+
+            subquery.select(bookingRoot.get("property").get("id"));
+            subquery.where(
+                    cb.equal(bookingRoot.get("property"), root),
+                    bookingRoot.get("status").in(List.of(BookingStatus.CONFIRMED, BookingStatus.PENDING)),
+                    cb.not(
+                            cb.or(
+                                    cb.lessThanOrEqualTo(bookingRoot.get("checkOutDate"), checkIn),
+                                    cb.greaterThanOrEqualTo(bookingRoot.get("checkInDate"), checkOut)
+                            )
+                    )
+            );
+            return cb.not(cb.exists(subquery));
+        };
     }
 }

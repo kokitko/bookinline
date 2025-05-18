@@ -194,6 +194,7 @@ public class PropertyServiceImpl implements PropertyService {
         logger.info("Fetching filtered properties with filters: {}, page: {}, size: {}", propertyFilterDto, page, size);
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         Specification<Property> specification = PropertySpecification.withAvailability()
+                .and(PropertySpecification.availableBetween(propertyFilterDto.getCheckIn(), propertyFilterDto.getCheckOut()))
                 .and(new PropertySpecification(propertyFilterDto));
         Page<Property> propertyPage = propertyRepository.findAll(specification, pageable);
         logger.info("Found {} filtered properties", propertyPage.getTotalElements());
