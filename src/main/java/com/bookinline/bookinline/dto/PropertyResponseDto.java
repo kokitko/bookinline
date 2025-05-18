@@ -18,6 +18,10 @@ public class PropertyResponseDto implements Serializable {
     private Long id;
     private String title;
     private String description;
+    private String city;
+    private String propertyType;
+    private Integer floorArea;
+    private Integer bedrooms;
     private String address;
     private BigDecimal pricePerNight;
     private Integer maxGuests;

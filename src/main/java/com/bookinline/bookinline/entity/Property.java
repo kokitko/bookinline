@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.entity;
 
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,15 +26,21 @@ public class Property {
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
+    private String city;
+    @Enumerated(EnumType.STRING)
+    private PropertyType propertyType;
+    @Column(nullable = false)
+    private Integer floorArea;
+    @Column(nullable = false)
+    private Integer bedrooms;
+    @Column(nullable = false)
     private String address;
     @Column(nullable = false)
     private BigDecimal pricePerNight;
-
     @Column(nullable = false)
     private Integer maxGuests;
     @Column(nullable = false)
     private Boolean available = true;
-
     @Column(nullable = false)
     private Double averageRating = 0.0;
 

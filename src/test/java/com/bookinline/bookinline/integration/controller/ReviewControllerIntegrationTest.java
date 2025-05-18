@@ -7,6 +7,7 @@ import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
@@ -85,7 +86,11 @@ public class ReviewControllerIntegrationTest {
 
         property.setTitle("Beautiful Beach House");
         property.setDescription("A beautiful beach house with stunning views.");
-        property.setAddress("123 Beach Ave, Miami, FL");
+        property.setCity("Miami, FL");
+        property.setFloorArea(250);
+        property.setBedrooms(5);
+        property.setPropertyType(PropertyType.HOUSE);
+        property.setAddress("123 Beach Ave");
         property.setPricePerNight(new BigDecimal(250.0));
         property.setHost(host);
         property.setMaxGuests(6);

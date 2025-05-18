@@ -5,6 +5,7 @@ import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.impl.PropertyServiceImpl;
@@ -43,7 +44,11 @@ public class PropertyServiceTest {
     public void setup() {
         property.setTitle("Luxury Villa");
         property.setDescription("A luxury villa with a sea view.");
-        property.setAddress("456 Ocean Ave, Beach City");
+        property.setCity("Beach City");
+        property.setPropertyType(PropertyType.VILLA);
+        property.setFloorArea(200);
+        property.setBedrooms(3);
+        property.setAddress("456 Ocean Ave");
         property.setPricePerNight(new BigDecimal("500.00"));
         property.setMaxGuests(6);
         property.setAvailable(true);
@@ -51,7 +56,11 @@ public class PropertyServiceTest {
 
         propertyRequestDto.setTitle("Luxury Villa");
         propertyRequestDto.setDescription("A luxury villa with a sea view.");
-        propertyRequestDto.setAddress("456 Ocean Ave, Beach City");
+        propertyRequestDto.setCity("Beach City");
+        propertyRequestDto.setPropertyType("VILLA");
+        propertyRequestDto.setFloorArea(200);
+        propertyRequestDto.setBedrooms(3);
+        propertyRequestDto.setAddress("456 Ocean Ave");
         propertyRequestDto.setPricePerNight(new BigDecimal("500.00"));
         propertyRequestDto.setMaxGuests(6);
     }

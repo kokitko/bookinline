@@ -4,6 +4,7 @@ import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.PropertyRepository;
@@ -52,6 +53,10 @@ public class PropertyServiceIntegrationTest {
 
         property.setTitle("Luxury Villa");
         property.setDescription("A luxury villa with a sea view.");
+        property.setPropertyType(PropertyType.VILLA);
+        property.setCity("Beach City");
+        property.setFloorArea(200);
+        property.setBedrooms(3);
         property.setAddress("456 Ocean Ave, Beach City");
         property.setPricePerNight(new BigDecimal("500.00"));
         property.setMaxGuests(6);
@@ -60,6 +65,10 @@ public class PropertyServiceIntegrationTest {
 
         propertyRequestDto.setTitle("Luxury Villa");
         propertyRequestDto.setDescription("A luxury villa with a sea view.");
+        propertyRequestDto.setPropertyType("VILLA");
+        propertyRequestDto.setCity("Beach City");
+        propertyRequestDto.setFloorArea(200);
+        propertyRequestDto.setBedrooms(3);
         propertyRequestDto.setAddress("456 Ocean Ave, Beach City");
         propertyRequestDto.setPricePerNight(new BigDecimal("500.00"));
         propertyRequestDto.setMaxGuests(6);

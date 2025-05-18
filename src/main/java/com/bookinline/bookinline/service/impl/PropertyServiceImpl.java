@@ -5,6 +5,7 @@ import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Image;
 import com.bookinline.bookinline.entity.Property;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.PropertyNotFoundException;
@@ -101,6 +102,10 @@ public class PropertyServiceImpl implements PropertyService {
         }
         property.setTitle(propertyRequestDto.getTitle());
         property.setDescription(propertyRequestDto.getDescription());
+        property.setCity(propertyRequestDto.getCity());
+        property.setPropertyType(PropertyType.valueOf(propertyRequestDto.getPropertyType()));
+        property.setFloorArea(propertyRequestDto.getFloorArea());
+        property.setBedrooms(propertyRequestDto.getBedrooms());
         property.setAddress(propertyRequestDto.getAddress());
         property.setPricePerNight(propertyRequestDto.getPricePerNight());
         property.setMaxGuests(propertyRequestDto.getMaxGuests());

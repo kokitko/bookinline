@@ -4,6 +4,7 @@ import com.bookinline.bookinline.dto.PropertyRequestDto;
 import com.bookinline.bookinline.dto.PropertyResponseDto;
 import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Property;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.mapper.PropertyMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +25,8 @@ public class PropertyMapperTest {
 
     @Test
     void shouldMapToPropertyResponseDto() {
-        Property property = new Property(1L, "Test Property", "Test Description", "Test Address",
-                BigDecimal.valueOf(100), 2, true, 4.5, null, new ArrayList<>(), null, null);
+        Property property = new Property(1L, "Test Property", "Test Description", "Test City", PropertyType.APARTMENT,
+                2, 50,"Test Address", BigDecimal.valueOf(100), 2, true, 4.5, null, new ArrayList<>(), null, null);
 
         PropertyResponseDto responseDto = propertyMapper.mapToPropertyResponseDto(property);
 
@@ -33,6 +34,10 @@ public class PropertyMapperTest {
         assertThat(responseDto.getId()).isEqualTo(property.getId());
         assertThat(responseDto.getTitle()).isEqualTo(property.getTitle());
         assertThat(responseDto.getDescription()).isEqualTo(property.getDescription());
+        assertThat(responseDto.getCity()).isEqualTo(property.getCity());
+        assertThat(responseDto.getPropertyType()).isEqualTo(String.valueOf(property.getPropertyType()));
+        assertThat(responseDto.getFloorArea()).isEqualTo(property.getFloorArea());
+        assertThat(responseDto.getBedrooms()).isEqualTo(property.getBedrooms());
         assertThat(responseDto.getAddress()).isEqualTo(property.getAddress());
         assertThat(responseDto.getPricePerNight()).isEqualTo(property.getPricePerNight());
         assertThat(responseDto.getMaxGuests()).isEqualTo(property.getMaxGuests());
@@ -43,14 +48,18 @@ public class PropertyMapperTest {
 
     @Test
     void shouldMapToPropertyEntity() {
-        PropertyRequestDto requestDto = new PropertyRequestDto("Test Property", "Test Description",
-                "Test Address", BigDecimal.valueOf(100), 2);
+        PropertyRequestDto requestDto = new PropertyRequestDto("Test Property", "Test Description", "Test City",
+                "APARTMENT", 50, 2, "Test Address", BigDecimal.valueOf(100), 2);
 
         Property property = propertyMapper.mapToPropertyEntity(requestDto);
 
         assertThat(property).isNotNull();
         assertThat(property.getTitle()).isEqualTo(requestDto.getTitle());
         assertThat(property.getDescription()).isEqualTo(requestDto.getDescription());
+        assertThat(property.getCity()).isEqualTo(requestDto.getCity());
+        assertThat(property.getPropertyType()).isEqualTo(PropertyType.valueOf(requestDto.getPropertyType()));
+        assertThat(property.getFloorArea()).isEqualTo(requestDto.getFloorArea());
+        assertThat(property.getBedrooms()).isEqualTo(requestDto.getBedrooms());
         assertThat(property.getAddress()).isEqualTo(requestDto.getAddress());
         assertThat(property.getPricePerNight()).isEqualTo(requestDto.getPricePerNight());
         assertThat(property.getMaxGuests()).isEqualTo(requestDto.getMaxGuests());
@@ -59,9 +68,9 @@ public class PropertyMapperTest {
     @Test
     void shouldMapToPropertyResponsePage() {
         List<Property> properties = List.of(
-                new Property(1L, "Test Property 1", "Test Description 1", "Test Address 1",
+                new Property(1L, "Test Property 1", "Test Description 1", "Test City 1", PropertyType.APARTMENT, 2, 50, "Test Address 1",
                         BigDecimal.valueOf(100), 2, true, 4.5, null, new ArrayList<>(), null, null),
-                new Property(2L, "Test Property 2", "Test Description 2", "Test Address 2",
+                new Property(2L, "Test Property 2", "Test Description 2", "Test City 2", PropertyType.APARTMENT, 2, 50, "Test Address 2",
                         BigDecimal.valueOf(200), 4, true, 4.0, null, new ArrayList<>(), null, null)
         );
 

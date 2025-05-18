@@ -6,6 +6,7 @@ import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
@@ -69,7 +70,11 @@ public class BookingServiceIntegrationTest {
 
         property.setTitle("Luxury Villa");
         property.setDescription("A luxury villa with a sea view.");
-        property.setAddress("456 Ocean Ave, Beach City");
+        property.setCity("Beach City");
+        property.setFloorArea(200);
+        property.setBedrooms(3);
+        property.setPropertyType(PropertyType.VILLA);
+        property.setAddress("456 Ocean Ave");
         property.setPricePerNight(new BigDecimal("500.00"));
         property.setMaxGuests(6);
         property.setHost(host);

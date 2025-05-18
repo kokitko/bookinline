@@ -3,6 +3,7 @@ package com.bookinline.bookinline.integration.controller;
 import com.bookinline.bookinline.dto.AuthenticationRequest;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.PropertyRepository;
@@ -66,7 +67,11 @@ public class PropertyControllerIntegrationTest {
         property = new Property();
         property.setTitle("Cozy Apartment");
         property.setDescription("A cozy apartment in the city center.");
-        property.setAddress("123 Main St, Cityville");
+        property.setCity("Cityville");
+        property.setFloorArea(150);
+        property.setBedrooms(2);
+        property.setPropertyType(PropertyType.APARTMENT);
+        property.setAddress("123 Main St");
         property.setPricePerNight(new BigDecimal("100.00"));
         property.setMaxGuests(2);
         property.setAvailable(true);
@@ -86,6 +91,10 @@ public class PropertyControllerIntegrationTest {
         String propertyInfo = """
                     {"title": "test property",
                     "description": "test description",
+                    "propertyType": "APARTMENT",
+                    "city": "test city",
+                    "floorArea": "100",
+                    "bedrooms": "2",
                     "address": "test address",
                     "pricePerNight": "100.0",
                     "maxGuests": "3"}
@@ -128,6 +137,10 @@ public class PropertyControllerIntegrationTest {
         String propertyInfo = """
                     {"title: "",
                     "description": "test description",
+                    "propertyType": "APARTMENT",
+                    "city": "test city",
+                    "floorArea": "100",
+                    "bedrooms": "2",
                     "address": "test address",
                     "pricePerNight": "100.0",
                     "maxGuests": "3"}
@@ -177,6 +190,10 @@ public class PropertyControllerIntegrationTest {
         String propertyInfo = """
                     {"title": "Updated Property",
                     "description": "Updated description",
+                    "propertyType": "APARTMENT",
+                    "city": "Updated city",
+                    "floorArea": "200",
+                    "bedrooms": "3",
                     "address": "Updated address",
                     "pricePerNight": "150.0",
                     "maxGuests": "4"}
@@ -202,6 +219,10 @@ public class PropertyControllerIntegrationTest {
         String propertyInfo = """
                     {"title: "",
                     "description": "Updated description",
+                    "propertyType": "APARTMENT",
+                    "city": "Updated city",
+                    "floorArea": "200",
+                    "bedrooms": "3",
                     "address": "Updated address",
                     "pricePerNight": "150.0",
                     "maxGuests": "4"}

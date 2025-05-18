@@ -75,7 +75,7 @@ public class AdminControllerTest {
     @DisplayName("Get property details - successful scenario")
     void testGetPropertyDetails() throws Exception {
         PropertyResponseDto response = new PropertyResponseDto(1L, "Test Property", null,
-                null, null, null, null, null, null);
+                null, null, null, null, null, null,null,null,null,null);
 
         Mockito.when(adminService.getPropertyById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 

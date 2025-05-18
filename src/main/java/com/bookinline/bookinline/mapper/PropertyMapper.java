@@ -3,6 +3,7 @@ package com.bookinline.bookinline.mapper;
 import com.bookinline.bookinline.dto.*;
 import com.bookinline.bookinline.entity.Image;
 import com.bookinline.bookinline.entity.Property;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,6 +14,10 @@ public class PropertyMapper {
                 .id(property.getId())
                 .title(property.getTitle())
                 .description(property.getDescription())
+                .city(property.getCity())
+                .propertyType(String.valueOf(property.getPropertyType()))
+                .floorArea(property.getFloorArea())
+                .bedrooms(property.getBedrooms())
                 .address(property.getAddress())
                 .pricePerNight(property.getPricePerNight())
                 .maxGuests(property.getMaxGuests())
@@ -31,6 +36,10 @@ public class PropertyMapper {
         return Property.builder()
                 .title(propertyRequestDto.getTitle())
                 .description(propertyRequestDto.getDescription())
+                .city(propertyRequestDto.getCity())
+                .propertyType(PropertyType.valueOf(propertyRequestDto.getPropertyType()))
+                .floorArea(propertyRequestDto.getFloorArea())
+                .bedrooms(propertyRequestDto.getBedrooms())
                 .address(propertyRequestDto.getAddress())
                 .pricePerNight(propertyRequestDto.getPricePerNight())
                 .maxGuests(propertyRequestDto.getMaxGuests())

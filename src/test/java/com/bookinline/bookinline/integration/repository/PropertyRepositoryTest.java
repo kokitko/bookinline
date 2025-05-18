@@ -2,6 +2,7 @@ package com.bookinline.bookinline.integration.repository;
 
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
@@ -48,7 +49,11 @@ public class PropertyRepositoryTest {
 
         property1.setTitle("Cozy Apartment");
         property1.setDescription("A cozy apartment in the city center.");
-        property1.setAddress("123 Main St, Cityville");
+        property1.setCity("Cityville");
+        property1.setFloorArea(80);
+        property1.setBedrooms(1);
+        property1.setPropertyType(PropertyType.APARTMENT);
+        property1.setAddress("123 Main St");
         property1.setPricePerNight(new BigDecimal("100.00"));
         property1.setMaxGuests(2);
         property1.setAvailable(true);
@@ -56,7 +61,11 @@ public class PropertyRepositoryTest {
 
         property2.setTitle("Luxury Villa");
         property2.setDescription("A luxury villa with a sea view.");
-        property2.setAddress("456 Ocean Ave, Beach City");
+        property2.setCity("Beach City");
+        property2.setFloorArea(200);
+        property2.setBedrooms(3);
+        property2.setPropertyType(PropertyType.VILLA);
+        property2.setAddress("456 Ocean Ave");
         property2.setPricePerNight(new BigDecimal("500.00"));
         property2.setMaxGuests(6);
         property2.setAvailable(true);

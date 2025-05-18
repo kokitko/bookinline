@@ -22,6 +22,20 @@ public class PropertyRequestDto {
     @NotBlank(message = "Description is required")
     private String description;
 
+    @NotBlank(message = "City is required")
+    private String city;
+
+    @NotBlank(message = "Property type is required")
+    private String propertyType;
+
+    @NotNull(message = "Floor area is required")
+    @Positive(message = "Floor area must be a positive number")
+    private Integer floorArea;
+
+    @NotNull(message = "Number of bedrooms is required")
+    @Positive(message = "Number of bedrooms must be a positive number")
+    private Integer bedrooms;
+
     @NotBlank(message = "Address is required")
     private String address;
 

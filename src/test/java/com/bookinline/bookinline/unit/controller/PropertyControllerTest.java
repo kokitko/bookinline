@@ -36,7 +36,7 @@ public class PropertyControllerTest {
     @Test
     @DisplayName("Get property by ID - successful scenario")
     void testGetPropertyById() throws Exception {
-        PropertyResponseDto response = new PropertyResponseDto(1L, null, null,null,
+        PropertyResponseDto response = new PropertyResponseDto(1L, null,null,null,null,null, null,null,
                 null, null, null, null, null);
 
         Mockito.when(propertyService.getPropertyById(Mockito.anyLong())).thenReturn(response);
@@ -51,8 +51,8 @@ public class PropertyControllerTest {
     void testGetAvailableProperties() throws Exception {
         PropertyResponsePage responsePage = new PropertyResponsePage(
                 0, 10, 1, 2, true, List.of(
-                        new PropertyResponseDto(1L, null, null, null, null, null, null, null, null),
-                        new PropertyResponseDto(2L, null, null, null, null, null, null, null, null)
+                        new PropertyResponseDto(1L, null, null, null, null, null, null, null, null,null,null,null,null),
+                        new PropertyResponseDto(2L, null, null, null, null, null, null, null, null,null,null,null,null)
                 )
         );
 

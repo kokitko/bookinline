@@ -2,6 +2,7 @@ package com.bookinline.bookinline.integration.security;
 
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.User;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.PropertyRepository;
@@ -34,7 +35,7 @@ public class SecurityIntegrationTest {
     public void publicEndpointsAreAccessible() throws Exception {
         User guest = new User(null,"johndoe88@gmail.com","password123","John Doe",null, UserStatus.ACTIVE,null, Role.GUEST,null,null);
         guest = userRepository.save(guest);
-        Property property = new Property(null,"test","test","test",new BigDecimal(100.0),3,true,0.0,guest,null,null,null);
+        Property property = new Property(null,"test","test", "test", PropertyType.APARTMENT, 100, 2,"test",new BigDecimal(100.0),3,true,0.0,guest,null,null,null);
         property = propertyRepository.save(property);
 
         mockMvc.perform(get("/api/properties/available")).andExpect(status().isOk());

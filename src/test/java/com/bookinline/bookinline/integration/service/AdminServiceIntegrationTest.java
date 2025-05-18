@@ -8,6 +8,7 @@ import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
@@ -83,7 +84,11 @@ public class AdminServiceIntegrationTest {
 
         property.setTitle("Beautiful Beach House");
         property.setDescription("A beautiful beach house with stunning views.");
-        property.setAddress("123 Beach St, Miami, FL");
+        property.setCity("Miami, FL");
+        property.setPropertyType(PropertyType.HOUSE);
+        property.setFloorArea(150);
+        property.setBedrooms(3);
+        property.setAddress("123 Beach St");
         property.setPricePerNight(new BigDecimal(400.0));
         property.setAvailable(true);
         property.setMaxGuests(4);
