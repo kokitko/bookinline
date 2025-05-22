@@ -331,7 +331,7 @@ public class PropertyControllerIntegrationTest {
                 "sortBy": "pricePerNight",
                 "sortOrder": "DESC"}
                 """;
-        mockMvc.perform(get("/api/properties/filter")
+        mockMvc.perform(post("/api/properties/filter")
                     .param("page", "0")
                     .param("size", "10")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -364,7 +364,7 @@ public class PropertyControllerIntegrationTest {
                 "sortBy": null,
                 "sortOrder": null}
                 """;
-        mockMvc.perform(get("/api/properties/filter")
+        mockMvc.perform(post("/api/properties/filter")
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -403,7 +403,7 @@ public class PropertyControllerIntegrationTest {
                 "sortBy": null,
                 "sortOrder": null}
                 """;
-        mockMvc.perform(get("/api/properties/filter")
+        mockMvc.perform(post("/api/properties/filter")
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)

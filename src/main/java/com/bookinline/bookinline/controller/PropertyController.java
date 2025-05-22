@@ -222,7 +222,7 @@ public class PropertyController {
         return ResponseEntity.ok(availableProperties);
     }
 
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     @Operation(summary = "Get a list of filtered properties",
             description = """
                     Detailed description of the get filtered properties endpoint:
@@ -243,7 +243,7 @@ public class PropertyController {
     public ResponseEntity<PropertyResponsePage> getFilteredProperties(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestBody PropertyFilterDto propertyFilterDto) {
+            @RequestBody() PropertyFilterDto propertyFilterDto) {
         PropertyResponsePage filteredProperties = propertyService.getFilteredProperties(propertyFilterDto, page, size);
         return ResponseEntity.ok(filteredProperties);
     }
