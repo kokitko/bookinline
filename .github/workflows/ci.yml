@@ -39,8 +39,8 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      - name: Run Docker Compose (DEV)
-        run: docker compose -f docker-compose-dev.yml up -d --build
+      - name: Run Docker Compose
+        run: docker compose up -d --build
 
       - name: Wait for services
         run: sleep 20
@@ -49,4 +49,4 @@ jobs:
         run: mvn verify -Pintegration
 
       - name: Shutdown containers
-        run: docker compose -f docker-compose-dev.yml down
+        run: docker compose down

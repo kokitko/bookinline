@@ -3,29 +3,36 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+    container_name: bookinline-backend
     ports:
       - "8080:8080"
     depends_on:
       - redis
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bookinline
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
+      SPRING_PROFILE: docker
+    networks:
+      - app-net
 
   redis:
     image: redis:latest
+    container_name: redis
     ports:
       - "6379:6379"
+    networks:
+      - app-net
 
   postgres:
     image: postgres:latest
+    container_name: postgres
     environment:
       POSTGRES_DB: bookinline
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
+    networks:
+      - app-net
+
+networks:
+  app-net:
