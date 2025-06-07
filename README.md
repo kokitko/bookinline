@@ -92,10 +92,10 @@ BookInLine is a Spring Boot-based backend application designed as an analogue of
 ### 🐳 Deployment
 
 1. Fully dockerized for development
-2. Dev environment includes:
-      · PostgreSQL 
-      · Redis
-      · Backend app with exposed Swagger UI
+2. Dev environment includes: <br /> 
+      · PostgreSQL <br />
+      · Redis <br />
+      · Backend app with exposed Swagger UI <br />
 
 ### 📚 Swagger API Docs
 
@@ -115,7 +115,7 @@ It provides complete documentation for all endpoints, including security schemes
 ## 🛠 Manual Setup (Local Development)
 
 **1. Start PostgreSQL**
-Make sure you have PostgreSQL running locally. Create a database (e.g., bookinline) and configure your credentials in application.properties:
+Make sure you have PostgreSQL running locally. Create a database (e.g., bookinline) and configure your credentials in application-dev.properties:
 ```
 spring.datasource.url=jdbc:postgresql://localhost:5432/bookinline
 spring.datasource.username=your_username
@@ -156,7 +156,7 @@ The project includes a Docker configuration for local development. <br />
 
 **2. Run with Docker Compose** <br /> 
 
-The docker-compose-dev.yml file contains services for the app, PostgreSQL, and Redis: <br />
+The docker-compose.yml file contains services for the app, PostgreSQL, and Redis: <br />
 
 `docker-compose -d up` <br />
 
