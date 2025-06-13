@@ -7,14 +7,13 @@ import com.bookinline.bookinline.dto.PropertyResponsePage;
 import com.bookinline.bookinline.entity.Image;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.enums.PropertyType;
-import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.PropertyNotFoundException;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.mapper.PropertyMapper;
 import com.bookinline.bookinline.repository.UserRepository;
-import com.bookinline.bookinline.service.ImageService;
+import com.bookinline.bookinline.service.S3Service;
 import com.bookinline.bookinline.specification.PropertySpecification;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
@@ -28,6 +27,7 @@ import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.service.PropertyService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +37,15 @@ public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
-    private final ImageService imageService;
+    private final S3Service s3Service
+            ;
 
     public PropertyServiceImpl(PropertyRepository propertyRepository,
                                UserRepository userRepository,
-                               ImageService imageService) {
+                               S3Service s3Service) {
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
-        this.imageService = imageService;
+        this.s3Service = s3Service;
     }
 
     @Timed(
@@ -68,7 +69,13 @@ public class PropertyServiceImpl implements PropertyService {
         if (images != null && !images.isEmpty()) {
             logger.info("Uploading images for property with ID: {}", property.getId());
             for (MultipartFile file : images) {
-                String imageUrl = imageService.uploadImage(file);
+                String imageUrl;
+                try {
+                    imageUrl = s3Service.uploadFile(file);
+                } catch (IOException e) {
+                    logger.error("Error uploading image: {}", e.getMessage());
+                    throw new RuntimeException("Failed to upload image", e);
+                }
                 Image image = new Image();
                 image.setImageUrl(imageUrl);
                 image.setProperty(property);
@@ -118,7 +125,13 @@ public class PropertyServiceImpl implements PropertyService {
         if (images != null && !images.isEmpty()) {
             logger.info("Uploading images for property with ID: {}", propertyId);
             for (MultipartFile file : images) {
-                String imageUrl = imageService.uploadImage(file);
+                String imageUrl;
+                try {
+                    imageUrl = s3Service.uploadFile(file);
+                } catch (IOException e) {
+                    logger.error("Error uploading image: {}", e.getMessage());
+                    throw new RuntimeException("Failed to upload image", e);
+                }
                 Image image = new Image();
                 image.setImageUrl(imageUrl);
                 image.setProperty(property);

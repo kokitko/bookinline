@@ -58,10 +58,10 @@ INSERT INTO review (id, rating, comment, created_at, author_id, property_id) VAL
     (4, 4, 'Nice place but needs some maintenance.', '2023-07-08 20:00:00', (SELECT id FROM users WHERE email = 'alice@example.com'), 3);
 
 INSERT INTO image (id, image_url, property_id) VALUES
-    (1, '/images/apart1.jpeg', 1),
-    (2, '/images/apart2.jpg', 1),
-    (3, '/images/cabin1.jpeg', 2),
-    (4, '/images/cabin2.jpg', 2),
-    (5, '/images/villa1.jpg', 3),
-    (6, '/images/villa2.jpg', 3),
-    (7, '/images/loft1.jpg', 4)
+    (1, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/apart1.jpeg', 1),
+    (2, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/apart2.jpg', 1),
+    (3, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/cabin1.jpeg', 2),
+    (4, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/cabin2.jpg', 2),
+    (5, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/villa1.jpg', 3),
+    (6, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/villa2.jpg', 3),
+    (7, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/loft1.jpg', 4)
