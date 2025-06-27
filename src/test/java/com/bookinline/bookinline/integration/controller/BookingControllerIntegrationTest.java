@@ -103,7 +103,7 @@ public class BookingControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authenticationRequest)))
                 .andReturn().getResponse().getContentAsString();
-        guestToken = guestToken.substring(10, guestToken.length() - 2);
+        guestToken = guestToken.substring(16, guestToken.length() - 2);
     }
 
     @Test
@@ -165,7 +165,7 @@ public class BookingControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestForHost)))
                 .andReturn().getResponse().getContentAsString();
-        hostToken = hostToken.substring(10, hostToken.length() - 2);
+        hostToken = hostToken.substring(16, hostToken.length() - 2);
 
         mockMvc.perform(get("/api/bookings/" + booking.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -212,7 +212,7 @@ public class BookingControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestForHost)))
                 .andReturn().getResponse().getContentAsString();
-        hostToken = hostToken.substring(10, hostToken.length() - 2);
+        hostToken = hostToken.substring(16, hostToken.length() - 2);
 
         mockMvc.perform(get("/api/bookings/property/" + property.getId())
                         .param("page", "0")
@@ -231,7 +231,7 @@ public class BookingControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestForHost)))
                 .andReturn().getResponse().getContentAsString();
-        hostToken = hostToken.substring(10, hostToken.length() - 2);
+        hostToken = hostToken.substring(16, hostToken.length() - 2);
 
         mockMvc.perform(get("/api/bookings/property/" + 99999)
                         .param("page", "0")
@@ -264,7 +264,7 @@ public class BookingControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestForHost)))
                 .andReturn().getResponse().getContentAsString();
-        hostToken = hostToken.substring(10, hostToken.length() - 2);
+        hostToken = hostToken.substring(16, hostToken.length() - 2);
 
         mockMvc.perform(put("/api/bookings/" + booking.getId() + "/confirm")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -280,7 +280,7 @@ public class BookingControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestForHost)))
                 .andReturn().getResponse().getContentAsString();
-        hostToken = hostToken.substring(10, hostToken.length() - 2);
+        hostToken = hostToken.substring(16, hostToken.length() - 2);
 
         mockMvc.perform(put("/api/bookings/99999/confirm")
                         .contentType(MediaType.APPLICATION_JSON)

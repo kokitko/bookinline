@@ -116,7 +116,7 @@ public class ReviewControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authenticationRequest)))
                 .andReturn().getResponse().getContentAsString();
-        guestToken = guestToken.substring(10, guestToken.length() - 2);
+        guestToken = guestToken.substring(16, guestToken.length() - 2);
     }
 
     @Test

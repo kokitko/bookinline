@@ -13,6 +13,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+    public static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 7;
+    private static final long ACCESS_TOKEN_VALIDITY = 1000 * 60 * 15;
     private final String SECRET_KEY = "aFWFNBw2wNmVqtkMmQTlRRSAT61X9Wmp";
 
     public String extractUsername(String token) {
@@ -29,7 +31,17 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .claim("role", userDetails.getAuthorities().stream().findFirst().get().getAuthority())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities().stream().findFirst().get().getAuthority())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -39,7 +51,7 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 

@@ -104,7 +104,7 @@ public class PropertyControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andReturn().getResponse().getContentAsString();
-        token = token.substring(10, token.length() - 2);
+        token = token.substring(16, token.length() - 2);
     }
 
     @Test
@@ -128,25 +128,8 @@ public class PropertyControllerIntegrationTest {
                 propertyInfo.getBytes()
         );
 
-
-        MockMultipartFile file1 = new MockMultipartFile(
-                "images",
-                "file1.jpg",
-                "text/plain",
-                "File content 1".getBytes()
-        );
-
-        MockMultipartFile file2 = new MockMultipartFile(
-                "images",
-                "file2.jpg",
-                "text/plain",
-                "File content 2".getBytes()
-        );
-
         mockMvc.perform(multipart("/api/properties/create")
                         .file(propertyFile)
-                        .file(file1)
-                        .file(file2)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())

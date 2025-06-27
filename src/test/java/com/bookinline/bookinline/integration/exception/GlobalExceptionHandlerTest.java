@@ -180,4 +180,14 @@ public class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.message").value("User is banned"))
                 .andExpect(jsonPath("$.timestamp").exists());
     }
+
+    @Test
+    @WithMockUser
+    public void testHandleInvalidRefreshTokenException() throws Exception {
+        mockMvc.perform(get("/dummy/invalid-refresh-token"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.statusCode").value(401))
+                .andExpect(jsonPath("$.message").value("Invalid refresh token"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
 }

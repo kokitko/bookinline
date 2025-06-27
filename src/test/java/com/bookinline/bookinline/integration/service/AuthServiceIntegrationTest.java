@@ -1,12 +1,13 @@
 package com.bookinline.bookinline.integration.service;
 
+import com.bookinline.bookinline.dto.AuthResponse;
 import com.bookinline.bookinline.dto.AuthenticationRequest;
-import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.security.JwtService;
 import com.bookinline.bookinline.service.AuthService;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,8 @@ public class AuthServiceIntegrationTest {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtService jwtService;
     @Autowired
     private Flyway flyway;
 
@@ -49,11 +53,20 @@ public class AuthServiceIntegrationTest {
     }
 
     @Test
-    public void AuthService_Register_ReturnsAuthenticationResponse() {
-        AuthenticationResponse response = authService.register(registerRequest);
+    public void AuthService_Register_ReturnsAuthResponseDto() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        AuthResponse authResponse = authService.register(registerRequest, response);
 
-        Assertions.assertThat(response).isNotNull();
-        Assertions.assertThat(response.getToken()).isNotNull();
+        Assertions.assertThat(authResponse).isNotNull();
+        Assertions.assertThat(authResponse.getAccessToken()).isNotNull();
+
+        String setCookieHeader = response.getHeader("Set-Cookie");
+        Assertions.assertThat(setCookieHeader).isNotNull();
+        Assertions.assertThat(setCookieHeader).contains("refreshToken")
+                .contains("HttpOnly")
+                .contains("Secure")
+                .contains("SameSite=Strict");
+
     }
 
     @Test
@@ -62,9 +75,49 @@ public class AuthServiceIntegrationTest {
         AuthenticationRequest request = new AuthenticationRequest(
                 guest.getEmail(), guestPassword);
 
-        AuthenticationResponse response = authService.login(request);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        AuthResponse authResponse = authService.login(request, response);
 
-        Assertions.assertThat(response).isNotNull();
-        Assertions.assertThat(response.getToken()).isNotNull();
+        Assertions.assertThat(authResponse).isNotNull();
+        Assertions.assertThat(authResponse.getAccessToken()).isNotNull();
+
+        String setCookieHeader = response.getHeader("Set-Cookie");
+        Assertions.assertThat(setCookieHeader).isNotNull();
+        Assertions.assertThat(setCookieHeader).contains("refreshToken")
+                .contains("HttpOnly")
+                .contains("Secure")
+                .contains("SameSite=Strict");
+    }
+
+    @Test
+    public void AuthService_RefreshToken_ReturnsAuthResponse() {
+        String refreshToken = jwtService.generateRefreshToken(guest);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        AuthResponse authResponse = authService.refreshToken(refreshToken, response);
+
+        Assertions.assertThat(authResponse).isNotNull();
+        Assertions.assertThat(authResponse.getAccessToken()).isNotNull();
+
+        String setCookieHeader = response.getHeader("Set-Cookie");
+        Assertions.assertThat(setCookieHeader).isNotNull();
+        Assertions.assertThat(setCookieHeader).contains("refreshToken")
+                .contains("HttpOnly")
+                .contains("Secure")
+                .contains("SameSite=Strict");
+    }
+
+    @Test
+    public void AuthService_Logout_ClearsRefreshTokenCookie() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        authService.logout(response);
+
+        String setCookieHeader = response.getHeader("Set-Cookie");
+        Assertions.assertThat(setCookieHeader).isNotNull();
+        Assertions.assertThat(setCookieHeader).contains("refreshToken=;")
+                .contains("Max-Age=0")
+                .contains("Path=/")
+                .contains("HttpOnly")
+                .contains("Secure")
+                .contains("SameSite=Strict");
     }
 }

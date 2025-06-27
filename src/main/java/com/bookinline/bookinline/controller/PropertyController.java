@@ -243,8 +243,8 @@ public class PropertyController {
     public ResponseEntity<PropertyResponsePage> getFilteredProperties(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestBody() PropertyFilterDto propertyFilterDto) {
-        PropertyResponsePage filteredProperties = propertyService.getFilteredProperties(propertyFilterDto, page, size);
+            @RequestBody PropertyFilterDto filters) {
+        PropertyResponsePage filteredProperties = propertyService.getFilteredProperties(filters, page, size);
         return ResponseEntity.ok(filteredProperties);
     }
 

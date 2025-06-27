@@ -124,7 +124,7 @@ public class AdminControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authenticationRequest)))
                 .andReturn().getResponse().getContentAsString();
-        adminToken = adminToken.substring(10, adminToken.length() - 2);
+        adminToken = adminToken.substring(16, adminToken.length() - 2);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class AdminControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(guestRequest)))
                 .andReturn().getResponse().getContentAsString();
-        guestToken = guestToken.substring(10, guestToken.length() - 2);
+        guestToken = guestToken.substring(16, guestToken.length() - 2);
 
         mockMvc.perform(get("/api/admin/users/" + guest.getId())
                         .header("Authorization", "Bearer " + guestToken)

@@ -61,12 +61,12 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         if (authentication == null ||
                 !authentication.isAuthenticated() ||
                 authentication instanceof AnonymousAuthenticationToken) {
-            limit = Bandwidth.classic(100, Refill.greedy(100, Duration.ofMinutes(10)));
+            limit = Bandwidth.classic(1000, Refill.greedy(100, Duration.ofMinutes(10)));
         } else if (authentication.getAuthorities().stream().anyMatch(
                 a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            limit = Bandwidth.classic(1000, Refill.greedy(1000, Duration.ofMinutes(10)));
+            limit = Bandwidth.classic(5000, Refill.greedy(1000, Duration.ofMinutes(10)));
         } else {
-            limit = Bandwidth.classic(500, Refill.greedy(500, Duration.ofMinutes(10)));
+            limit = Bandwidth.classic(2500, Refill.greedy(500, Duration.ofMinutes(10)));
         }
 
         return Bucket4j.builder()

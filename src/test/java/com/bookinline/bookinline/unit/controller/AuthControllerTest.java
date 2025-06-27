@@ -1,12 +1,14 @@
 package com.bookinline.bookinline.unit.controller;
 
 import com.bookinline.bookinline.controller.AuthController;
+import com.bookinline.bookinline.dto.AuthResponse;
 import com.bookinline.bookinline.dto.AuthenticationRequest;
-import com.bookinline.bookinline.dto.AuthenticationResponse;
 import com.bookinline.bookinline.dto.RegisterRequest;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.security.JwtAuthFilter;
+import com.bookinline.bookinline.security.JwtService;
 import com.bookinline.bookinline.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,8 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +34,7 @@ class AuthControllerTest {
     @MockBean
     private AuthService authService;
     @MockBean
-    private JwtAuthFilter jwtAuthFilter;
+    private JwtService jwtService;
     @MockBean
     private UserDetailsService userDetailsService;
     @Autowired
@@ -45,15 +46,15 @@ class AuthControllerTest {
         RegisterRequest registerRequest = new RegisterRequest("John Doe", "johndoe88@gmail.com",
                 "password123", Role.GUEST);
 
-        AuthenticationResponse response = new AuthenticationResponse("fake-jwt-token");
+        AuthResponse response = new AuthResponse("fake-access-jwt-token");
 
-        Mockito.when(authService.register(any(RegisterRequest.class))).thenReturn(response);
+        Mockito.when(authService.register(any(RegisterRequest.class), any(HttpServletResponse.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("fake-jwt-token"));
+                .andExpect(jsonPath("$.accessToken").value("fake-access-jwt-token"));
     }
 
     @Test
@@ -61,15 +62,15 @@ class AuthControllerTest {
     void shouldLoginUserSuccessfully() throws Exception {
         AuthenticationRequest loginRequest = new AuthenticationRequest("johndoe88@gmail.com", "password123");
 
-        AuthenticationResponse response = new AuthenticationResponse("another-fake-jwt-token");
+        AuthResponse response = new AuthResponse("fake-access-jwt-token");
 
-        Mockito.when(authService.login(any(AuthenticationRequest.class))).thenReturn(response);
+        Mockito.when(authService.login(any(AuthenticationRequest.class), any(HttpServletResponse.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("another-fake-jwt-token"));
+                .andExpect(jsonPath("$.accessToken").value("fake-access-jwt-token"));
     }
 
     @Test

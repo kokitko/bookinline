@@ -102,4 +102,9 @@ public class DummyController {
     public void throwUserIsBannedException() {
         throw new UserIsBannedException("User is banned");
     }
+
+    @GetMapping("/invalid-refresh-token")
+    public void throwInvalidRefreshTokenException() {
+        throw new InvalidRefreshTokenException("Invalid refresh token");
+    }
 }

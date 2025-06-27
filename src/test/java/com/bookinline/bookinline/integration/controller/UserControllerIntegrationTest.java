@@ -78,7 +78,7 @@ public class UserControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andReturn().getResponse().getContentAsString();
-        token = token.substring(10, token.length() - 2);
+        token = token.substring(16, token.length() - 2);
     }
 
     @Test

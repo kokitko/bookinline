@@ -1,19 +1,23 @@
 package com.bookinline.bookinline.service.impl;
 
-import com.bookinline.bookinline.dto.AuthenticationRequest;
-import com.bookinline.bookinline.dto.AuthenticationResponse;
-import com.bookinline.bookinline.dto.RegisterRequest;
+import com.bookinline.bookinline.dto.*;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.exception.EmailBeingUsedException;
 import com.bookinline.bookinline.exception.IllegalRoleException;
+import com.bookinline.bookinline.exception.InvalidRefreshTokenException;
 import com.bookinline.bookinline.exception.InvalidUserDataException;
 import io.micrometer.core.annotation.Timed;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.bookinline.bookinline.repository.UserRepository;
@@ -28,19 +32,25 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           JwtService jwtService,
+                           AuthenticationManager authenticationManager,
+                           UserDetailsService userDetailsService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
     }
 
     @Timed(
             value = "auth.register",
             description = "Time taken to register a user")
     @Override
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request, HttpServletResponse response) {
         logger.info("Attempting to register user with email: {}", request.getEmail());
 
 
@@ -61,16 +71,28 @@ public class AuthServiceImpl implements AuthService {
         user.setStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        String accessToken = jwtService.generateToken(user);
+
+        logger.info("Setting refresh token for user: {}", request.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(user);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
         logger.info("User registered successfully: {}", request.getEmail());
-        return new AuthenticationResponse(token);
+        return new AuthResponse(accessToken);
     }
 
     @Timed(
             value = "auth.login",
             description = "Time taken to login a user")
     @Override
-    public AuthenticationResponse login(AuthenticationRequest request) {
+    public AuthResponse login(AuthenticationRequest request, HttpServletResponse response) {
         logger.info("Attempting to login user with email: {}", request.getEmail());
 
         try {
@@ -88,8 +110,69 @@ public class AuthServiceImpl implements AuthService {
                     return new InvalidUserDataException("Invalid email or password");
                 });
 
-        String token = jwtService.generateToken(user);
+        String accessToken = jwtService.generateToken(user);
+
+        logger.info("Setting refresh token for user: {}", request.getEmail());
+        String refreshToken = jwtService.generateRefreshToken(user);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
         logger.info("User logged in successfully: {}", request.getEmail());
-        return new AuthenticationResponse(token);
+        return new AuthResponse(accessToken);
+    }
+
+    @Timed(
+            value = "auth.refreshToken",
+            description = "Time taken to refresh a token")
+    @Override
+    public AuthResponse refreshToken(String refreshToken, HttpServletResponse response) {
+        if (refreshToken == null || jwtService.isTokenExpired(refreshToken)) {
+            logger.warn("Invalid refresh token: {}", refreshToken);
+            throw new InvalidRefreshTokenException("Invalid refresh token");
+        }
+
+        String username = jwtService.extractUsername(refreshToken);
+        logger.info("Attempting to refresh token for user: {}", username);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        String newAccessToken = jwtService.generateToken(userDetails);
+
+        logger.info("Setting new refresh token for user: {}", username);
+        String newRefreshToken = jwtService.generateRefreshToken(userDetails);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        logger.info("Refreshed token successfully for user: {}", username);
+        return new AuthResponse(newAccessToken);
+    }
+
+    @Timed(
+            value = "auth.logout",
+            description = "Time taken to logout a user")
+    @Override
+    public void logout(HttpServletResponse response) {
+        logger.info("Logging out user, clearing refresh token cookie");
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+        logger.info("User logged out successfully");
     }
 }
