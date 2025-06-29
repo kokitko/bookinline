@@ -64,7 +64,7 @@ class UserControllerTest {
 
         Mockito.when(userService.getUserById(Mockito.anyLong())).thenReturn(responseDto);
 
-        mockMvc.perform(get("/api/user/me")) // Укажи правильный путь
+        mockMvc.perform(get("/api/user/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test@example.com"));
     }

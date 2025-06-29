@@ -62,7 +62,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("Get user details - successful scenario")
     void testGetUserDetails() throws Exception {
-        UserResponseDto response = new UserResponseDto("testemail@example.com",null,null,null,null);
+        UserResponseDto response = new UserResponseDto("testemail@example.com",null,null,null,null, null);
 
         Mockito.when(adminService.getUserById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 

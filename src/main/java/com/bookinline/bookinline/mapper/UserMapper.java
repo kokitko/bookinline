@@ -11,6 +11,7 @@ public class UserMapper {
                 .fullName(user.getFullName())
                 .status(String.valueOf(user.getStatus()))
                 .statusDescription(user.getStatusDescription())
+                .role(String.valueOf(user.getRole()))
                 .build();
     }
 }
