@@ -126,13 +126,18 @@ public class UserServiceImpl implements UserService {
             value = "user.deleteUser",
             description = "Time taken to delete user")
     @Override
-    public void deleteUser(Long userId) {
+    public void deleteUser(Long userId, String password) {
         logger.info("Deleting user with ID: {}", userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     logger.error("User with ID {} not found", userId);
                     return new UserNotFoundException("User not found");
                 });
-        userRepository.delete(user);
+        if (!encoder.matches(password, user.getPassword())) {
+            userRepository.delete(user);
+        } else {
+            logger.error("Password mismatch for user ID: {}", userId);
+            throw new UnauthorizedActionException("Incorrect password");
+        }
     }
 }

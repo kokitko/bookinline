@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.security;
 
+import com.bookinline.bookinline.exception.TokenIsExpiredException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -56,6 +57,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Access token is expired or invalid\"}");
+                return;
             }
         }
         filterChain.doFilter(request, response);

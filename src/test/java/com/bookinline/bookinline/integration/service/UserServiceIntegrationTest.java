@@ -82,7 +82,7 @@ public class UserServiceIntegrationTest {
 
     @Test
     public void UserService_DeleteUser_ReturnsVoid() {
-        userService.deleteUser(testUser.getId());
+        userService.deleteUser(testUser.getId(), testUserRequestDto.getPassword());
 
         User deletedUser = userRepository.findById(testUser.getId()).orElse(null);
         Assertions.assertThat(deletedUser).isNull();

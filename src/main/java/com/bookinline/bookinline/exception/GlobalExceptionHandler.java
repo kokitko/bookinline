@@ -203,4 +203,15 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorObject, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(TokenIsExpiredException.class)
+    public ResponseEntity<ErrorObject> handleTokenIsExpiredException(TokenIsExpiredException e) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(401);
+        errorObject.setMessage(e.getMessage());
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.UNAUTHORIZED);
+    }
 }

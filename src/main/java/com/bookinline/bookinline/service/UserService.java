@@ -9,5 +9,5 @@ public interface UserService {
     UserResponseDto setPassword(UserRequestDto userRequestDto, Long userId);
     UserResponseDto getUserById(Long userId);
     UserResponseDto getUserById(Long userId, Long authenticatedUserId);
-    void deleteUser(Long userId);
+    void deleteUser(Long userId, String password);
 }

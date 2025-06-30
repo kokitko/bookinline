@@ -77,9 +77,9 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false) // Set to true in production
                 .path("/")
-                .sameSite("Strict")
+                .sameSite("Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -116,9 +116,9 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false) // Set to true in production
                 .path("/")
-                .sameSite("Strict")
+                .sameSite("Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -148,9 +148,9 @@ public class AuthServiceImpl implements AuthService {
         String newRefreshToken = jwtService.generateRefreshToken(userDetails);
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false) // Set to true in production
                 .path("/")
-                .sameSite("Strict")
+                .sameSite("Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -167,9 +167,9 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Logging out user, clearing refresh token cookie");
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false) // Set to true in production
                 .path("/")
-                .sameSite("Strict")
+                .sameSite("Secure")
                 .maxAge(0)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());

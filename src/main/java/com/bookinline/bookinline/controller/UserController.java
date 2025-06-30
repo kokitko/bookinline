@@ -1,5 +1,6 @@
 package com.bookinline.bookinline.controller;
 
+import com.bookinline.bookinline.dto.PasswordDto;
 import com.bookinline.bookinline.dto.UserRequestDto;
 import com.bookinline.bookinline.dto.UserResponseDto;
 import com.bookinline.bookinline.entity.User;
@@ -153,10 +154,10 @@ public class UserController {
     @Operation(summary = "Delete user",
             description = """
                     Detailed description of the user deletion process:
-                    1. The user sends a DELETE request to the / endpoint.
+                    1. The user sends a DELETE request to the / endpoint with their password.
                     2. The server retrieves the authenticated user's ID from the security context.
                     3. The server checks if the user exists in the database.
-                    4. If the user exists, the server deletes the user from the database.
+                    4. If the user exists and password matches, the server deletes the user from the database.
                     5. The server returns a response indicating successful deletion (noContent).
                     """,
             security = @SecurityRequirement(name = "bearerAuth"),
@@ -166,9 +167,9 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
             }
     )
-    public ResponseEntity<Void> deleteUser() {
+    public ResponseEntity<Void> deleteUser(@RequestBody PasswordDto passwordDto) {
         Long userId = getAuthenticatedUserId();
-        userService.deleteUser(userId);
+        userService.deleteUser(userId, passwordDto.getPassword());
         return ResponseEntity.noContent().build();
     }
 
