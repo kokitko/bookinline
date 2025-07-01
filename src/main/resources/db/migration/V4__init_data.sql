@@ -64,4 +64,9 @@ INSERT INTO image (id, image_url, property_id) VALUES
     (4, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/cabin2.jpg', 2),
     (5, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/villa1.jpg', 3),
     (6, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/villa2.jpg', 3),
-    (7, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/loft1.jpg', 4)
+    (7, 'https://bookinline-bucket.s3.eu-north-1.amazonaws.com/loft1.jpg', 4);
+
+SELECT setval('booking_seq', (SELECT MAX(id) FROM booking));
+SELECT setval('image_seq', (SELECT MAX(id) FROM image));
+SELECT setval('property_seq', (SELECT MAX(id) FROM property));
+SELECT setval('review_seq', (SELECT MAX(id) FROM review));
