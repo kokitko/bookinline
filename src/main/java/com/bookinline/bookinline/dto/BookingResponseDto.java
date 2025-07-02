@@ -18,4 +18,6 @@ public class BookingResponseDto {
     private String guestName;
     private String propertyTitle;
     private String status;
+    private Long propertyId;
+    private Long hostId;
 }

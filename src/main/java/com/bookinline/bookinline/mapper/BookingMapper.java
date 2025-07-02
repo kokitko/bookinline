@@ -20,6 +20,8 @@ public class BookingMapper {
                 .guestName(booking.getGuest().getFullName())
                 .propertyTitle(booking.getProperty().getTitle())
                 .status(String.valueOf(booking.getStatus()))
+                .propertyId(booking.getProperty().getId())
+                .hostId(booking.getProperty().getHost().getId())
                 .build();
     }
 

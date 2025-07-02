@@ -42,6 +42,8 @@ public class BookingMapperTest {
         assertThat(responseDto.getGuestName()).isEqualTo(booking.getGuest().getFullName());
         assertThat(responseDto.getPropertyTitle()).isEqualTo(booking.getProperty().getTitle());
         assertThat(responseDto.getStatus()).isEqualTo(booking.getStatus().name());
+        assertThat(responseDto.getPropertyId()).isEqualTo(booking.getProperty().getId());
+        assertThat(responseDto.getHostId()).isEqualTo(booking.getProperty().getHost().getId());
     }
 
     @Test

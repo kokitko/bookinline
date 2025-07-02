@@ -89,7 +89,7 @@ public class AdminControllerTest {
     @DisplayName("Get booking details - successful scenario")
     void testGetBookingDetails() throws Exception {
         BookingResponseDto response = new BookingResponseDto(1L, null, null,
-                null, null, null);
+                null, null, null, null, null);
 
         Mockito.when(adminService.getBookingById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 

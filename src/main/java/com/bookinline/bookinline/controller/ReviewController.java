@@ -177,6 +177,31 @@ public class ReviewController {
         return ResponseEntity.ok(reviewResponsePage);
     }
 
+    @GetMapping("/property/{propertyId}/has-review")
+    @PreAuthorize("hasRole('ROLE_GUEST')")
+    @Operation(summary = "Check if user has left a review for a property",
+            description = """
+                    Detailed description of user review check process:
+                    - **Endpoint**: `/api/reviews/property/{propertyId}/has-review`
+                    - **Method**: `GET`
+                    - **Path Variables**: `propertyId` - ID of the property
+                    
+                    1. Guest sends a GET request to the endpoint with the property ID and user ID.
+                    2. The system checks if the user has left a review for the specified property.
+                    3. Returns true if the user has left a review, false otherwise.
+                    """,
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Review existence check successful"),
+                    @ApiResponse(responseCode = "404", description = "Property or User not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorObject.class)))
+            }
+    )
+    public ResponseEntity<Boolean> hasUserLeftReviewForProperty(@PathVariable Long propertyId) {
+        Long userId = getAuthenticatedUserId();
+        boolean hasLeftReview = reviewService.hasPersonLeftReview(propertyId, userId);
+        return ResponseEntity.ok(hasLeftReview);
+    }
+
     private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

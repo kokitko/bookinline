@@ -174,6 +174,20 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Timed(
+            value = "review.hasPersonLeftReview",
+            description = "Time taken to check if a person has left a review")
+    @Override
+    public boolean hasPersonLeftReview(Long propertyId, Long userId) {
+        logger.info("Checking if user with ID: {} has left a review for property with ID: {}", userId, propertyId);
+
+        List<Review> reviews = reviewRepository.findByPropertyIdAndAuthorId(propertyId, userId);
+        boolean hasLeftReview = !reviews.isEmpty();
+        logger.info("User with ID: {} has {}left a review for property with ID: {}", userId,
+                hasLeftReview ? "" : "not ", propertyId);
+        return hasLeftReview;
+    }
+
+    @Timed(
             value = "review.calculateAverageRating",
             description = "Time taken to calculate average rating")
     private double calculateAverageRating(Long propertyId) {
@@ -205,18 +219,4 @@ public class ReviewServiceImpl implements ReviewService {
                 userId, hasStayed ? "" : "not ", propertyId);
         return hasStayed;
     }
-
-    @Timed(
-            value = "review.hasPersonLeftReview",
-            description = "Time taken to check if a person has left a review")
-    private boolean hasPersonLeftReview(Long propertyId, Long userId) {
-        logger.info("Checking if user with ID: {} has left a review for property with ID: {}", userId, propertyId);
-
-        List<Review> reviews = reviewRepository.findByPropertyIdAndAuthorId(propertyId, userId);
-        boolean hasLeftReview = !reviews.isEmpty();
-        logger.info("User with ID: {} has {}left a review for property with ID: {}", userId,
-                hasLeftReview ? "" : "not ", propertyId);
-        return hasLeftReview;
-    }
-
 }

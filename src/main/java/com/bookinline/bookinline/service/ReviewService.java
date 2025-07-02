@@ -10,4 +10,5 @@ public interface ReviewService {
     void deleteReview(Long reviewId, Long userId);
     ReviewResponsePage getReviewsByPropertyId(Long propertyId, int page, int size);
     ReviewResponsePage getReviewsByUserId(Long userId, int page, int size);
+    boolean hasPersonLeftReview(Long propertyId, Long userId);
 }

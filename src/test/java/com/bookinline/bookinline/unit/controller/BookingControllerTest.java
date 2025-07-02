@@ -63,7 +63,7 @@ public class BookingControllerTest {
     @Test
     @DisplayName("Get booking by ID - successful scenario")
     void testGetBookingById() throws Exception {
-        BookingResponseDto response = new BookingResponseDto(1L, null, null, null, null, null);
+        BookingResponseDto response = new BookingResponseDto(1L, null, null, null, null, null, null, null);
 
         Mockito.when(bookingService.getBookingById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 
@@ -77,8 +77,8 @@ public class BookingControllerTest {
     void testGetBookingsByUserId() throws Exception {
         BookingResponsePage response = new BookingResponsePage(
                 1, 10, 1, 2, true, List.of(
-                new BookingResponseDto(1L, null, null, null, null, null),
-                new BookingResponseDto(2L, null, null, null, null, null)
+                new BookingResponseDto(1L, null, null, null, null, null, null, null),
+                new BookingResponseDto(2L, null, null, null, null, null, null, null)
             )
         );
 
@@ -98,8 +98,8 @@ public class BookingControllerTest {
     void testGetBookingsByPropertyId() throws Exception {
         BookingResponsePage response = new BookingResponsePage(
                 1, 10, 1, 2, true, List.of(
-                new BookingResponseDto(1L, null, null, null, null, null),
-                new BookingResponseDto(2L, null, null, null, null, null)
+                new BookingResponseDto(1L, null, null, null, null, null, null, null),
+                new BookingResponseDto(2L, null, null, null, null, null, null, null)
             )
         );
 
