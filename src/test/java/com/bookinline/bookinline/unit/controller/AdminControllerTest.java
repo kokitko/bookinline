@@ -62,7 +62,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("Get user details - successful scenario")
     void testGetUserDetails() throws Exception {
-        UserResponseDto response = new UserResponseDto("testemail@example.com",null,null,null,null, null);
+        UserResponseDto response = new UserResponseDto(null, "testemail@example.com",null,null,null,null, null);
 
         Mockito.when(adminService.getUserById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 
@@ -101,7 +101,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("Get review by ID - successful scenario")
     void testGetReviewById() throws Exception {
-        ReviewResponseDto response = new ReviewResponseDto(1L, 5, null, null, null);
+        ReviewResponseDto response = new ReviewResponseDto(1L, 5, null, null, null, null);
 
         Mockito.when(adminService.getReviewById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 

@@ -1,9 +1,6 @@
 package com.bookinline.bookinline.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +18,6 @@ public class ReviewRequestDto {
     private int rating;
 
     @NotBlank(message = "Comment cannot be blank")
+    @Size(max = 240, message = "Comment cannot exceed 120 characters")
     private String comment;
 }

@@ -214,7 +214,9 @@ public class UserControllerIntegrationTest {
     @Test
     void shouldDeleteUser() throws Exception {
         mockMvc.perform(delete("/api/user")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString("{\"password\":\"password123\"}")))
                 .andExpect(status().isNoContent());
 
         Assertions.assertThat(userRepository.findById(user.getId())).isEmpty();

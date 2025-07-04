@@ -28,8 +28,12 @@ public class BookingMapperTest {
     void shouldMapToBookingResponseDto() {
         User user = new User();
         user.setFullName("John Doe");
+        User host = new User();
+        host.setId(1L);
+        host.setFullName("Jane Doe");
         Property property = new Property();
         property.setTitle("Test Property");
+        property.setHost(host);
         Booking booking = new Booking(1L, LocalDate.now(), LocalDate.now().plusDays(2),
                 user, property, BookingStatus.PENDING);
 
@@ -66,9 +70,15 @@ public class BookingMapperTest {
 
     @Test
     void shouldMapToBookingResponsePage() {
+        User host = new User();
+        host.setId(1L);
+        host.setFullName("Jane Doe");
+        Property property = new Property();
+        property.setTitle("Test Property");
+        property.setHost(host);
         List<Booking> bookings = List.of(
-                new Booking(1L, LocalDate.now(), LocalDate.now().plusDays(2), mock(User.class), mock(Property.class), BookingStatus.PENDING),
-                new Booking(2L, LocalDate.now().plusDays(1), LocalDate.now().plusDays(3), mock(User.class), mock(Property.class), BookingStatus.CONFIRMED)
+                new Booking(1L, LocalDate.now(), LocalDate.now().plusDays(2), mock(User.class), property, BookingStatus.PENDING),
+                new Booking(2L, LocalDate.now().plusDays(1), LocalDate.now().plusDays(3), mock(User.class), property, BookingStatus.CONFIRMED)
         );
 
         Page<Booking> bookingPage = mock(Page.class);

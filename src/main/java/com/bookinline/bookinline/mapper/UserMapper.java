@@ -6,6 +6,7 @@ import com.bookinline.bookinline.entity.User;
 public class UserMapper {
     public static UserResponseDto mapToUserResponseDto(User user) {
         return UserResponseDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .fullName(user.getFullName())

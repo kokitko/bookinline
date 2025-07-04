@@ -25,6 +25,7 @@ public class ReviewMapper {
                 .comment(review.getComment())
                 .createdAt(review.getCreatedAt())
                 .authorName(review.getAuthor().getFullName())
+                .propertyId(review.getProperty().getId())
                 .build();
     }
 

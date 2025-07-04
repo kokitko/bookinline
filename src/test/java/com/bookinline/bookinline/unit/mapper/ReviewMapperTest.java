@@ -3,6 +3,7 @@ package com.bookinline.bookinline.unit.mapper;
 import com.bookinline.bookinline.dto.ReviewRequestDto;
 import com.bookinline.bookinline.dto.ReviewResponseDto;
 import com.bookinline.bookinline.dto.ReviewResponsePage;
+import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.mapper.ReviewMapper;
@@ -27,7 +28,11 @@ public class ReviewMapperTest {
         User user = new User();
         user.setFullName("John Doe");
 
-        Review review = new Review(1L, 5, "Great place!", LocalDateTime.now(), user, null);
+        Property property = new Property();
+        property.setId(1L);
+        property.setTitle("Test Property");
+
+        Review review = new Review(1L, 5, "Great place!", LocalDateTime.now(), user, property);
 
         ReviewResponseDto responseDto = reviewMapper.mapToReviewResponseDto(review);
 
@@ -55,9 +60,14 @@ public class ReviewMapperTest {
     void shouldMapToReviewResponseEntity() {
         User user = new User();
         user.setFullName("John Doe");
+
+        Property property = new Property();
+        property.setId(1L);
+        property.setTitle("Test Property");
+
         List<Review> reviews = List.of(
-                new Review(1L, 5, "Great place!", LocalDateTime.now(), user, null),
-                new Review(2L, 4, "Good experience", LocalDateTime.now(), user, null)
+                new Review(1L, 5, "Great place!", LocalDateTime.now(), user, property),
+                new Review(2L, 4, "Good experience", LocalDateTime.now(), user, property)
         );
 
         Page<Review> reviewPage = mock(Page.class);

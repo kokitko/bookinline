@@ -61,7 +61,7 @@ public class ReviewControllerTest {
     @Test
     @DisplayName("Get review by ID - successful scenario")
     void testGetReviewById() throws Exception {
-        ReviewResponseDto response = new ReviewResponseDto(1L, 5, null, null, null);
+        ReviewResponseDto response = new ReviewResponseDto(1L, 5, null, null, null, null);
 
         Mockito.when(reviewService.getReviewById(Mockito.anyLong(), Mockito.anyLong())).thenReturn(response);
 
@@ -75,8 +75,8 @@ public class ReviewControllerTest {
     void testGetReviewsByPropertyId() throws Exception {
         ReviewResponsePage response = new ReviewResponsePage(0,2,1,2,true,
                 List.of(
-                        new ReviewResponseDto(1L, 5, null, null, null),
-                        new ReviewResponseDto(2L, 4, null, null, null)
+                        new ReviewResponseDto(1L, 5, null, null, null, null),
+                        new ReviewResponseDto(2L, 4, null, null, null, null)
                 )
         );
 
@@ -95,8 +95,8 @@ public class ReviewControllerTest {
     void testGetReviewsByUserId() throws Exception {
         ReviewResponsePage response = new ReviewResponsePage(0,2,1,2,true,
                 List.of(
-                        new ReviewResponseDto(1L, 5, null, null, null),
-                        new ReviewResponseDto(2L, 4, null, null, null)
+                        new ReviewResponseDto(1L, 5, null, null, null, null),
+                        new ReviewResponseDto(2L, 4, null, null, null, null)
                 )
         );
 

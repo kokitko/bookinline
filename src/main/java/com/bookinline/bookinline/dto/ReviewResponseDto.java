@@ -17,4 +17,5 @@ public class ReviewResponseDto {
     private String comment;
     private LocalDateTime createdAt;
     private String authorName;
+    private Long propertyId;
 }

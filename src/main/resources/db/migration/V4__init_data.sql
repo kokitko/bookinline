@@ -3,7 +3,7 @@ INSERT INTO users (email, password, full_name, phone_number, status, status_desc
     ('frank@example.com', '$2a$10$aHMzEfMH0GUuju4A09lCNO9sVBlaqUgOVCX3V0U8vE/30g.Ryl0VO', 'Frank White', '+1555666777', 'ACTIVE', NULL, 'GUEST'),
     ('bob@example.com', '$2a$10$aHMzEfMH0GUuju4A09lCNO9sVBlaqUgOVCX3V0U8vE/30g.Ryl0VO', 'Bob Smith', '+1987654321', 'WARNED', 'Suspicious activity detected', 'GUEST'),
     ('charlie@example.com', '$2a$10$aHMzEfMH0GUuju4A09lCNO9sVBlaqUgOVCX3V0U8vE/30g.Ryl0VO', 'Charlie Brown', '+1122334455', 'ACTIVE', NULL, 'HOST'),
-    ('dave@example.com', '$2a$10$aHMzEfMH0GUuju4A09lCNO9sVBlaqUgOVCX3V0U8vE/30g.Ryl0VO', 'Dave Wilson', '+1222333444', 'ACTIVE', 'Violation of community guidelines', 'HOST'),
+    ('dave@example.com', '$2a$10$aHMzEfMH0GUuju4A09lCNO9sVBlaqUgOVCX3V0U8vE/30g.Ryl0VO', 'Dave Wilson', '+1222333444', 'WARNED', 'Violation of community guidelines', 'HOST'),
     ('eve@example.com', '$2a$10$aHMzEfMH0GUuju4A09lCNO9sVBlaqUgOVCX3V0U8vE/30g.Ryl0VO', 'Eve Adams', '+1444555666', 'ACTIVE', NULL, 'ADMIN');
 
 INSERT INTO property (id, title, description, city, property_type, floor_area, bedrooms, address, price_per_night, max_guests, available, average_rating, host_id) VALUES
@@ -49,7 +49,8 @@ INSERT INTO booking (id, check_in_date, check_out_date, guest_id, property_id, s
     (6, '2023-07-01', '2023-07-07', (SELECT id FROM users WHERE email = 'alice@example.com'), 3, 'CHECKED_OUT'),
     (7, '2026-05-10', '2026-05-15', (SELECT id FROM users WHERE email = 'alice@example.com'), 1, 'PENDING'),
     (8, '2026-06-20', '2026-06-25', (SELECT id FROM users WHERE email = 'frank@example.com'), 2, 'CONFIRMED'),
-    (9, '2026-07-15', '2026-07-20', (SELECT id FROM users WHERE email = 'bob@example.com'), 3, 'CONFIRMED');
+    (9, '2026-07-15', '2026-07-20', (SELECT id FROM users WHERE email = 'bob@example.com'), 3, 'CONFIRMED'),
+    (10, '2025-05-01', '2025-05-05', (SELECT id FROM users WHERE email = 'alice@example.com'), 2, 'CHECKED_OUT');
 
 INSERT INTO review (id, rating, comment, created_at, author_id, property_id) VALUES
     (1, 5, 'Amazing place! Highly recommend.', '2024-05-16 10:00:00', (SELECT id FROM users WHERE email = 'alice@example.com'), 1),
