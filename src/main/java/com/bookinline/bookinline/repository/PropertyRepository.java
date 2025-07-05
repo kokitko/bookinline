@@ -14,4 +14,5 @@ public interface PropertyRepository extends JpaRepository<Property, Integer> {
     Page<Property> findByAvailableTrue(Pageable pageable);
     Page<Property> findAll(Specification<Property> specification, Pageable pageable);
     Optional<Property> findById(Long id);
+    Page<Property> findByHostId(Long hostId, Pageable pageable);
 }

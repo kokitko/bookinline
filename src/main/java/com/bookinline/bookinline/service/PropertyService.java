@@ -17,4 +17,5 @@ public interface PropertyService {
     PropertyResponseDto getPropertyById(Long id);
     PropertyResponsePage getAvailableProperties(int page, int size);
     PropertyResponsePage getFilteredProperties(PropertyFilterDto propertyFilterDto, int page, int size);
+    PropertyResponsePage getPropertiesByHostId(Long hostId, int page, int size);
 }

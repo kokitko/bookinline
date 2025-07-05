@@ -207,6 +207,30 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Timed(
+            value = "booking.getBookingsByHostId",
+            description = "Time taken to get bookings by host ID"
+    )
+    @Override
+    public BookingResponsePage getBookingsByHostIdAndStatus(Long hostId, String status, int page, int size) {
+        logger.info("Fetching bookings for host ID: {}, status: {}, page: {}, size: {}", hostId, status, page, size);
+        Page<Booking> bookingPage;
+        if (status.equals("any")) {
+            logger.info("Fetching bookings for host ID: {}, page: {}, size: {}", hostId, page, size);
+            Pageable pageable = Pageable.ofSize(size).withPage(page);
+            bookingPage = bookingRepository.findByHostId(hostId, pageable);
+            logger.info("Found {} bookings for host ID: {}", bookingPage.getTotalElements(), hostId);
+        } else {
+            logger.info("Fetching bookings for host ID: {}, status: {}, page: {}, size: {}", hostId, status, page, size);
+            BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
+            Pageable pageable = Pageable.ofSize(size).withPage(page);
+            bookingPage = bookingRepository.findByHostIdAndStatus(hostId, bookingStatus, pageable);
+            logger.info("Found {} bookings for host ID: {} with status: {}", bookingPage.getTotalElements(), hostId, status);
+        }
+
+        return BookingMapper.mapToBookingResponsePage(bookingPage);
+    }
+
+    @Timed(
             value = "booking.isPropertyAvailable",
             description = "Time taken to check property availability")
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {

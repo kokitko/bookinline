@@ -248,6 +248,34 @@ public class PropertyController {
         return ResponseEntity.ok(filteredProperties);
     }
 
+    @PreAuthorize("hasRole('ROLE_HOST')")
+    @GetMapping("/host")
+    @Operation(summary = "Get paginated properties for a current Host",
+            description = """
+                    Detailed description of the get paginated properties endpoint:
+                    - **Endpoint**: `/api/properties/host`
+                    - **Method**: `GET`
+                    - **Request Body**: None
+                    
+                    1. The user must be authenticated and have the `ROLE_HOST` role to access this endpoint.
+                    2. The server retrieves a paginated list of properties owned by the authenticated host.
+                    3. The server returns a response with the list of properties.
+                    4. The user can specify the page and size of the results using query parameters.
+                    5. If no properties are found, the server returns an empty list.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Properties found")
+            }
+    )
+    public ResponseEntity<PropertyResponsePage> getPropertiesByHostId(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long userId = getAuthenticatedUserId();
+        PropertyResponsePage properties = propertyService.getPropertiesByHostId(userId, page, size);
+        return ResponseEntity.ok(properties);
+    }
+
     private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

@@ -33,7 +33,6 @@ public class S3ServiceImpl implements S3Service {
                 .bucket(bucket)
                 .key(key)
                 .contentType(file.getContentType())
-                .acl("public-read")
                 .build();
 
         s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));

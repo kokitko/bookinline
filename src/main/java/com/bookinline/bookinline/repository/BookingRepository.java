@@ -36,4 +36,12 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     boolean existsByGuestIdAndHostIdAndStatuses(@Param("guestId") Long guestId,
                                                 @Param("hostId") Long hostId,
                                                 @Param("statuses") List<BookingStatus> statuses);
+
+    @Query("SELECT b FROM Booking b WHERE b.property.host.id = :hostId")
+    Page<Booking> findByHostId(@Param("hostId") Long hostId, Pageable pageable);
+
+    @Query("SELECT b FROM Booking b WHERE b.property.host.id = :hostId AND b.status = :status")
+    Page<Booking> findByHostIdAndStatus(@Param("hostId") Long hostId,
+                                        @Param("status") BookingStatus status,
+                                        Pageable pageable);
 }

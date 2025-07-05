@@ -65,6 +65,9 @@ public class PropertyServiceImpl implements PropertyService {
         property.setAvailable(true);
         property.setAverageRating(0.0);
 
+        logger.info("Creating property with title: {}", property.getTitle());
+        property = propertyRepository.save(property);
+
         List<Image> imageList = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             logger.info("Uploading images for property with ID: {}", property.getId());
@@ -211,6 +214,25 @@ public class PropertyServiceImpl implements PropertyService {
                 .and(new PropertySpecification(propertyFilterDto));
         Page<Property> propertyPage = propertyRepository.findAll(specification, pageable);
         logger.info("Found {} filtered properties", propertyPage.getTotalElements());
+
+        return PropertyMapper.mapToPropertyResponsePage(propertyPage);
+    }
+
+    @Timed(
+            value = "property.getPropertiesByHostId",
+            description = "Time taken to get all properties by host ID")
+    @Override
+    public PropertyResponsePage getPropertiesByHostId(Long hostId, int page, int size) {
+        logger.info("Fetching properties for host with ID: {}, page: {}, size: {}", hostId, page, size);
+        User user = userRepository.findById(hostId)
+                .orElseThrow(() -> {
+                    logger.error("User not found with ID: {}", hostId);
+                    return new UserNotFoundException("User not found");
+                });
+        Long userId = user.getId();
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<Property> propertyPage = propertyRepository.findByHostId(userId, pageable);
+        logger.info("Found {} properties for host with ID: {}", propertyPage.getTotalElements(), hostId);
 
         return PropertyMapper.mapToPropertyResponsePage(propertyPage);
     }
