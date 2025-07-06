@@ -44,4 +44,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Page<Booking> findByHostIdAndStatus(@Param("hostId") Long hostId,
                                         @Param("status") BookingStatus status,
                                         Pageable pageable);
+
+    Page<Booking> findBookingsByStatus(BookingStatus status, Pageable pageable);
 }

@@ -1,14 +1,12 @@
 package com.bookinline.bookinline.service.impl;
 
-import com.bookinline.bookinline.dto.BookingResponseDto;
-import com.bookinline.bookinline.dto.PropertyResponseDto;
-import com.bookinline.bookinline.dto.ReviewResponseDto;
-import com.bookinline.bookinline.dto.UserResponseDto;
+import com.bookinline.bookinline.dto.*;
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
 import com.bookinline.bookinline.entity.Review;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
+import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.exception.BookingNotFoundException;
 import com.bookinline.bookinline.exception.PropertyNotFoundException;
@@ -25,6 +23,8 @@ import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.AdminService;
 import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -168,6 +168,100 @@ public class AdminServiceImpl implements AdminService {
         reviewRepository.delete(review);
         calculateAverageRating(review.getProperty().getId());
         logger.info("Average rating updated for property {}", review.getProperty().getId());
+    }
+
+    @Timed(
+            value = "admin.getAllUsers",
+            description = "Time taken to get all users by admin")
+    @Override
+    public UserResponsePage getAllUsers(int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching all users with pagination: page {}, size {}", adminId, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<User> users = userRepository.findAll(pageable);
+        UserResponsePage userResponsePage = UserMapper.mapToUserResponsePage(users);
+        logger.info("Total users found: {}", userResponsePage.getTotalElements());
+        return userResponsePage;
+    }
+
+    @Timed(
+            value = "admin.getAllProperties",
+            description = "Time taken to get all properties by admin")
+    @Override
+    public PropertyResponsePage getAllProperties(int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching all properties with pagination: page {}, size {}", adminId, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<Property> properties = propertyRepository.findAll(pageable);
+        PropertyResponsePage propertyResponsePage = PropertyMapper.mapToPropertyResponsePage(properties);
+        logger.info("Total properties found: {}", propertyResponsePage.getTotalElements());
+        return propertyResponsePage;
+    }
+
+    @Timed(
+            value = "admin.getAllBookings",
+            description = "Time taken to get all bookings by admin")
+    @Override
+    public BookingResponsePage getAllBookings(int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching all bookings with pagination: page {}, size {}", adminId, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<Booking> bookings = bookingRepository.findAll(pageable);
+        BookingResponsePage bookingResponsePage = BookingMapper.mapToBookingResponsePage(bookings);
+        logger.info("Total bookings found: {}", bookingResponsePage.getTotalElements());
+        return bookingResponsePage;
+    }
+
+    @Timed(
+            value = "admin.getAllReviews",
+            description = "Time taken to get all reviews by admin")
+    @Override
+    public ReviewResponsePage getAllReviews(int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching all reviews with pagination: page {}, size {}", adminId, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<Review> reviews = reviewRepository.findAll(pageable);
+        ReviewResponsePage reviewResponsePage = ReviewMapper.mapToReviewResponsePage(reviews);
+        logger.info("Total reviews found: {}", reviewResponsePage.getTotalElements());
+        return reviewResponsePage;
+    }
+
+    @Timed(
+            value = "admin.getUsersByStatus",
+            description = "Time taken to get users by status")
+    @Override
+    public UserResponsePage getUsersByStatus(String status, int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching users with status {} with pagination: page {}, size {}", adminId, status, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        UserStatus userStatus = UserStatus.valueOf(status.toUpperCase());
+        Page<User> users = userRepository.findUsersByStatus(userStatus, pageable);
+        UserResponsePage userResponsePage = UserMapper.mapToUserResponsePage(users);
+        logger.info("Total users found with status {}: {}", status, userResponsePage.getTotalElements());
+        return userResponsePage;
+    }
+
+    @Timed(
+            value = "admin.getPropertiesByTypeAndAvailability",
+            description = "Time taken to get properties by type and availability")
+    @Override
+    public PropertyResponsePage getPropertiesByPropertyType(String type, int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching properties of type {} with pagination: page {}, size {}", adminId, type, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        PropertyType propertyType = PropertyType.valueOf(type.toUpperCase());
+        Page<Property> properties = propertyRepository.findPropertiesByPropertyType(propertyType, pageable);
+        PropertyResponsePage propertyResponsePage = PropertyMapper.mapToPropertyResponsePage(properties);
+        logger.info("Total properties found of type {}: {}", type, propertyResponsePage.getTotalElements());
+        return propertyResponsePage;
+    }
+
+    @Timed(
+            value = "admin.getBookingsByStatus",
+            description = "Time taken to get bookings by status")
+    @Override
+    public BookingResponsePage getBookingsByStatus(String status, int page, int size, Long adminId) {
+        logger.info("Admin {} is fetching bookings with status {} with pagination: page {}, size {}", adminId, status, page, size);
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
+        Page<Booking> bookings = bookingRepository.findBookingsByStatus(bookingStatus, pageable);
+        BookingResponsePage bookingResponsePage = BookingMapper.mapToBookingResponsePage(bookings);
+        logger.info("Total bookings found with status {}: {}", status, bookingResponsePage.getTotalElements());
+        return bookingResponsePage;
     }
 
     @Timed(

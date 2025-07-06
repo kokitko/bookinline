@@ -96,12 +96,12 @@ public class PropertyController {
     }
 
     @PreAuthorize("hasRole('ROLE_HOST')")
-    @PostMapping("/update/{propertyId}")
+    @PutMapping("/update/{propertyId}")
     @Operation(summary = "Update an existing property",
             description = """
                     Detailed description of the update property endpoint:
                     - **Endpoint**: `/api/properties/update/{propertyId}`
-                    - **Method**: `POST`
+                    - **Method**: `PUT`
                     - **Request Body**: Multipart form data containing the property details and optional images.
                     
                     1. The user must be authenticated and have the `ROLE_HOST` role to access this endpoint.

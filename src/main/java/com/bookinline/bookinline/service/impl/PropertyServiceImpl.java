@@ -123,10 +123,11 @@ public class PropertyServiceImpl implements PropertyService {
         property.setPricePerNight(propertyRequestDto.getPricePerNight());
         property.setMaxGuests(propertyRequestDto.getMaxGuests());
 
-        List<Image> imageList = property.getImages();
-        imageList.clear();
+
         if (images != null && !images.isEmpty()) {
             logger.info("Uploading images for property with ID: {}", propertyId);
+            List<Image> imageList = property.getImages();
+            imageList.clear();
             for (MultipartFile file : images) {
                 String imageUrl;
                 try {
@@ -139,9 +140,10 @@ public class PropertyServiceImpl implements PropertyService {
                 image.setImageUrl(imageUrl);
                 image.setProperty(property);
                 imageList.add(image);
+                property.setImages(imageList);
             }
         }
-        property.setImages(imageList);
+
         Property updatedProperty = propertyRepository.save(property);
 
         logger.info("Property with ID: {} updated successfully", propertyId);

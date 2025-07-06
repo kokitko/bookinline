@@ -1,9 +1,6 @@
 package com.bookinline.bookinline.service;
 
-import com.bookinline.bookinline.dto.BookingResponseDto;
-import com.bookinline.bookinline.dto.PropertyResponseDto;
-import com.bookinline.bookinline.dto.ReviewResponseDto;
-import com.bookinline.bookinline.dto.UserResponseDto;
+import com.bookinline.bookinline.dto.*;
 
 public interface AdminService {
     UserResponseDto getUserById(Long userId, Long adminId);
@@ -16,4 +13,11 @@ public interface AdminService {
     PropertyResponseDto changePropertyAvailability(Long propertyId, Long adminId);
     BookingResponseDto cancelBooking(Long bookingId, Long adminId);
     void deleteReview(Long reviewId, Long adminId);
+    UserResponsePage getAllUsers(int page, int size, Long adminId);
+    PropertyResponsePage getAllProperties(int page, int size, Long adminId);
+    BookingResponsePage getAllBookings(int page, int size, Long adminId);
+    ReviewResponsePage getAllReviews(int page, int size, Long adminId);
+    UserResponsePage getUsersByStatus(String status, int page, int size, Long adminId);
+    PropertyResponsePage getPropertiesByPropertyType(String type, int page, int size, Long adminId);
+    BookingResponsePage getBookingsByStatus(String status, int page, int size, Long adminId);
 }

@@ -1,9 +1,6 @@
 package com.bookinline.bookinline.controller;
 
-import com.bookinline.bookinline.dto.BookingResponseDto;
-import com.bookinline.bookinline.dto.PropertyResponseDto;
-import com.bookinline.bookinline.dto.ReviewResponseDto;
-import com.bookinline.bookinline.dto.UserResponseDto;
+import com.bookinline.bookinline.dto.*;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.ErrorObject;
 import com.bookinline.bookinline.exception.UnauthorizedActionException;
@@ -295,6 +292,180 @@ public class AdminController {
         Long adminId = getAuthenticatedAdminId();
         adminService.deleteReview(reviewId, adminId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/users")
+    @Operation(summary = "Get all users",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/users`
+                    - **Method**: `GET`
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves all users with pagination.
+                    3. Returns paginated user details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
+            })
+    public ResponseEntity<UserResponsePage> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        UserResponsePage userResponsePage = adminService.getAllUsers(page, size, adminId);
+        return ResponseEntity.ok(userResponsePage);
+    }
+
+    @GetMapping("/properties")
+    @Operation(summary = "Get all properties",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/properties`
+                    - **Method**: `GET`
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves all properties with pagination.
+                    3. Returns paginated property details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Properties retrieved successfully"),
+            })
+    public ResponseEntity<PropertyResponsePage> getAllProperties(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        PropertyResponsePage propertyResponsePage = adminService.getAllProperties(page, size, adminId);
+        return ResponseEntity.ok(propertyResponsePage);
+    }
+
+    @GetMapping("/bookings")
+    @Operation(summary = "Get all bookings",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/bookings`
+                    - **Method**: `GET`
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves all bookings with pagination.
+                    3. Returns paginated booking details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Bookings retrieved successfully"),
+            })
+    public ResponseEntity<BookingResponsePage> getAllBookings(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        BookingResponsePage bookingResponsePage = adminService.getAllBookings(page, size, adminId);
+        return ResponseEntity.ok(bookingResponsePage);
+    }
+
+    @GetMapping("/reviews")
+    @Operation(summary = "Get all reviews",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/reviews`
+                    - **Method**: `GET`
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves all reviews with pagination.
+                    3. Returns paginated review details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Reviews retrieved successfully"),
+            })
+    public ResponseEntity<ReviewResponsePage> getAllReviews(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        ReviewResponsePage reviewResponsePage = adminService.getAllReviews(page, size, adminId);
+        return ResponseEntity.ok(reviewResponsePage);
+    }
+
+    @GetMapping("/users/status/{status}")
+    @Operation(summary = "Get users by status",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/users/status/{status}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `status` (String) - Status of the users to filter
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves users by status with pagination.
+                    3. Returns paginated user details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Users by status retrieved successfully"),
+            })
+    public ResponseEntity<UserResponsePage> getUsersByStatus(
+            @PathVariable String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        UserResponsePage userResponsePage = adminService.getUsersByStatus(status, page, size, adminId);
+        return ResponseEntity.ok(userResponsePage);
+    }
+
+    @GetMapping("/properties/type/{type}")
+    @Operation(summary = "Get properties by type",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/properties/type/{type}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `type` (String) - Type of the properties to filter
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves properties by type with pagination.
+                    3. Returns paginated property details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Properties by type retrieved successfully"),
+            })
+    public ResponseEntity<PropertyResponsePage> getPropertiesByPropertyType(
+            @PathVariable String type,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        PropertyResponsePage propertyResponsePage = adminService.getPropertiesByPropertyType(type, page, size, adminId);
+        return ResponseEntity.ok(propertyResponsePage);
+    }
+
+    @GetMapping("/bookings/status/{status}")
+    @Operation(summary = "Get bookings by status",
+            description = """
+                    Detailed information about method:
+                    - **Endpoint**: `/api/admin/bookings/status/{status}`
+                    - **Method**: `GET`
+                    - **Path Variable**: `status` (String) - Status of the bookings to filter
+                    - **Request Parameters**: `page` (int), `size` (int) - Pagination parameters
+                    
+                    1. Checks authenticated admin ID.
+                    2. Retrieves bookings by status with pagination.
+                    3. Returns paginated booking details.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Bookings by status retrieved successfully"),
+            })
+    public ResponseEntity<BookingResponsePage> getBookingsByStatus(
+            @PathVariable String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Long adminId = getAuthenticatedAdminId();
+        BookingResponsePage bookingResponsePage = adminService.getBookingsByStatus(status, page, size, adminId);
+        return ResponseEntity.ok(bookingResponsePage);
     }
 
     private Long getAuthenticatedAdminId() {

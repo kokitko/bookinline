@@ -31,5 +31,5 @@ public class Booking {
     private Property property;
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status; // PENDING, CONFIRMED, CANCELLED
+    private BookingStatus status;
 }

@@ -230,7 +230,7 @@ public class AdminControllerIntegrationTest {
     @Test
     void shouldSuccessfullyBanUser() throws Exception {
         String reasonJson = "{\"reason\": \"Inappropriate behavior\"}";
-        mockMvc.perform(delete("/api/admin/ban/" + guest.getId())
+        mockMvc.perform(put("/api/admin/ban/" + guest.getId())
                         .header("Authorization", "Bearer " + adminToken)
                         .param("reason", "Inappropriate behavior"))
                 .andExpect(status().isOk())
@@ -240,7 +240,7 @@ public class AdminControllerIntegrationTest {
     @Test
     void shouldFailToBanUser() throws Exception {
         String reasonJson = "{\"reason\": \"Inappropriate behavior\"}";
-        mockMvc.perform(delete("/api/admin/ban/99999")
+        mockMvc.perform(put("/api/admin/ban/99999")
                         .header("Authorization", "Bearer " + adminToken)
                         .param("reason", "Inappropriate behavior"))
                 .andExpect(status().isNotFound());

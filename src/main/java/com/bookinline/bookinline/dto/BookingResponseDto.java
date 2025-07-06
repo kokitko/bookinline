@@ -19,5 +19,6 @@ public class BookingResponseDto {
     private String propertyTitle;
     private String status;
     private Long propertyId;
+    private Long guestId;
     private Long hostId;
 }
