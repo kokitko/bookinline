@@ -168,7 +168,9 @@ public class AdminServiceImpl implements AdminService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
         reviewRepository.delete(review);
-        calculateAverageRating(review.getProperty().getId());
+        Property property = review.getProperty();
+        property.setAverageRating(calculateAverageRating(review.getProperty().getId()));
+        propertyRepository.save(property);
         logger.info("Average rating updated for property {}", review.getProperty().getId());
     }
 

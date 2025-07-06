@@ -231,6 +231,28 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Timed(
+            value = "booking.getBookingsByGuestIdAndStatus",
+            description = "Time taken to get bookings by guest ID and status")
+    @Override
+    public BookingResponsePage getBookingsByGuestIdAndStatus(Long guestId, String status, int page, int size) {
+        logger.info("Fetching bookings for guest ID: {}, status: {}, page: {}, size: {}", guestId, status, page, size);
+
+        Page<Booking> bookingPage;
+        BookingStatus bookingStatus = BookingStatus.valueOf(status.toUpperCase());
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+
+        User guest = userRepository.findById(guestId)
+                .orElseThrow(() -> {
+                    logger.error("User with ID: {} not found", guestId);
+                    return new UserNotFoundException("User not found");
+                });
+        bookingPage = bookingRepository.findBookingsByStatusAndGuest(bookingStatus, guest, pageable);
+        logger.info("Found {} bookings for guest ID: {} with status: {}", bookingPage.getTotalElements(), guestId, status);
+
+        return BookingMapper.mapToBookingResponsePage(bookingPage);
+    }
+
+    @Timed(
             value = "booking.isPropertyAvailable",
             description = "Time taken to check property availability")
     private boolean isPropertyAvailable(Long propertyId, LocalDate startDate, LocalDate endDate) {

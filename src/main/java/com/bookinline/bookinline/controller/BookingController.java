@@ -268,6 +268,34 @@ public class BookingController {
         return ResponseEntity.ok(bookingResponsePage);
     }
 
+    @PreAuthorize("hasRole('ROLE_GUEST')")
+    @GetMapping("/guest/{status}")
+    @Operation(summary = "Get bookings for authenticated guest",
+            description = """
+                    Detailed description of the booking page retrieval process for guests.
+                    - **Endpoint**: `/api/bookings/guest/{status}`
+                    - **Method**: `GET`
+                    - **Query Parameters**: `page` and `size` for pagination
+                    
+                    1. The user (with guest role) sends a request to retrieve their bookings.
+                    2. The server retrieves the authenticated user's ID from the security context.
+                    3. The system looks for bookings associated with the user ID as a guest.
+                    4. The system returns a paginated list of bookings for the guest.
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "List of bookings retrieved successfully")
+            }
+    )
+    public ResponseEntity<BookingResponsePage> getBookingsByGuestIdAndStatus(@RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "10") int size,
+                                                                    @PathVariable String status) {
+        Long userId = getAuthenticatedUserId();
+        BookingResponsePage bookingResponsePage = bookingService.
+                getBookingsByGuestIdAndStatus(userId, status, page, size);
+        return ResponseEntity.ok(bookingResponsePage);
+    }
+
     private Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {

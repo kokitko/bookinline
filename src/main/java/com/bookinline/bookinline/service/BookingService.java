@@ -16,4 +16,5 @@ public interface BookingService {
     List<BookingDatesDto> getBookedDatesByPropertyId(Long propertyId);
     BookingResponseDto confirmBooking(Long bookingId, Long userId);
     BookingResponsePage getBookingsByHostIdAndStatus(Long hostId, String status, int page, int size);
+    BookingResponsePage getBookingsByGuestIdAndStatus(Long guestId, String status, int page, int size);
 }

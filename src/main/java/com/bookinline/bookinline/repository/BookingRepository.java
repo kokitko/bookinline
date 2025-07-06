@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.repository;
 
 import com.bookinline.bookinline.entity.Booking;
+import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.BookingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,4 +47,5 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                                         Pageable pageable);
 
     Page<Booking> findBookingsByStatus(BookingStatus status, Pageable pageable);
+    Page<Booking> findBookingsByStatusAndGuest(BookingStatus status, User guest, Pageable pageable);
 }
