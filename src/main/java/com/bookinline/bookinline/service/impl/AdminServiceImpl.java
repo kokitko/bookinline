@@ -138,10 +138,12 @@ public class AdminServiceImpl implements AdminService {
             description = "Time taken to change property availability by admin")
     @Override
     public PropertyResponseDto changePropertyAvailability(Long propertyId, Long adminId) {
-        logger.info("Admin {} is deactivating property {}", adminId, propertyId);
+        logger.info("Admin {} is changing property availability with id {}", adminId, propertyId);
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new PropertyNotFoundException("Property not found"));
         property.setAvailable(!property.getAvailable());
+        propertyRepository.save(property);
+        logger.info("Property availability changed for property with ID: {}", propertyId);
         return PropertyMapper.mapToPropertyResponseDto(property);
     }
 
