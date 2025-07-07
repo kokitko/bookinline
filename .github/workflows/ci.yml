@@ -9,6 +9,11 @@ on:
 jobs:
   dev-build:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_PROD_USER: postgres
+      POSTGRES_PROD_PASSWORD: password
+      REDIS_PROD_HOST: redis
+      REDIS_PROD_PORT: 6379
 
     services:
       postgres:
