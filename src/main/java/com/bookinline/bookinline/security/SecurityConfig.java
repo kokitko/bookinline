@@ -36,17 +36,37 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/properties",
-                                "/api/properties/**",
-                                "/api/bookings",
-                                "/api/bookings/**",
-                                "/api/reviews",
-                                "/api/reviews/**").permitAll()
-                        .requestMatchers("/api/auth/**",
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/properties/filter",
+                                "/api/properties/{id}",
+                                "/api/properties/available",
+                                "/api/reviews/property/{propertyId}",
+                                "/api/reviews/user/{userId}",
+                                "/api/bookings/property/{propertyId}/dates",
                                 "/api/s3/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
+                        .requestMatchers(
+                                "/api/reviews/property/{propertyId}/review",
+                                "/api/reviews/{reviewId}",
+                                "/api/reviews/property/{propertyId}/has-review",
+                                "/api/bookings/property/{propertyId}/book",
+                                "/api/bookings/{bookingId}/cancel",
+                                "/api/bookings/user",
+                                "/api/bookings/guest/{status}").hasRole("GUEST")
+                        .requestMatchers(
+                                "/api/properties/update/{propertyId}",
+                                "/api/properties/create",
+                                "/api/properties/host",
+                                "/api/properties/delete/{propertyId}",
+                                "/api/bookings/{bookingId}/confirm",
+                                "/api/bookings/property/{propertyId}",
+                                "/api/bookings/host").hasRole("HOST")
+                        .requestMatchers(
+                                "/api/user/**",
+                                "/api/bookings/{bookingId}").authenticated()
                         .requestMatchers("/api/admin/**",
                                 "/actuator/**").hasRole("ADMIN")
                         .anyRequest().authenticated())

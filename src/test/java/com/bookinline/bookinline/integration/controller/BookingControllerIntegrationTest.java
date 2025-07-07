@@ -109,7 +109,7 @@ public class BookingControllerIntegrationTest {
     @Test
     void shouldSuccessfullyBookAProperty() throws Exception {
         BookingRequestDto requestDto = new BookingRequestDto(LocalDate.now().plusDays(3), LocalDate.now().plusDays(5));
-        mockMvc.perform(post("/api/bookings/property/" + property.getId())
+        mockMvc.perform(post("/api/bookings/property/" + property.getId() + "/book")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + guestToken)
                     .content(objectMapper.writeValueAsString(requestDto)))
@@ -122,7 +122,7 @@ public class BookingControllerIntegrationTest {
     @Test
     void shouldFailBooking() throws Exception {
         BookingRequestDto requestDto = new BookingRequestDto(LocalDate.now(), LocalDate.now().plusDays(3));
-        mockMvc.perform(post("/api/bookings/property/" + property.getId())
+        mockMvc.perform(post("/api/bookings/property/" + property.getId() + "/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + guestToken)
                         .content(objectMapper.writeValueAsString(requestDto)))
@@ -132,7 +132,7 @@ public class BookingControllerIntegrationTest {
 
     @Test
     void shouldCancelBooking() throws Exception {
-        mockMvc.perform(delete("/api/bookings/" + booking.getId())
+        mockMvc.perform(delete("/api/bookings/" + booking.getId() + "/cancel")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + guestToken))
                 .andExpect(status().isOk())
@@ -141,7 +141,7 @@ public class BookingControllerIntegrationTest {
 
     @Test
     void shouldFailCancelBooking() throws Exception {
-        mockMvc.perform(delete("/api/bookings/" + 99999)
+        mockMvc.perform(delete("/api/bookings/" + 99999 + "/cancel")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + guestToken))
                 .andExpect(status().isNotFound())

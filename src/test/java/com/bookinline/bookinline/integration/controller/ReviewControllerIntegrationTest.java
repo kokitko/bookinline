@@ -124,7 +124,7 @@ public class ReviewControllerIntegrationTest {
         reviewRepository.deleteAll();
         ReviewRequestDto reviewRequestDto = new ReviewRequestDto(5,"Great stay!");
 
-        mockMvc.perform(post("/api/reviews/property/" + property.getId())
+        mockMvc.perform(post("/api/reviews/property/" + property.getId() + "/review")
                         .header("Authorization", "Bearer " + guestToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reviewRequestDto)))
@@ -137,7 +137,7 @@ public class ReviewControllerIntegrationTest {
     void shouldFailToCreateReviewWhenPropertyNotFound() throws Exception {
         ReviewRequestDto reviewRequestDto = new ReviewRequestDto(5,"Great stay!");
 
-        mockMvc.perform(post("/api/reviews/property/99999")
+        mockMvc.perform(post("/api/reviews/property/99999/review")
                         .header("Authorization", "Bearer " + guestToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(reviewRequestDto)))

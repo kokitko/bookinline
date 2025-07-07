@@ -33,11 +33,11 @@ public class ReviewController {
     }
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
-    @PostMapping("/property/{propertyId}")
+    @PostMapping("/property/{propertyId}/review")
     @Operation(summary = "Leave a review for a property",
             description = """
                     Detailed description of review creation process:
-                    - **Endpoint**: `/api/reviews/property/{propertyId}`
+                    - **Endpoint**: `/api/reviews/property/{propertyId}/review`
                     - **Method**: `POST`
                     - **Request Body**: JSON object containing review details
                     - **Path Variable**: `propertyId` - ID of the property to review
@@ -177,8 +177,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviewResponsePage);
     }
 
-    @GetMapping("/property/{propertyId}/has-review")
     @PreAuthorize("hasRole('ROLE_GUEST')")
+    @GetMapping("/property/{propertyId}/has-review")
     @Operation(summary = "Check if user has left a review for a property",
             description = """
                     Detailed description of user review check process:
@@ -190,6 +190,7 @@ public class ReviewController {
                     2. The system checks if the user has left a review for the specified property.
                     3. Returns true if the user has left a review, false otherwise.
                     """,
+            security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Review existence check successful"),
                     @ApiResponse(responseCode = "404", description = "Property or User not found",

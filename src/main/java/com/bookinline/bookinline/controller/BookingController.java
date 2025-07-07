@@ -36,11 +36,11 @@ public class BookingController {
     }
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
-    @PostMapping("/property/{propertyId}")
+    @PostMapping("/property/{propertyId}/book")
     @Operation(summary = "Book a property",
             description = """
                     Detailed description of the booking process.
-                    - **Endpoint**: `/api/bookings/property/{propertyId}`
+                    - **Endpoint**: `/api/bookings/property/{propertyId}/book`
                     - **Method**: `POST`
                     - **Request Body**: `BookingRequestDto` containing booking details
                     
@@ -69,11 +69,11 @@ public class BookingController {
     }
 
     @PreAuthorize("hasRole('ROLE_GUEST')")
-    @DeleteMapping("/{bookingId}")
+    @DeleteMapping("/{bookingId}/cancel")
     @Operation(summary = "Cancel a booking",
             description = """
                     Detailed description of the booking cancellation process.
-                    - **Endpoint**: `/api/bookings/{bookingId}`
+                    - **Endpoint**: `/api/bookings/{bookingId}/cancel`
                     - **Method**: `DELETE`
                     - **Path Variable**: `bookingId` of the booking to be canceled
                     
