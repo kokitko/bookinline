@@ -156,6 +156,7 @@ public class AdminServiceImpl implements AdminService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new UserNotFoundException("Booking not found"));
         booking.setStatus(BookingStatus.CANCELLED);
+        bookingRepository.save(booking);
         return BookingMapper.mapToBookingResponseDto(booking);
     }
 

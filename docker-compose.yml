@@ -9,6 +9,8 @@ services:
     depends_on:
       - redis
       - postgres
+    env_file:
+      - .env
     environment:
       SPRING_PROFILE: docker
     networks:
@@ -27,8 +29,8 @@ services:
     container_name: postgres
     environment:
       POSTGRES_DB: bookinline
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${POSTGRES_PROD_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD}
     ports:
       - "5432:5432"
     networks:

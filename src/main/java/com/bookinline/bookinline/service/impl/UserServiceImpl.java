@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
                     logger.error("User with ID {} not found", userId);
                     return new UserNotFoundException("User not found");
                 });
-        if (!encoder.matches(password, user.getPassword())) {
+        if (encoder.matches(password, user.getPassword())) {
             userRepository.delete(user);
         } else {
             logger.error("Password mismatch for user ID: {}", userId);
