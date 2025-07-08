@@ -8,6 +8,8 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.S3Service;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,16 +34,29 @@ public class SecurityIntegrationTest {
     private UserRepository userRepository;
     @Autowired
     private PropertyRepository propertyRepository;
+    @Autowired
+    private Flyway flyway;
     @MockBean
     private S3Service s3Service;
 
+    User guest;
+    Property property;
+
+    @BeforeEach
+    public void setup() {
+        flyway.clean();
+        flyway.migrate();
+        userRepository.deleteAll();
+        propertyRepository.deleteAll();
+
+        guest = new User(null,"johndoe88@gmail.com","password123","John Doe",null, UserStatus.ACTIVE,null, Role.GUEST,null,null);
+        guest = userRepository.save(guest);
+        property = new Property(null,"test","test", "test", PropertyType.APARTMENT, 100, 2,"test",new BigDecimal(100.0),3,true,0.0,guest,null,null,null);
+        property = propertyRepository.save(property);
+    }
+
     @Test
     public void publicEndpointsAreAccessible() throws Exception {
-        User guest = new User(null,"johndoe88@gmail.com","password123","John Doe",null, UserStatus.ACTIVE,null, Role.GUEST,null,null);
-        guest = userRepository.save(guest);
-        Property property = new Property(null,"test","test", "test", PropertyType.APARTMENT, 100, 2,"test",new BigDecimal(100.0),3,true,0.0,guest,null,null,null);
-        property = propertyRepository.save(property);
-
         mockMvc.perform(get("/api/properties/available")).andExpect(status().isOk());
         mockMvc.perform(get("/api/bookings/property/" + property.getId() + "/dates")).andExpect(status().isOk());
         mockMvc.perform(get("/api/user/me")).andExpect(status().isForbidden());
