@@ -14,6 +14,7 @@ import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.ReviewRepository;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -54,6 +56,8 @@ public class ReviewControllerIntegrationTest {
     private ReviewRepository reviewRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User host = new User();
     User guest = new User();

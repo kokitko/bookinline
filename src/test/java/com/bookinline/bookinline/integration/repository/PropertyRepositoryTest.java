@@ -6,12 +6,14 @@ import com.bookinline.bookinline.entity.enums.PropertyType;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +33,8 @@ public class PropertyRepositoryTest {
     private UserRepository userRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User user = new User();
     Property property1 = new Property();

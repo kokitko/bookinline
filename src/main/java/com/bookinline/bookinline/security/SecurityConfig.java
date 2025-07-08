@@ -3,6 +3,7 @@ package com.bookinline.bookinline.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,9 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+    @Autowired
+    private Environment environment;
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
@@ -33,16 +38,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        boolean isTest = Arrays.asList(environment.getActiveProfiles()).contains("test");
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> {
-                    CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
-                    CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-                    requestHandler.setCsrfRequestAttributeName(null);
-                    csrf
-                        .csrfTokenRequestHandler(requestHandler)
-                        .csrfTokenRepository(repo)
-                        .ignoringRequestMatchers("/api/auth/refresh-token");
+                    if (isTest) {
+                        csrf.disable();
+                    } else {
+                        CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+                        requestHandler.setCsrfRequestAttributeName(null);
+                        csrf
+                                .csrfTokenRequestHandler(requestHandler)
+                                .csrfTokenRepository(repo)
+                                .ignoringRequestMatchers("/api/auth/refresh-token");
+                    }
     })
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(

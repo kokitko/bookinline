@@ -4,6 +4,7 @@ import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.exception.UserNotFoundException;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.security.CustomUserDetailsService;
+import com.bookinline.bookinline.service.S3Service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,10 +21,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 class CustomUserDetailsServiceTest {
-
     @MockBean
     private UserRepository userRepository;
-
+    @MockBean
+    private S3Service s3Service;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 

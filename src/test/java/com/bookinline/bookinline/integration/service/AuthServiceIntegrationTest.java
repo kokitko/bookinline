@@ -9,12 +9,14 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.security.JwtService;
 import com.bookinline.bookinline.service.AuthService;
+import com.bookinline.bookinline.service.S3Service;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +36,8 @@ public class AuthServiceIntegrationTest {
     private JwtService jwtService;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User guest = new User();
     RegisterRequest registerRequest = new RegisterRequest(

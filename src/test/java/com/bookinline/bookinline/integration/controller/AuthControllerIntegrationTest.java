@@ -7,6 +7,7 @@ import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.security.JwtService;
+import com.bookinline.bookinline.service.S3Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.flywaydb.core.Flyway;
@@ -15,10 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,8 @@ public class AuthControllerIntegrationTest {
     private JwtService jwtService;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     @BeforeEach
     public void setup() {

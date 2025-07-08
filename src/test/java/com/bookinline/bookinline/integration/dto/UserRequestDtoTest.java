@@ -1,10 +1,12 @@
 package com.bookinline.bookinline.integration.dto;
 
+import com.bookinline.bookinline.service.S3Service;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserRequestDtoTest {
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private S3Service s3Service;
 
     @Test
     @WithMockUser

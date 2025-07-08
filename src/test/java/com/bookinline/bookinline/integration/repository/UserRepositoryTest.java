@@ -3,12 +3,14 @@ package com.bookinline.bookinline.integration.repository;
 import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User user1 = new User();
     User user2 = new User();

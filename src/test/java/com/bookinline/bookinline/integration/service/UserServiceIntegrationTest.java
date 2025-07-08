@@ -5,6 +5,7 @@ import com.bookinline.bookinline.entity.User;
 import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import com.bookinline.bookinline.service.UserService;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
@@ -12,7 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,11 @@ public class UserServiceIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private User testUser = new User();
     private UserRequestDto testUserRequestDto = new UserRequestDto();
 
@@ -39,7 +42,7 @@ public class UserServiceIntegrationTest {
         testUser.setFullName("John Doe");
         testUser.setEmail("johndoe88@gmail.com");
         testUser.setPhoneNumber("1234567890");
-        testUser.setPassword("password123");
+        testUser.setPassword(passwordEncoder.encode("password123"));
         testUser.setStatus(UserStatus.ACTIVE);
         testUser.setRole(Role.GUEST);
         testUser = userRepository.save(testUser);

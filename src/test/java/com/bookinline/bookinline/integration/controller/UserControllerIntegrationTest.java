@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.integration.controller;
 
 import com.bookinline.bookinline.dto.AuthenticationRequest;
+import com.bookinline.bookinline.dto.PasswordDto;
 import com.bookinline.bookinline.dto.UserRequestDto;
 import com.bookinline.bookinline.entity.Booking;
 import com.bookinline.bookinline.entity.Property;
@@ -12,6 +13,7 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -50,6 +53,8 @@ public class UserControllerIntegrationTest {
     private BookingRepository bookingRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User user;
     User host;
@@ -213,10 +218,11 @@ public class UserControllerIntegrationTest {
 
     @Test
     void shouldDeleteUser() throws Exception {
+        PasswordDto passwordDto = new PasswordDto("password123");
         mockMvc.perform(delete("/api/user")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString("{\"password\":\"password123\"}")))
+                        .content(objectMapper.writeValueAsString(passwordDto)))
                 .andExpect(status().isNoContent());
 
         Assertions.assertThat(userRepository.findById(user.getId())).isEmpty();

@@ -11,6 +11,7 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,6 +51,8 @@ public class PropertyControllerIntegrationTest {
     private BookingRepository bookingRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User host;
     Property property;
@@ -213,7 +217,8 @@ public class PropertyControllerIntegrationTest {
         mockMvc.perform(multipart("/api/properties/update/" + property.getId())
                         .file(propertyFile)
                         .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .with(request -> { request.setMethod("PUT"); return request; }))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Property"));
     }
@@ -242,7 +247,8 @@ public class PropertyControllerIntegrationTest {
         mockMvc.perform(multipart("/api/properties/update/" + property.getId())
                         .file(propertyFile)
                         .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .with(request -> { request.setMethod("PUT"); return request; }))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Invalid property data"));
     }

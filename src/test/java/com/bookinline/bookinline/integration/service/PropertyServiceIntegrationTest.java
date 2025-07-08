@@ -12,12 +12,14 @@ import com.bookinline.bookinline.entity.enums.UserStatus;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.PropertyService;
+import com.bookinline.bookinline.service.S3Service;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,8 @@ public class PropertyServiceIntegrationTest {
     private UserRepository userRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     private User user = new User();
     private Property property = new Property();

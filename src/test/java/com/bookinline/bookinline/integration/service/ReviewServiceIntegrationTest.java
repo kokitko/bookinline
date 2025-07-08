@@ -15,12 +15,14 @@ import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.ReviewRepository;
 import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.service.ReviewService;
+import com.bookinline.bookinline.service.S3Service;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +46,8 @@ public class ReviewServiceIntegrationTest {
     private ReviewService reviewService;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User guest = new User();
     User host = new User();

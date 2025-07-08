@@ -9,6 +9,7 @@ import com.bookinline.bookinline.entity.enums.Role;
 import com.bookinline.bookinline.repository.BookingRepository;
 import com.bookinline.bookinline.repository.PropertyRepository;
 import com.bookinline.bookinline.repository.UserRepository;
+import com.bookinline.bookinline.service.S3Service;
 import com.bookinline.bookinline.service.impl.BookingStatusScheduler;
 import org.assertj.core.api.Assertions;
 import org.flywaydb.core.Flyway;
@@ -16,12 +17,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -37,6 +38,8 @@ public class BookingStatusSchedulerIntegrationTest {
     private PropertyRepository propertyRepository;
     @Autowired
     private Flyway flyway;
+    @MockBean
+    private S3Service s3Service;
 
     User guest = new User();
     User host = new User();
