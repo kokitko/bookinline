@@ -1,4 +1,4 @@
-name: CI - Dev Build
+name: CI - Prod Build
 
 on:
   push:
@@ -61,7 +61,10 @@ jobs:
           echo "POSTGRES_DOCKER_USER=postgres" >> .env
           echo "POSTGRES_DOCKER_PASSWORD=password" >> .env
           echo "REDIS_DOCKER_HOST=redis" >> .env
-          echo "REDIS_DOCKER_PORT=6379" >> .env
+          echo "AWS_ACCESS_KEY_ID=dummy-id" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=dummy-key" >> .env
+          echo "AWS_REGION=eu-north-1" >> .env
+          echo "AWS_BUCKET=dummy-bucket" >> .env
 
       - name: Run Docker Compose
         run: docker compose up -d --build
