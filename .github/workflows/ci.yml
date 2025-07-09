@@ -39,7 +39,7 @@ jobs:
 
       redis:
         image: redis:latest
-        options: --requirepass password
+        command: ["redis-server", "--requirepass", "password"]
         ports:
           - 6379:6379
               
