@@ -2,19 +2,23 @@
 
 ## Overview
 
-BookInLine is a Spring Boot-based backend application designed as an analogue of Booking.com. The system supports user registration, property management, booking operations, and reviews. It includes role-based access control, performance optimizations, and extensive testing coverage.
+BookInLine is a Spring Boot-based backend application inspired by Booking.com. The system supports user registration, property management, booking operations, and reviews with role-based access control, performance optimizations, and extensive testing coverage.
+
+---
 
 ## 🚀 Tech Stack
 
 1. **Framework**: Spring Boot
 2. **Database**: PostgreSQL
 3. **Caching**: Redis
-4. **Security**: JWT-based authentication
+4. **Security**: JWT-based authentication & CSRF protection
 5. **Migration Tool**: Flyway
 6. **Documentation**: Swagger (OpenAPI)
 7. **Monitoring**: Spring Actuator + Prometheus
 8. **Containerization**: Docker
 9. **Testing**: JUnit/Mockito (unit & integration tests)
+
+---
 
 ## 🔐 Roles & Permissions 
 
@@ -24,12 +28,14 @@ BookInLine is a Spring Boot-based backend application designed as an analogue of
 | Host  |Registered users who can manage their own properties and bookings|
 | Admin |Has full control over users, properties, bookings, and reviews   |
 
+---
+
 ## 🧩 Core entities
 
 ### User
 
 1. **Fields**: id, email, password, fullName, phoneNumber, status (ENUM based), statusDescription, role (and relation fields)
-2. **Feautures**:
+2. **Features**:
       - Register as HOST or GUEST
       - Public: View property by ID, list all properties (with filtering & sorting)
       - Host: Create, update, delete own properties
@@ -65,18 +71,23 @@ BookInLine is a Spring Boot-based backend application designed as an analogue of
 1. **Fields**: id, imageUrl (and relation fields)
 2. Attached to Property
 
+---
+
 ## ⚙️ API overview 
 
 ### 🔑 Authentication & Authorization
 
-1. JWT-based
-2. Role-based endpoint restrictions
-3. Rate limiting per IP/user to prevent abuse
+1. JWT two tokens based
+2. CSRF-protected for enhanced security
+3. Role-based endpoint restrictions
+4. Rate limiting per IP/user to prevent abuse
 
 ### 🧪 Testing
 
+*~60-70% tests coverage*
+
 1. **Unit tests**: For most services and controllers
-2. **Integration tests**: Written for all sensitive methods. Separated via Maven profile integration.
+2. **Integration tests**: Written for most of sensitive methods. Separated via Maven profile integration.
 
 ### 🧾 Validation & Error Handling
 
@@ -89,80 +100,83 @@ BookInLine is a Spring Boot-based backend application designed as an analogue of
 1. Spring Actuator endpoints enabled
 2. Integrated with Prometheus for metrics scraping
 
-### 🐳 Deployment
-
-1. Fully dockerized for development
-2. Dev environment includes: <br /> 
-      · PostgreSQL <br />
-      · Redis <br />
-      · Backend app with exposed Swagger UI <br />
-
-### 📚 Swagger API Docs
-
-Swagger UI is enabled and available at: <br /> 
-`http://localhost:8080/swagger-ui/index.html` <br />
-It provides complete documentation for all endpoints, including security schemes, schemas, and example payloads.
-
-### ✅ Future Improvements / TODOs
-
-1. React front-end for more enjoyable testing/viewing of the project.
-2. Host analytics dashboard.
-3. Notifications (email/SMS).
-4. Email verification on registration.
+---
 
 ## ▶️ How to Run the Project
 
-## 🛠 Manual Setup (Local Development)
+### ⚙️ Environment Configuration
 
-**1. Start PostgreSQL**
-Make sure you have PostgreSQL running locally. Create a database (e.g., bookinline) and configure your credentials in application-dev.properties:
-```
-spring.datasource.url=jdbc:postgresql://localhost:5432/bookinline
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-```
-**2. Start Redis**
-Run Redis locally (default port 6379). You can install it via:
-```
-# On macOS (Homebrew)
-brew install redis
-brew services start redis
+The project uses environment variables for configuration (for PostgreSQL, Redis, and Amazon S3).  
+A `.env.example` file is provided in the project root — **copy it to `.env` and fill in the required values** before running the application.
 
-# On Linux
-sudo apt install redis-server
-sudo service redis-server start
-```
-Configure Redis in application.properties if necessary:
-```
-spring.cache.type=redis
-spring.redis.host=localhost
-spring.redis.port=6379
-```
-**3. Run the App**
+- If you use Docker, environment variables are injected automatically using the `.env` file and Docker Compose.
+- For manual (local) execution, you'll need to either:
+    - create a `.env` file in the root folder and use an env plugin (e.g., `envfile` for IntelliJ, or `direnv`), or
+    - export the variables in your shell session before running the app.
+
+**Note:**  
+- Use the `*_DEV` variables when running locally with Maven.  
+- Use the `*_PROD` variables when running via Docker Compose.
+
+---
+
+### 🛠 Manual Setup (Local Development)
+
+**1. Copy `.env.example` to `.env` and fill out your local (DEV) values.**
+
+**2. Start PostgreSQL**  
+Make sure you have PostgreSQL running locally. Create a database (e.g., bookinline) and set your credentials via environment variables.
+
+**3. Start Redis**  
+Run Redis locally (default port 6379).  
+- macOS: `brew install redis && brew services start redis`
+- Linux: `sudo apt install redis-server && sudo service redis-server start`
+
+**4. Run the App**  
 Use Maven to build and run the application:
 ```
 mvn clean install
 mvn spring-boot:run
 ```
-**Swagger UI** will be available at:
+**Swagger UI** will be available at:  
 `http://localhost:8080/swagger-ui/index.html`
 
-## 🐳 Docker-based Setup
+---
 
-The project includes a Docker configuration for local development. <br />
-**1. Build the Docker Image** <br />
+### 🐳 Docker-based Setup
 
-`docker-compose build` <br />
+**1. Copy `.env.example` to `.env` and fill out your production (PROD) values.**
 
-**2. Run with Docker Compose** <br /> 
+**2. Build the Docker Image**  
+```
+docker-compose build
+```
 
-The docker-compose.yml file contains services for the app, PostgreSQL, and Redis: <br />
-
-`docker-compose -d up` <br />
-
+**3. Run with Docker Compose**  
+```
+docker-compose up -d
+```
 This will:
  - Start the backend service
  - Launch Redis and PostgreSQL containers
- - Set up environment automatically using pre-configured values
+ - Configure all environment variables automatically (using `.env`)
 
-✅ No need to modify application.properties for Docker — configs are injected via environment variables or mounted files.
+✅ **No need to modify application.properties for Docker — configs are injected via environment variables or mounted files.**
+
+---
+
+### 📚 Swagger API Docs
+
+Swagger UI is enabled and available at:  
+`http://localhost:8080/swagger-ui/index.html`  
+It provides complete documentation for all endpoints, including security schemes, schemas, and example payloads.
+
+---
+
+### ✅ Future Improvements / TODOs
+
+1. Host analytics dashboard.
+2. Notifications (email/SMS).
+3. Email verification on registration.
+
+---
