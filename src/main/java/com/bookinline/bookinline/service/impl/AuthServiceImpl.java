@@ -87,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .sameSite("Secure")
+                .sameSite("None")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -126,7 +126,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .sameSite("Secure")
+                .sameSite("None")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -158,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .sameSite("Secure")
+                .sameSite("None")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -177,7 +177,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .sameSite("Secure")
+                .sameSite("None")
                 .maxAge(0)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());

@@ -1,8 +1,10 @@
 package com.bookinline.bookinline.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -108,6 +110,15 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public FilterRegistrationBean<SameSiteCookieFilter> sameSiteCookieFilter() {
+        FilterRegistrationBean<SameSiteCookieFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new SameSiteCookieFilter());
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
+        return registrationBean;
     }
 
     @Bean
