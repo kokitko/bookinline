@@ -7,8 +7,20 @@ on:
     branches: [ master, dev ]
 
 jobs:
-  dev-build:
+  prod-build:
     runs-on: ubuntu-latest
+    env:
+        SPRING_PROFILE: prod
+        POSTGRES_PROD_URL: jdbc:postgresql://localhost:5432/bookinline
+        POSTGRES_PROD_USER: postgres
+        POSTGRES_PROD_PASSWORD: password
+        REDIS_PROD_HOST: redis
+        REDIS_PROD_PORT: 6379
+        REDIS_PROD_PASSWORD: password
+        AWS_ACCESS_KEY_ID: dummy
+        AWS_SECRET_ACCESS_KEY: dummy
+        AWS_REGION: eu-north-1
+        AWS_BUCKET: dummy
 
     services:
       postgres:
@@ -25,22 +37,15 @@ jobs:
 
       redis:
           image: redis:latest
+          env:
+            REDIS_PASSWORD: password
+          options: >-
+            --requirepass password
+              
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Create .env file
-        run: |
-          echo "POSTGRES_PROD_URL=jdbc:postgresql://postgres:5432/bookinline" >> .env
-          echo "POSTGRES_PROD_USER=postgres" >> .env
-          echo "POSTGRES_PROD_PASSWORD=password" >> .env
-          echo "REDIS_PROD_URL=redis" >> .env
-          echo "REDIS_PROD_PORT=6379" >> .env
-          echo "AWS_ACCESS_KEY_ID=dummy" >> .env
-          echo "AWS_SECRET_ACCESS_KEY=dummy" >> .env
-          echo "AWS_REGION=eu-north-1" >> .env
-          echo "AWS_BUCKET=dummy" >> .env
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
