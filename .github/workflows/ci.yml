@@ -16,7 +16,6 @@ jobs:
         POSTGRES_PROD_PASSWORD: password
         REDIS_PROD_HOST: redis
         REDIS_PROD_PORT: 6379
-        REDIS_PROD_PASSWORD: password
         AWS_ACCESS_KEY_ID: dummy
         AWS_SECRET_ACCESS_KEY: dummy
         AWS_REGION: eu-north-1
@@ -39,7 +38,6 @@ jobs:
 
       redis:
         image: redis:latest
-        command: ["redis-server", "--requirepass", "password"]
         ports:
           - 6379:6379
               
