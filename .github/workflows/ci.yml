@@ -16,10 +16,10 @@ jobs:
         POSTGRES_PROD_PASSWORD: password
         REDIS_PROD_HOST: redis
         REDIS_PROD_PORT: 6379
-        AWS_ACCESS_KEY_ID: dummy
-        AWS_SECRET_ACCESS_KEY: dummy
+        AWS_ACCESS_KEY_ID: dummy-id
+        AWS_SECRET_ACCESS_KEY: dummy-key
         AWS_REGION: eu-north-1
-        AWS_BUCKET: dummy
+        AWS_BUCKET: dummy-bucket
 
     services:
       postgres:
@@ -62,10 +62,6 @@ jobs:
           echo "POSTGRES_DOCKER_PASSWORD=password" >> .env
           echo "REDIS_DOCKER_HOST=redis" >> .env
           echo "REDIS_DOCKER_PORT=6379" >> .env
-          echo "AWS_ACCESS_KEY_ID=dummy" >> .env
-          echo "AWS_SECRET_ACCESS_KEY=dummy" >> .env
-          echo "AWS_REGION=eu-north-1" >> .env
-          echo "AWS_BUCKET=dummy" >> .env
 
       - name: Run Docker Compose
         run: docker compose up -d --build

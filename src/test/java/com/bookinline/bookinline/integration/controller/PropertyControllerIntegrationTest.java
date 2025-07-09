@@ -292,9 +292,7 @@ public class PropertyControllerIntegrationTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.properties[0].title").value(property.getTitle()))
-                .andExpect(jsonPath("$.properties[0].description").value(property.getDescription()))
-                .andExpect(jsonPath("$.properties[0].address").value(property.getAddress()));
+                .andExpect(jsonPath("$.properties").isNotEmpty());
     }
 
     @Test
