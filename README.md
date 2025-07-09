@@ -116,7 +116,7 @@ A `.env.example` file is provided in the project root — **copy it to `.env` an
 
 **Note:**  
 - Use the `*_DEV` variables when running locally with Maven.  
-- Use the `*_PROD` variables when running via Docker Compose.
+- Use the `*_DOCKER` variables when running via Docker Compose.
 
 ---
 
@@ -145,7 +145,7 @@ mvn spring-boot:run
 
 ### 🐳 Docker-based Setup
 
-**1. Copy `.env.example` to `.env` and fill out your production (PROD) values.**
+**1. Copy `.env.example` to `.env` and fill out your production (DOCKER) values.**
 
 **2. Build the Docker Image**  
 ```
