@@ -29,8 +29,8 @@ services:
     container_name: postgres
     environment:
       POSTGRES_DB: bookinline
-      POSTGRES_USER: ${POSTGRES_PROD_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_DOCKER_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DOCKER_PASSWORD}
     ports:
       - "5432:5432"
     networks:
