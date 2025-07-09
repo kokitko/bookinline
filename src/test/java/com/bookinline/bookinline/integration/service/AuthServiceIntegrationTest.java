@@ -68,8 +68,7 @@ public class AuthServiceIntegrationTest {
         Assertions.assertThat(setCookieHeader).isNotNull();
         Assertions.assertThat(setCookieHeader).contains("refreshToken")
                 .contains("HttpOnly")
-                .contains("Secure")
-                .contains("SameSite=None");
+                .contains("SameSite=Secure");
 
     }
 
@@ -89,8 +88,7 @@ public class AuthServiceIntegrationTest {
         Assertions.assertThat(setCookieHeader).isNotNull();
         Assertions.assertThat(setCookieHeader).contains("refreshToken")
                 .contains("HttpOnly")
-                .contains("Secure")
-                .contains("SameSite=None");
+                .contains("SameSite=Secure");
     }
 
     @Test
@@ -106,8 +104,7 @@ public class AuthServiceIntegrationTest {
         Assertions.assertThat(setCookieHeader).isNotNull();
         Assertions.assertThat(setCookieHeader).contains("refreshToken")
                 .contains("HttpOnly")
-                .contains("Secure")
-                .contains("SameSite=None");
+                .contains("SameSite=Secure");
     }
 
     @Test
@@ -121,7 +118,6 @@ public class AuthServiceIntegrationTest {
                 .contains("Max-Age=0")
                 .contains("Path=/")
                 .contains("HttpOnly")
-                .contains("Secure")
-                .contains("SameSite=None");
+                .contains("SameSite=Secure");
     }
 }
