@@ -12,6 +12,8 @@ import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,26 +26,32 @@ import com.bookinline.bookinline.repository.UserRepository;
 import com.bookinline.bookinline.security.JwtService;
 import com.bookinline.bookinline.service.AuthService;
 
+import java.util.Arrays;
+
 @Service
 public class AuthServiceImpl implements AuthService {
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
+    private final boolean isProd;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
 
+    @Autowired
     public AuthServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            JwtService jwtService,
                            AuthenticationManager authenticationManager,
-                           UserDetailsService userDetailsService) {
+                           UserDetailsService userDetailsService,
+                           Environment env) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.isProd = Arrays.asList(env.getActiveProfiles()).contains("prod");
     }
 
     @Timed(
@@ -77,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false) // Set to true in production
+                .secure(isProd)
                 .path("/")
                 .sameSite("Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
@@ -116,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false) // Set to true in production
+                .secure(isProd)
                 .path("/")
                 .sameSite("Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
@@ -148,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
         String newRefreshToken = jwtService.generateRefreshToken(userDetails);
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefreshToken)
                 .httpOnly(true)
-                .secure(false) // Set to true in production
+                .secure(isProd)
                 .path("/")
                 .sameSite("Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
@@ -167,7 +175,7 @@ public class AuthServiceImpl implements AuthService {
         logger.info("Logging out user, clearing refresh token cookie");
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(false) // Set to true in production
+                .secure(isProd)
                 .path("/")
                 .sameSite("Secure")
                 .maxAge(0)
