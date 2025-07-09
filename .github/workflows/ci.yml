@@ -39,7 +39,7 @@ jobs:
           echo "REDIS_PROD_PORT=6379" >> .env
           echo "AWS_ACCESS_KEY_ID=dummy" >> .env
           echo "AWS_SECRET_ACCESS_KEY=dummy" >> .env
-          echo "AWS_REGION=ue-north-1" >> .env
+          echo "AWS_REGION=eu-north-1" >> .env
           echo "AWS_BUCKET=dummy" >> .env
 
       - name: Set up JDK 21
