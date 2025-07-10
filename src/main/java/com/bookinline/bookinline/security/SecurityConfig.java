@@ -1,10 +1,8 @@
 package com.bookinline.bookinline.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -41,6 +39,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         boolean isTest = Arrays.asList(environment.getActiveProfiles()).contains("test");
+        boolean isProd = Arrays.asList(environment.getActiveProfiles()).contains("prod");
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> {
@@ -48,6 +47,8 @@ public class SecurityConfig {
                         csrf.disable();
                     } else {
                         CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                        if (isProd) repo.setCookieCustomizer(builder ->
+                                builder.sameSite("None").secure(true).httpOnly(false));
                         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
                         requestHandler.setCsrfRequestAttributeName(null);
                         csrf
@@ -110,15 +111,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    @Bean
-    public FilterRegistrationBean<SameSiteCookieFilter> sameSiteCookieFilter() {
-        FilterRegistrationBean<SameSiteCookieFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new SameSiteCookieFilter());
-        registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
-        return registrationBean;
     }
 
     @Bean
