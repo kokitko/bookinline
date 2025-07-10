@@ -23,7 +23,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(isProd ? "https://bookinline.onrender.com" : "http://localhost:5173")
+                        .allowedOrigins(isProd ? "https://bookinline.vercel.app" : "http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("Content-Type", "X-XSRF-TOKEN", "Authorization", "refreshToken")
                         .allowCredentials(true);
