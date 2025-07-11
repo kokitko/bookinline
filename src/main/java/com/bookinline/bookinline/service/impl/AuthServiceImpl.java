@@ -87,6 +87,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
+                .domain(isProd ? "bookinline.site" : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
@@ -126,6 +127,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
+                .domain(isProd ? "bookinline.site" : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
@@ -158,6 +160,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
+                .domain(isProd ? "bookinline.site" : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
@@ -177,6 +180,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
+                .domain(isProd ? "bookinline.site" : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(0)
                 .build();

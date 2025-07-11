@@ -48,7 +48,7 @@ public class SecurityConfig {
                     } else {
                         CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
                         if (isProd) repo.setCookieCustomizer(builder ->
-                                builder.sameSite("None").secure(true).httpOnly(false).domain("bookinline.vercel.app"));
+                                builder.sameSite("None").secure(true).httpOnly(false).domain("bookinline.site"));
                         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
                         requestHandler.setCsrfRequestAttributeName(null);
                         csrf
