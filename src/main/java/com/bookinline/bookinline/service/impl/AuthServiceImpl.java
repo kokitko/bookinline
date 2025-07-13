@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -38,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+
+    @Value("${app.front-end-url}")
+    private String frontEndUrl;
 
     @Autowired
     public AuthServiceImpl(UserRepository userRepository,
@@ -87,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .domain(isProd ? "bookinline.site" : null)
+                .domain(isProd ? frontEndUrl.substring(12) : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
@@ -127,7 +131,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .domain(isProd ? "bookinline.site" : null)
+                .domain(isProd ? frontEndUrl.substring(12) : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
@@ -160,7 +164,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .domain(isProd ? "bookinline.site" : null)
+                .domain(isProd ? frontEndUrl.substring(12) : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(JwtService.REFRESH_TOKEN_VALIDITY / 1000)
                 .build();
@@ -180,7 +184,7 @@ public class AuthServiceImpl implements AuthService {
                 .httpOnly(true)
                 .secure(isProd)
                 .path("/")
-                .domain(isProd ? "bookinline.site" : null)
+                .domain(isProd ? frontEndUrl.substring(12) : null)
                 .sameSite(isProd ? "None" : "Secure")
                 .maxAge(0)
                 .build();

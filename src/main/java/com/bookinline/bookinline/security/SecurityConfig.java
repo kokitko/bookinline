@@ -1,6 +1,7 @@
 package com.bookinline.bookinline.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -29,6 +30,8 @@ public class SecurityConfig {
     private Environment environment;
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    @Value("${app.front-end-url}")
+    private String frontEndUrl;
 
     @Autowired
     public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserDetailsService userDetailsService) {
@@ -48,7 +51,7 @@ public class SecurityConfig {
                     } else {
                         CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
                         if (isProd) repo.setCookieCustomizer(builder ->
-                                builder.sameSite("None").secure(true).httpOnly(false).domain("bookinline.site"));
+                                builder.sameSite("None").secure(true).httpOnly(false).domain(frontEndUrl.substring(12)));
                         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
                         requestHandler.setCsrfRequestAttributeName(null);
                         csrf
