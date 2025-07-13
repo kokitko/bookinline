@@ -3,7 +3,7 @@
 ## Overview
 
 BookInLine is a Spring Boot-based backend application inspired by Booking.com. The system supports user registration, property management, booking operations, and reviews with role-based access control, performance optimizations, and extensive testing coverage. <br /><br />
-PS: This project is deployed and you can find it on https://www.bookinline.site, if properties aren't loading, visit page in 5 minutes, I used free hosting so it sleeps after 15 minutes of idling =).
+PS: This project is deployed and you can find it on https://www.bookinline.online, if properties aren't loading, visit page in 5 minutes, I used free hosting so it sleeps after 15 minutes of idling =).
 
 ---
 
