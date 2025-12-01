@@ -97,8 +97,8 @@ public class BookingServiceIntegrationTest {
         booking2.setStatus(BookingStatus.PENDING);
         booking2 = bookingRepository.save(booking2);
 
-        bookingRequestDto.setCheckInDate(LocalDate.of(2025, 10, 1));
-        bookingRequestDto.setCheckOutDate(LocalDate.of(2025, 10, 7));
+        bookingRequestDto.setCheckInDate(LocalDate.of(2026, 10, 1));
+        bookingRequestDto.setCheckOutDate(LocalDate.of(2026, 10, 7));
     }
 
     @Test

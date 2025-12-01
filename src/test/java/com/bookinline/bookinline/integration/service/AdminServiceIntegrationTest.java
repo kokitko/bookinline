@@ -99,8 +99,8 @@ public class AdminServiceIntegrationTest {
         property.setHost(host);
         property = propertyRepository.save(property);
 
-        booking.setCheckInDate(LocalDate.of(2026, 01, 01));
-        booking.setCheckOutDate(LocalDate.of(2026, 01, 10));
+        booking.setCheckInDate(LocalDate.of(2027, 01, 01));
+        booking.setCheckOutDate(LocalDate.of(2027, 01, 10));
         booking.setGuest(guest);
         booking.setProperty(property);
         booking.setStatus(BookingStatus.PENDING);
